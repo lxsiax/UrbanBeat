@@ -1,4 +1,3 @@
-// resources/js/components/festival/LinkHeader.tsx
 import { Link } from '@inertiajs/react';
 
 interface Props {
@@ -10,7 +9,7 @@ export default function LinkHeader({ href, children }: Props) {
     return (
         <Link 
             href={href} 
-            className="text-white font-bold uppercase tracking-tighter text-sm inline-block transition-all duration-300 ease-in-out hover:scale-120 transform"
+            className="text-[16px] font-black uppercase tracking-tighter text-white hover:scale-110"
         >
             {children}
         </Link>
