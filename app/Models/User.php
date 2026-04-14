@@ -54,11 +54,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function carrito()
-    {
-        return $this->hasOne(Carrito::class);
-    }
-
     public function role()
     {
         return $this->belongsTo(Role::class);
@@ -72,5 +67,19 @@ class User extends Authenticatable
     public function mensajes()
     {
         return $this->hasMany(Mensaje::class);
+    }
+
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class, 'producto_user')
+            ->withPivot('cantidad')
+            ->withTimestamps();
+    }
+
+    public function entradas()
+    {
+        return $this->belongsToMany(Entrada::class, 'entrada_user')
+            ->withPivot('cantidad')
+            ->withTimestamps();
     }
 }

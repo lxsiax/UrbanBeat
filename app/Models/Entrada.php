@@ -27,11 +27,15 @@ class Entrada extends Model
         return $this->belongsTo(Zona::class);
     }
 
-    public function carritos()
+    public function users()
     {
-        return $this->belongsToMany(Carrito::class, 'carrito_entrada')
-        ->withPivot('cantidad')
-        ->withTimestamps();
+        return $this->belongsToMany(User::class, 'entrada_user')
+            ->withPivot('cantidad');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
     }
 
 }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->decimal('total', 10, 2);
             $table->string('estado')->default('Pagado');
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('carrito_id')->constrained();
             $table->timestamps();
         });
     }

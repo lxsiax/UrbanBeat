@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Producto extends Model
 {
@@ -18,16 +20,19 @@ class Producto extends Model
         'imagen_url',
     ];
 
-    public function carritos()
+    public function talla()
     {
-        return $this->belongsToMany(Carrito::class, 'carrito_producto')
-        ->withPivot('cantidad')
-        ->withTimestamps();
+        return $this->belongsTo(Talla::class);
     }
-    public function tallas()
+
+    public function users()
     {
-        return $this->belongsToMany(Talla::class, 'producto_talla')
-        ->withPivot('stock')
-        ->withTimestamps();
+        return $this->BelongsToMany(User::class, 'producto_user')
+        ->withPivot('cantidad');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
     }
 }

@@ -12,7 +12,6 @@ class Compra extends Model
 
     protected $fillable = [
         'user_id',
-        'carrito_id',
         'total',
         'estado'
     ];
@@ -20,11 +19,6 @@ class Compra extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function carrito()
-    {
-        return $this->belongsTo(Carrito::class);
     }
 
     public function facturas()
