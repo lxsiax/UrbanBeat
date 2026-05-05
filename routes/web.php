@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Entrada;
 
 Route::get('/', function () {
     return Inertia::render('home');
@@ -44,6 +45,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $request->session()->regenerateToken();
         return redirect('/');
     })->name('logout');
+});
+
+
+Route::get('/entradas', function (Request $request) {
+    $query = Entrada::with(['tipoEntrada.dia', 'zona']);
+
+    if ($request->has('tipo') && $request->tipo === 'abono') {
+        $query->whereHas('tipoEntrada', function($q) {
+            $q->whereNull('dia_id');
+        });
+    }
+
+    if ($request->has('dia')) {
+        $query->whereHas('tipoEntrada.dia', function($q) use ($request) {
+            $q->where('fecha', $request->dia);
+        });
+    }
+
+    return Inertia::render('Entradas', [
+        'entradas' => $query->get(),
+        'titulo' => $request->tipo === 'abono' ? 'Abonos Generales' : ($request->dia ? 'Entradas Diarias' : 'Tickets')
+    ]);
 });
 
 require __DIR__.'/settings.php';
