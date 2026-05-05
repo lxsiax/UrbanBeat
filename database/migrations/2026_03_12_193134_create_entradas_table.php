@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('stock');
             $table->foreignId('tipo_entrada_id')->constrained();
             $table->foreignId('zona_id')->constrained();
+            $table->boolean('esta_oculta')->default(false);
             $table->timestamps();
         });
     }

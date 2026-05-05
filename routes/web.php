@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EntradaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -36,6 +37,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    
     Route::post('/logout', function (Request $request) {
         Auth::logout();
         $request->session()->invalidate();
@@ -44,8 +46,15 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/admin/entradas', [AdminController::class, 'entradas'])->name('admin.entradas.index');
-    Route::patch('/admin/entradas/{id}', [AdminController::class, 'updateEntrada'])->name('admin.entradas.update');
+
+    Route::resource('admin/entradas', EntradaController::class)->names([
+        'index'  => 'admin.entradas.index',
+        'edit'   => 'admin.entradas.edit',
+        'update' => 'admin.entradas.update',
+    ])->only(['index', 'edit', 'update']);
+
+    Route::patch('/admin/entradas/{id}/cambiar-visibilidad', [EntradaController::class, 'cambiarVisibilidad'])
+        ->name('admin.entradas.cambiarVisibilidad');
 });
 
 Route::get('/entradas', function (Request $request) {

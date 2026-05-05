@@ -15,6 +15,7 @@ class Entrada extends Model
         'stock',
         'tipo_entrada_id',
         'zona_id',
+        'esta_oculta',
     ];
 
     public function tipoEntrada()

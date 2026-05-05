@@ -14,7 +14,13 @@ export default function Entradas({ entradas, titulo }: Props) {
     const [zona, setZona] = useState<string | null>(null);
     const [cantidades, setCantidades] = useState<Record<number, number>>({});
 
-    const filtradas = zona ? entradas.filter(e => e.zona.nombre === zona) : entradas;
+    // 1. Primero filtramos las que no están ocultas
+    const entradasVisibles = entradas.filter(e => !e.esta_oculta);
+
+    // 2. Luego, sobre las visibles, aplicamos el filtro de zona si existe
+    const filtradas = zona 
+        ? entradasVisibles.filter(e => e.zona.nombre === zona) 
+        : entradasVisibles;
 
     const updateCant = (id: number, delta: number) => {
         setCantidades(prev => ({
@@ -76,6 +82,7 @@ export default function Entradas({ entradas, titulo }: Props) {
                                     <div className="mt-auto">
                                         <div className="flex items-center justify-between bg-gray-100 rounded-full p-2 mb-4">
                                             <button 
+                                                type="button"
                                                 onClick={() => updateCant(e.id, -1)}
                                                 className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-pink-500 transition-all active:scale-90"
                                             >
@@ -83,6 +90,7 @@ export default function Entradas({ entradas, titulo }: Props) {
                                             </button>
                                             <span className="font-black text-lg">{cantidades[e.id] || 1}</span>
                                             <button 
+                                                type="button"
                                                 onClick={() => updateCant(e.id, 1)}
                                                 className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-pink-500 transition-all active:scale-90"
                                             >
@@ -91,7 +99,8 @@ export default function Entradas({ entradas, titulo }: Props) {
                                         </div>
 
                                         <button
-                                            onClick={() => console.log(e.id, cantidades[e.id] || 1)}
+                                            type="button"
+                                            onClick={() => console.log("Añadido al carrito:", e.id, "Cantidad:", cantidades[e.id] || 1)}
                                             className="w-full py-4 bg-pink-500 text-white rounded-full font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-black transition-all shadow-lg"
                                         >
                                             <HiOutlineShoppingBag className="text-xl" />

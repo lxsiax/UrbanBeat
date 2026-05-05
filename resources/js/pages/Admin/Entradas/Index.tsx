@@ -1,29 +1,40 @@
-import { Head, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
+import { HiOutlineEye, HiOutlineEyeSlash, HiOutlinePencil } from "react-icons/hi2";
 
 interface Props {
     entradas: any[];
 }
 
-export default function Dashboard({ entradas = [] }: Props) {
+export default function GestionEntradas({ entradas: entradasIniciales = [] }: Props) {
+    const [entradas, setEntradas] = useState(entradasIniciales);
+
+    const cambiarVisibilidad = (id: number) => {
+        setEntradas(prev => prev.map(e =>
+            e.id === id ? { ...e, esta_oculta: !e.esta_oculta } : e
+        ));
+
+        router.patch(`/admin/entradas/${id}/cambiar-visibilidad`, {}, {
+            preserveScroll: true
+        });
+    };
+
+    const irAEditar = (id: number) => {
+        router.get(`/admin/entradas/${id}/edit`);
+    };
+
     return (
         <div className="bg-gray-50 min-h-screen flex flex-col">
-            <Head title="Panel Admin - UrbanBeat" />
+            <Head title="Gestión - UrbanBeat" />
             <Header />
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex justify-between items-end mb-12">
-                        <div>
-                            <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black">
-                                Admin <span className="text-pink-500">Panel</span>
-                            </h1>
-                            <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-2">
-                                Gestión de inventario y precios de entradas
-                            </p>
-                        </div>
-                    </div>
+                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black mb-12">
+                        Gestión <span className="text-pink-500">Entradas</span>
+                    </h1>
 
                     <div className="bg-white rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
                         <table className="w-full text-left">
@@ -31,56 +42,59 @@ export default function Dashboard({ entradas = [] }: Props) {
                                 <tr className="bg-black text-white uppercase text-[10px] tracking-[0.2em] font-black">
                                     <th className="p-6">Tipo</th>
                                     <th className="p-6">Zona</th>
-                                    <th className="p-6">Fecha</th>
                                     <th className="p-6">Precio</th>
                                     <th className="p-6">Stock</th>
+                                    <th className="p-6">Estado</th>
                                     <th className="p-6 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {entradas.length > 0 ? (
-                                    entradas.map((entrada) => (
-                                        <tr key={entrada.id} className="hover:bg-pink-50 transition-colors group">
-                                            <td className="p-6 font-black uppercase italic text-sm">
-                                                {entrada.tipo_entrada?.nombre}
-                                            </td>
-                                            <td className="p-6">
-                                                <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black uppercase">
-                                                    {entrada.zona?.nombre}
-                                                </span>
-                                            </td>
-                                            <td className="p-6 text-xs font-bold text-gray-500">
-                                                {entrada.tipo_entrada?.dia?.fecha || 'ABONO COMPLETO'}
-                                            </td>
-                                            <td className="p-6 font-black text-lg">
-                                                {entrada.precio}€
-                                            </td>
-                                            <td className="p-6">
-                                                <div className="flex items-center gap-2">
-                                                    <span className={`w-2 h-2 rounded-full ${entrada.stock > 10 ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                                                    <span className="font-mono font-bold">{entrada.stock}</span>
-                                                </div>
-                                            </td>
-                                            <td className="p-6 text-right">
-                                                <button className="bg-pink-500 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-md">
-                                                    Editar
+                                {entradas.map((e) => (
+                                    <tr key={e.id} className={`transition-all ${e.esta_oculta ? 'opacity-40 bg-gray-50' : 'bg-white'}`}>
+                                        <td className="p-6 font-black uppercase italic text-sm">{e.tipo_entrada?.nombre}</td>
+                                        <td className="p-6">
+                                            <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black uppercase">
+                                                {e.zona?.nombre}
+                                            </span>
+                                        </td>
+                                        <td className="p-6 font-black text-lg">{e.precio}€</td>
+                                        <td className="p-6">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`w-2 h-2 rounded-full ${e.stock > 10 ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                                <span className="font-mono font-bold text-sm">{e.stock}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-6">
+                                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${e.esta_oculta ? 'text-red-500 bg-red-50' : 'text-green-600 bg-green-50'}`}>
+                                                {e.esta_oculta ? 'Oculta' : 'Visible'}
+                                            </span>
+                                        </td>
+                                        <td className="p-6 text-right">
+                                            <div className="flex justify-end gap-3">
+                                                <button
+                                                    onClick={() => cambiarVisibilidad(e.id)}
+                                                    title={e.esta_oculta ? "Mostrar entrada" : "Ocultar entrada"}
+                                                    className={`p-2 rounded-xl border-2 border-black transition-all active:scale-90 ${e.esta_oculta ? 'bg-black text-white' : 'bg-white hover:bg-pink-500 hover:text-white'}`}
+                                                >
+                                                    {e.esta_oculta ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
                                                 </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={6} className="p-20 text-center font-bold text-gray-400 uppercase tracking-widest">
-                                            No hay entradas registradas en la base de datos
+                                                
+                                                <button 
+                                                    onClick={() => irAEditar(e.id)}
+                                                    title="Editar entrada"
+                                                    className="p-2 bg-white border-2 border-black rounded-xl text-black hover:bg-black hover:text-white transition-all active:scale-90"
+                                                >
+                                                    <HiOutlinePencil size={20} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </main>
-
             <Footer />
         </div>
     );
