@@ -21,7 +21,7 @@ export default function Login() {
             <main className="flex-grow flex items-center justify-center px-4 pt-32 pb-12">
                 <div className="bg-white p-8 rounded-2xl w-full max-w-md border border-gray-200 shadow-2xl">
                     <h2 className="text-black text-4xl font-black italic mb-2 tracking-tighter uppercase text-center">
-                        ACCESO <span className="text-pink-500">URBANBEAT</span>
+                        ACCESO <span className="text-pink-500">URBANBEAT </span>
                     </h2>
 
                     <form onSubmit={acceder} className="space-y-6">

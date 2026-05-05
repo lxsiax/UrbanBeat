@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -27,40 +28,35 @@ Route::middleware('guest')->group(function () {
             return redirect()->intended('/');
         }
 
-        return back()->withErrors([
-            'email' => 'Las credenciales no coinciden.',
-        ])->onlyInput('email');
+        return back()->withErrors(['email' => 'Las credenciales no coinciden.'])->onlyInput('email');
     });
 
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-
+Route::middleware('auth')->group(function () {
     Route::post('/logout', function (Request $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
     })->name('logout');
-});
 
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/entradas', [AdminController::class, 'entradas'])->name('admin.entradas.index');
+    Route::patch('/admin/entradas/{id}', [AdminController::class, 'updateEntrada'])->name('admin.entradas.update');
+});
 
 Route::get('/entradas', function (Request $request) {
     $query = Entrada::with(['tipoEntrada.dia', 'zona']);
 
-    if ($request->has('tipo') && $request->tipo === 'abono') {
-        $query->whereHas('tipoEntrada', function($q) {
-            $q->whereNull('dia_id');
-        });
+    if ($request->tipo === 'abono') {
+        $query->whereHas('tipoEntrada', fn($q) => $q->whereNull('dia_id'));
     }
 
-    if ($request->has('dia')) {
-        $query->whereHas('tipoEntrada.dia', function($q) use ($request) {
-            $q->where('fecha', $request->dia);
-        });
+    if ($request->dia) {
+        $query->whereHas('tipoEntrada.dia', fn($q) => $q->where('fecha', $request->dia));
     }
 
     return Inertia::render('Entradas', [

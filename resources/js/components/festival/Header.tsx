@@ -1,7 +1,12 @@
 import Logo from './Logo';
 import LinkHeader from './LinkHeader';
 import { useState } from 'react';
-import { HiOutlineShoppingBag, HiOutlineUser, HiChevronDown } from "react-icons/hi2";
+import { 
+    HiOutlineShoppingBag, 
+    HiOutlineUser, 
+    HiChevronDown, 
+    HiOutlineAdjustmentsHorizontal 
+} from "react-icons/hi2";
 import { Link, usePage } from '@inertiajs/react';
 
 export default function Header() {
@@ -62,12 +67,24 @@ export default function Header() {
 
                         {auth.user ? (
                             <div className="flex items-center gap-4">
+                                
+                                {auth.user.role_id === 1 && (
+                                    <Link 
+                                        href="/admin/dashboard" 
+                                        className="flex items-center gap-2 bg-black text-white px-4 py-2.5 rounded-full border border-black hover:bg-white hover:text-black transition-all group shadow-md"
+                                    >
+                                        <HiOutlineAdjustmentsHorizontal className="text-xl group-hover:rotate-90 transition-transform duration-500" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Panel Admin</span>
+                                    </Link>
+                                )}
+
                                 <div className="flex items-center gap-2 bg-black/15 px-5 py-2.5 rounded-full border border-black/10 backdrop-blur-sm">
                                     <HiOutlineUser className="text-white text-lg" />
                                     <span className="text-white text-xs font-black uppercase tracking-widest pt-0.5">
                                         {auth.user.name}
                                     </span>
                                 </div>
+
                                 <Link
                                     href="/logout"
                                     method="post"
@@ -79,7 +96,6 @@ export default function Header() {
                             </div>
                         ) : (
                             <div className="flex items-center gap-4">
-
                                 <Link href="/login">
                                     <span className="border-2 border-white text-white px-8 py-3 rounded-full text-sm font-black tracking-widest hover:bg-white hover:text-pink-500 transition-all shadow-md">
                                         LOGIN
