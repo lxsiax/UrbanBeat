@@ -11,26 +11,16 @@ interface Props {
 }
 
 export default function Entradas({ entradas, titulo }: Props) {
-    const [zonaSeleccionada, setZonaSeleccionada] = useState<string | null>(null);
-    const [cantidades, setCantidades] = useState<{ [key: number]: number }>(
-        Object.fromEntries(entradas.map(e => [e.id, 1]))
-    );
+    const [zona, setZona] = useState<string | null>(null);
+    const [cantidades, setCantidades] = useState<Record<number, number>>({});
 
-    const entradasFiltradas = zonaSeleccionada 
-        ? entradas.filter(e => e.zona.nombre === zonaSeleccionada)
-        : entradas;
+    const filtradas = zona ? entradas.filter(e => e.zona.nombre === zona) : entradas;
 
-    const handleCantidad = (id: number, delta: number) => {
+    const updateCant = (id: number, delta: number) => {
         setCantidades(prev => ({
             ...prev,
-            [id]: Math.max(1, Math.min(prev[id] + delta, 10))
+            [id]: Math.max(1, Math.min((prev[id] || 1) + delta, 10))
         }));
-    };
-
-    const añadirAlCarrito = (entrada: any) => {
-        const cantidad = cantidades[entrada.id];
-        console.log(`Añadido: ${entrada.tipo_entrada.nombre} - Cantidad: ${cantidad}`);
-        // Lógica de persistencia del carrito próximamente
     };
 
     return (
@@ -52,50 +42,48 @@ export default function Entradas({ entradas, titulo }: Props) {
 
                     <div className="mb-20 bg-gray-50 p-10 rounded-[40px] border-2 border-black/5 shadow-inner">
                         <MapaRecinto 
-                            onZonaSelect={(zona) => setZonaSeleccionada(zona === zonaSeleccionada ? null : zona)} 
-                            zonaActiva={zonaSeleccionada}
+                            onZonaSelect={(z) => setZona(z === zona ? null : z)} 
+                            zonaActiva={zona}
                         />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {entradasFiltradas.length > 0 ? (
-                            entradasFiltradas.map((entrada) => (
-                                <div 
-                                    key={entrada.id} 
-                                    className="relative p-8 rounded-3xl border-2 border-black flex flex-col h-full bg-white shadow-2xl transition-transform hover:-translate-y-2"
-                                >
+                        {filtradas.length > 0 ? (
+                            filtradas.map((e) => (
+                                <div key={e.id} className="relative p-8 rounded-3xl border-2 border-black flex flex-col h-full bg-white shadow-2xl transition-transform hover:-translate-y-2">
+                                    
                                     <div className="mb-4">
                                         <span className="bg-black text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-                                            {entrada.zona.nombre}
+                                            {e.zona.nombre}
                                         </span>
                                     </div>
 
                                     <h2 className="text-3xl font-black uppercase italic mb-1 leading-none">
-                                        {entrada.tipo_entrada.nombre}
+                                        {e.tipo_entrada.nombre}
                                     </h2>
 
                                     <p className="text-pink-500 font-bold text-[10px] uppercase tracking-[0.2em] mb-6">
-                                        {entrada.tipo_entrada.dia 
-                                            ? new Date(entrada.tipo_entrada.dia.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })
+                                        {e.tipo_entrada.dia 
+                                            ? new Date(e.tipo_entrada.dia.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })
                                             : 'Abono Full Festival'
                                         }
                                     </p>
 
                                     <div className="text-5xl font-black text-black mb-8">
-                                        {Math.floor(entrada.precio)}€
+                                        {Math.floor(e.precio)}€
                                     </div>
 
                                     <div className="mt-auto">
                                         <div className="flex items-center justify-between bg-gray-100 rounded-full p-2 mb-4">
                                             <button 
-                                                onClick={() => handleCantidad(entrada.id, -1)}
+                                                onClick={() => updateCant(e.id, -1)}
                                                 className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-pink-500 transition-all active:scale-90"
                                             >
                                                 <HiMinus />
                                             </button>
-                                            <span className="font-black text-lg">{cantidades[entrada.id] || 1}</span>
+                                            <span className="font-black text-lg">{cantidades[e.id] || 1}</span>
                                             <button 
-                                                onClick={() => handleCantidad(entrada.id, 1)}
+                                                onClick={() => updateCant(e.id, 1)}
                                                 className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-pink-500 transition-all active:scale-90"
                                             >
                                                 <HiPlus />
@@ -103,16 +91,11 @@ export default function Entradas({ entradas, titulo }: Props) {
                                         </div>
 
                                         <button
-                                            onClick={() => añadirAlCarrito(entrada)}
-                                            disabled={entrada.stock <= 0}
-                                            className={`w-full py-4 rounded-full font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${
-                                                entrada.stock > 0 
-                                                ? 'bg-pink-500 text-white hover:bg-black shadow-lg' 
-                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            }`}
+                                            onClick={() => console.log(e.id, cantidades[e.id] || 1)}
+                                            className="w-full py-4 bg-pink-500 text-white rounded-full font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-black transition-all shadow-lg"
                                         >
                                             <HiOutlineShoppingBag className="text-xl" />
-                                            {entrada.stock > 0 ? 'Añadir al carrito' : 'Agotado'}
+                                            Añadir al carrito
                                         </button>
                                     </div>
                                 </div>
@@ -120,7 +103,7 @@ export default function Entradas({ entradas, titulo }: Props) {
                         ) : (
                             <div className="col-span-full py-20 text-center">
                                 <p className="text-gray-300 font-black uppercase tracking-[0.5em] text-xl">
-                                    No hay tickets para esta zona
+                                    No hay tickets disponibles
                                 </p>
                             </div>
                         )}
