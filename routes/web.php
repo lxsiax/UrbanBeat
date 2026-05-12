@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Middleware\CheckAdmin; // Asegúrate de que este archivo exista
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,12 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/');
     })->name('logout');
 
+    // Rutas del carrito 
+    Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
+    Route::post('/carrito/actualizar/{id}', [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
+    Route::delete('/carrito/eliminar/{id}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
+    Route::post('/carrito/aniadir', [CarritoController::class, 'aniadir'])->name('carrito.aniadir');
+
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
 
@@ -84,5 +91,6 @@ Route::get('/entradas', function (Request $request) {
         'titulo' => $request->tipo === 'abono' ? 'Abonos Generales' : ($request->dia ? 'Entradas Diarias' : 'Tickets')
     ]);
 });
+
 
 require __DIR__ . '/settings.php';

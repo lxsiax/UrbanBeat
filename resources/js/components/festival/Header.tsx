@@ -1,11 +1,11 @@
 import Logo from './Logo';
 import LinkHeader from './LinkHeader';
 import { useState } from 'react';
-import { 
-    HiOutlineShoppingBag, 
-    HiOutlineUser, 
-    HiChevronDown, 
-    HiOutlineAdjustmentsHorizontal 
+import {
+    HiOutlineShoppingBag,
+    HiOutlineUser,
+    HiChevronDown,
+    HiOutlineAdjustmentsHorizontal
 } from "react-icons/hi2";
 import { Link, usePage } from '@inertiajs/react';
 
@@ -61,16 +61,15 @@ export default function Header() {
                     </div>
 
                     <div className="flex items-center gap-6 ml-4">
-                        <button className="text-white hover:scale-110 transition-transform text-3xl">
-                            <HiOutlineShoppingBag />
-                        </button>
-
                         {auth.user ? (
                             <div className="flex items-center gap-4">
-                                
+                                <Link href='/carrito' className="text-white hover:scale-110 transition-transform text-3xl">
+                                    <HiOutlineShoppingBag />
+                                </Link>
+
                                 {auth.user.role_id === 1 && (
-                                    <Link 
-                                        href="/admin/dashboard" 
+                                    <Link
+                                        href="/admin/dashboard"
                                         className="flex items-center gap-2 bg-black text-white px-4 py-2.5 rounded-full border border-black hover:bg-white hover:text-black transition-all group shadow-md"
                                     >
                                         <HiOutlineAdjustmentsHorizontal className="text-xl group-hover:rotate-90 transition-transform duration-500" />
