@@ -3,16 +3,19 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EntradaController;
+use App\Http\Middleware\CheckAdmin; // Asegúrate de que este archivo exista
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Entrada;
 
+// --- RUTAS PÚBLICAS ---
 Route::get('/', function () {
     return Inertia::render('home');
 });
 
+// --- RUTAS PARA INVITADOS (GUEST) ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
         return Inertia::render('auth/login');
@@ -36,8 +39,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
-Route::middleware('auth')->group(function () {
-    
+// --- RUTAS PROTEGIDAS (Cualquier usuario logueado) ---
+Route::middleware(['auth'])->group(function () {
+
     Route::post('/logout', function (Request $request) {
         Auth::logout();
         $request->session()->invalidate();
@@ -45,18 +49,26 @@ Route::middleware('auth')->group(function () {
         return redirect('/');
     })->name('logout');
 
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // --- RUTAS DE ADMINISTRACIÓN ---
+    // Usamos el middleware CheckAdmin para bloquear a cualquiera que no tenga role_id = 1
+    Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
 
-    Route::resource('admin/entradas', EntradaController::class)->names([
-        'index'  => 'admin.entradas.index',
-        'edit'   => 'admin.entradas.edit',
-        'update' => 'admin.entradas.update',
-    ])->only(['index', 'edit', 'update']);
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    Route::patch('/admin/entradas/{id}/cambiar-visibilidad', [EntradaController::class, 'cambiarVisibilidad'])
-        ->name('admin.entradas.cambiarVisibilidad');
+        Route::resource('entradas', EntradaController::class)->names([
+            'index' => 'admin.entradas.index',
+            'edit' => 'admin.entradas.edit',
+            'create' => 'admin.entradas.create',
+            'store' => 'admin.entradas.store',
+            'update' => 'admin.entradas.update',
+        ])->only(['index', 'edit', 'create', 'store', 'update']);
+
+        Route::patch('/entradas/{id}/cambiar-visibilidad', [EntradaController::class, 'cambiarVisibilidad'])
+            ->name('admin.entradas.cambiarVisibilidad');
+    });
 });
 
+// --- RUTAS DE CONSULTA (PÚBLICAS) ---
 Route::get('/entradas', function (Request $request) {
     $query = Entrada::with(['tipoEntrada.dia', 'zona']);
 
@@ -74,4 +86,4 @@ Route::get('/entradas', function (Request $request) {
     ]);
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
