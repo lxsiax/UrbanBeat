@@ -44,8 +44,6 @@ export default function Footer() {
 
                 <div className="border-t border-white pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex gap-6">
-                        <Patrocinador />
-                        <Patrocinador />
                     </div>
                     <p className="text-[10px] text-white uppercase">
                         © 2026 UrbanBeat. Todos los derechos reservados.
