@@ -1,6 +1,7 @@
 import Footer from '@/components/festival/Footer';
 import Header from '@/components/festival/Header';
 import { Head, Link, useForm, router } from '@inertiajs/react';
+import { HiOutlineTrash, HiMinusSmall, HiPlusSmall, HiArrowRight } from "react-icons/hi2";
 
 interface ArticuloCarrito {
     id: number;
@@ -16,15 +17,13 @@ interface Props {
 }
 
 export default function Carrito({ articulos = [], total = 0 }: Props) {
-    const { post, delete: destroy } = useForm();
+    const { delete: destroy } = useForm();
 
-    // Función para actualizar la cantidad (Inertia post)
     const actualizarCantidad = (id: number, nuevaCantidad: number) => {
         if (nuevaCantidad < 1) return;
-
         router.post(`/carrito/actualizar/${id}`,
             { cantidad: nuevaCantidad },
-            { preserveScroll: true }     
+            { preserveScroll: true }
         );
     };
 
@@ -35,131 +34,131 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-black">
-            <Head title="Tu Carrito - Festival" />
-
+        <div className="min-h-screen bg-[#fcfcfc] text-black font-sans antialiased">
+            <Head title="Tu Carrito — UrbanBeat" />
             <Header />
 
-            <main className="max-w-5xl mx-auto pt-40 pb-20 px-6">
-                <header className="mb-12">
-                    <h1 className="text-7xl font-black uppercase tracking-tighter italic leading-none">
-                        Tu <span className="text-pink-500 text-7xl block sm:inline">Carrito</span>
+            <main className="max-w-6xl mx-auto pt-44 pb-32 px-8">
+                <header className="relative mb-13">
+                    <span className="absolute -top-8 left-0 text-pink-500 font-black text-6xl opacity-9 italic select-none tracking-tighter uppercase">
+                        Tu carrito
+                    </span>
+                    <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter italic leading-none relative z-10">
+                        TU <span className="text-pink-500">CARRITO</span>
                     </h1>
-                    <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mt-4 ml-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mt-6 ml-1">
                         Artículos que has añadido al carrito
                     </p>
                 </header>
 
                 {articulos.length > 0 ? (
-                    <div className="flex flex-col lg:flex-row gap-10">
-
-                        {/* Lista de Artículos */}
-                        <div className="flex-1 space-y-4">
+                    <div className="flex flex-col lg:flex-row gap-16 items-start">
+                        
+                        {/* Columna de Productos - Más equilibrada */}
+                        <div className="flex-[1.5] w-full space-y-0 divide-y-2 divide-black">
                             {articulos.map((articulo) => (
-                                <div
-                                    key={articulo.id}
-                                    className="group bg-white rounded-[2rem] p-6 flex flex-col sm:flex-row items-center gap-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
-                                >
-                                    {/* Info de la Entrada */}
-                                    <div className="flex-1 text-center sm:text-left">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-pink-500 bg-pink-50 px-3 py-1 rounded-full mb-2 inline-block">
-                                            {articulo.zona}
-                                        </span>
-                                        <h3 className="text-xl font-black uppercase italic leading-none tracking-tighter">
+                                <div key={articulo.id} className="group py-10 first:pt-0 flex flex-col md:flex-row md:items-center gap-8">
+                                    <div className="flex-1">
+                                        <div className="inline-block bg-black text-white px-2 py-0.5 mb-3">
+                                            <span className="text-[11px] font-black uppercase tracking-widest">
+                                                {articulo.zona}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tight leading-none group-hover:text-pink-500 transition-colors">
                                             {articulo.nombre}
                                         </h3>
-                                    </div>
-
-                                    {/* Controles de Cantidad */}
-                                    <div className="flex items-center bg-gray-50 rounded-2xl p-1 border border-gray-100">
-                                        <button
-                                            type="button"
-                                            onClick={() => actualizarCantidad(articulo.id, articulo.cantidad - 1)}
-                                            className="w-10 h-10 flex items-center justify-center font-black hover:text-pink-500 transition-colors"
-                                        >
-                                            —
-                                        </button>
-                                        <span className="w-8 text-center font-black text-sm">
-                                            {articulo.cantidad}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() => actualizarCantidad(articulo.id, articulo.cantidad + 1)}
-                                            className="w-10 h-10 flex items-center justify-center font-black hover:text-pink-500 transition-colors"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-
-                                    {/* Precio Unitario y Total Artículo */}
-                                    <div className="text-right min-w-[100px]">
-                                        <p className="text-xl font-black tracking-tighter">
-                                            {(articulo.precio * articulo.cantidad).toFixed(2)}€
-                                        </p>
-                                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                                            {articulo.precio}€ / ud
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">
+                                            Ref: 00{articulo.id} — {articulo.precio}€ / ud
                                         </p>
                                     </div>
 
-                                    {/* Botón Eliminar */}
-                                    <button
-                                        type="button"
-                                        onClick={() => eliminarArticulo(articulo.id)}
-                                        className="p-2 text-gray-200 hover:text-red-500 transition-colors"
-                                        title="Eliminar del carrito"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
+                                    {/* Controles y Precio */}
+                                    <div className="flex items-center justify-between md:justify-end gap-10">
+                                        <div className="flex items-center border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                            <button 
+                                                onClick={() => actualizarCantidad(articulo.id, articulo.cantidad - 1)}
+                                                className="w-9 h-9 flex items-center justify-center hover:bg-black hover:text-white transition-colors border-r-2 border-black"
+                                            >
+                                                <HiMinusSmall />
+                                            </button>
+                                            <span className="w-10 text-center font-black text-base italic">{articulo.cantidad}</span>
+                                            <button 
+                                                onClick={() => actualizarCantidad(articulo.id, articulo.cantidad + 1)}
+                                                className="w-9 h-9 flex items-center justify-center hover:bg-black hover:text-white transition-colors border-l-2 border-black"
+                                            >
+                                                <HiPlusSmall />
+                                            </button>
+                                        </div>
+                                        
+                                        <div className="text-right min-w-[100px]">
+                                            <p className="text-2xl font-black italic tracking-tighter">
+                                                {(articulo.precio * articulo.cantidad).toFixed(2)}€
+                                            </p>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => eliminarArticulo(articulo.id)}
+                                            className="text-gray-300 hover:text-red-600 transition-colors"
+                                        >
+                                            <HiOutlineTrash size={22} />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Columna Lateral de Pago (Resumen) */}
-                        <aside className="w-full lg:w-[380px]">
-                            <div className="bg-black rounded-[2.5rem] p-8 text-white sticky top-32 shadow-2xl overflow-hidden relative">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 blur-[50px] rounded-full -mr-10 -mt-10"></div>
-
-                                <h2 className="text-sm font-black uppercase tracking-widest mb-8 border-b border-white/10 pb-4">
-                                    Resumen de compra
+                        {/* Panel de Pago */}
+                        <aside className="w-full lg:w-[400px] sticky top-40">
+                            <div className="bg-white border-2 border-black p-8 shadow-[10px_10px_0px_0px_rgba(236,72,153,1)] relative">
+                                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#fcfcfc] border-2 border-black rounded-full" />
+                                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#fcfcfc] border-2 border-black rounded-full" />
+                                
+                                <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-8 pb-3 border-b-2 border-black">
+                                    Resumen de <span className="text-pink-500"> pago</span>
                                 </h2>
 
                                 <div className="space-y-4 mb-10">
-                                    <div className="flex justify-between items-end">
-                                        <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Subtotal</span>
-                                        <span className="font-bold text-lg">{total.toFixed(2)}€</span>
+                                    <div className="flex justify-between text-[12px] font-black uppercase tracking-widest text-gray-500">
+                                        <span>Subtotal</span>
+                                        <span className="text-black">{total.toFixed(2)}€</span>
                                     </div>
-                                    <div className="flex justify-between items-end pb-4 border-b border-white/5">
-                                        <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Gastos Gestión</span>
-                                        <span className="font-bold text-lg">0.00€</span>
+                                    <div className="flex justify-between text-[12px] font-black uppercase tracking-widest text-gray-400 italic">
+                                        <span>Gastos gestión</span>
+                                        <span className="text-emerald-500 font-black">Gratis</span>
                                     </div>
-                                    <div className="flex justify-between items-end pt-2">
-                                        <span className="text-xs font-black uppercase text-pink-500 tracking-tighter">Total a pagar</span>
-                                        <span className="text-4xl font-black italic">{total.toFixed(2)}€</span>
+                                    
+                                    <div className="pt-8 mt-8 border-t-2 border-dashed border-gray-200 flex justify-between items-end">
+                                        <div className="flex flex-col">
+                                            <span className="text-[12px] font-black uppercase text-pink-500 tracking-widest">Total Final</span>
+                                        </div>
+                                        <span className="text-5xl font-black italic tracking-tighter leading-none">
+                                            {total.toFixed(2)}€
+                                        </span>
                                     </div>
                                 </div>
 
-                                <button className="w-full bg-pink-500 hover:bg-white hover:text-black py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all duration-300 shadow-lg shadow-pink-500/20 active:scale-95">
+                                <button className="group w-full bg-black text-white py-5 font-black uppercase tracking-[0.25em] text-[12px] flex items-center justify-center gap-3 hover:bg-pink-500 transition-all active:translate-y-1">
                                     Finalizar Pedido
+                                    <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
                                 </button>
 
-                                <p className="text-[9px] text-center text-gray-500 uppercase font-bold mt-6 tracking-widest leading-relaxed px-4">
-                                    Al continuar, aceptas las condiciones de venta y acceso al recinto.
+                                <p className="text-[8px] text-center text-gray-400 font-bold mt-8 uppercase tracking-[0.15em] leading-relaxed italic">
+                                    Al continuar aceptas nuestras condiciones de pago y acceso al festival. 
                                 </p>
                             </div>
                         </aside>
                     </div>
                 ) : (
-                    <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-200">
-                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-300">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                            </svg>
-                        </div>
-                        <h2 className="text-2xl font-black uppercase italic text-gray-300 mb-6 tracking-tighter">Tu carrito está vacío</h2>
-                        <Link href="/" className="inline-block bg-black text-white px-10 py-4 rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-pink-500 transition-colors">
-                            Ver Cartelera
+                    /* Cuando está vacío */
+                    <div className="py-32 text-center border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        <h2 className="text-3xl font-black uppercase italic mb-8 tracking-tighter text-gray-200">
+                            Tu carrito está vacío
+                        </h2>
+                        <Link 
+                            href="/entradas" 
+                            className="inline-block bg-pink-500 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                        >
+                            Ver entradas
                         </Link>
                     </div>
                 )}
