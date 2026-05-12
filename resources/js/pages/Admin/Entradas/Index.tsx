@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import { HiOutlineEye, HiOutlineEyeSlash, HiOutlinePencil } from "react-icons/hi2";
+import { Link } from '@inertiajs/react';
 
 interface Props {
     entradas: any[];
@@ -32,9 +33,18 @@ export default function GestionEntradas({ entradas: entradasIniciales = [] }: Pr
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-7xl mx-auto">
-                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black mb-12">
+                    <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black mb-8">
                         Gestión <span className="text-pink-500">Entradas</span>
                     </h1>
+                    <div className="flex justify-between items-center mb-6">
+
+                        <Link
+                            href="/admin/entradas/create"
+                            className="bg-green-600 hover:bg-green-800 text-white px-10 py-2 rounded-full font-black text-xs uppercase tracking-widest transition-colors shadow-md"
+                        >
+                            Añadir entrada
+                        </Link>
+                    </div>
 
                     <div className="bg-white rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
                         <table className="w-full text-left">
@@ -60,7 +70,7 @@ export default function GestionEntradas({ entradas: entradasIniciales = [] }: Pr
                                         <td className="p-6 font-black text-lg">{e.precio}€</td>
                                         <td className="p-6">
                                             <div className="flex items-center gap-2">
-                                                <span className={`w-2 h-2 rounded-full ${e.stock > 10 ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                                <span className={`w-2 h-2 rounded-full ${e.stock > 10 ? 'bg-green-500' : e.stock == 0 ? 'bg-red-500' : 'bg-yellow-500' }`}></span>
                                                 <span className="font-mono font-bold text-sm">{e.stock}</span>
                                             </div>
                                         </td>
@@ -78,8 +88,8 @@ export default function GestionEntradas({ entradas: entradasIniciales = [] }: Pr
                                                 >
                                                     {e.esta_oculta ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
                                                 </button>
-                                                
-                                                <button 
+
+                                                <button
                                                     onClick={() => irAEditar(e.id)}
                                                     title="Editar entrada"
                                                     className="p-2 bg-white border-2 border-black rounded-xl text-black hover:bg-black hover:text-white transition-all active:scale-90"

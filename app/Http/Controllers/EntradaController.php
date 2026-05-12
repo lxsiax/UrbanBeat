@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entrada;
-use App\Http\Requests\StoreEntradaRequest;
-use App\Http\Requests\UpdateEntradaRequest;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class EntradaController extends Controller
@@ -34,18 +32,31 @@ class EntradaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+   public function create()
+{
+    return Inertia::render('Admin/Entradas/Create', [
+        'tipos' => \App\Models\TipoEntrada::with('dia')->get(),
+        'zonas' => \App\Models\Zona::all(),
+    ]);
+}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEntradaRequest $request)
-    {
-        //
-    }
+    public function store(Request $request)
+{
+    $validated = $request->validate([
+        'tipo_entrada_id' => 'required|exists:tipo_entradas,id',
+        'zona_id'         => 'required|exists:zonas,id',
+        'precio'          => 'required|numeric|min:0',
+        'stock'           => 'required|integer|min:0',
+        'esta_oculta'     => 'boolean',
+    ]);
+
+    Entrada::create($validated);
+
+    return redirect()->route('admin.entradas.index')->with('success', 'Entrada creada correctamente.');
+}
 
     /**
      * Display the specified resource.
@@ -66,7 +77,7 @@ class EntradaController extends Controller
         ]);
     }
 
-    public function update(\Illuminate\Http\Request $request, $id)
+    public function update(Request $request, $id)
     {
         $entrada = Entrada::findOrFail($id);
 

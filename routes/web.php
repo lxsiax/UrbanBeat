@@ -10,12 +10,12 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Entrada;
 
-// --- RUTAS PÚBLICAS ---
+// Rutas públicas
 Route::get('/', function () {
     return Inertia::render('home');
 });
 
-// --- RUTAS PARA INVITADOS (GUEST) ---
+// Rutas para usuarios no logueados
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
         return Inertia::render('auth/login');
@@ -39,7 +39,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
-// --- RUTAS PROTEGIDAS (Cualquier usuario logueado) ---
+// Rutas para usuarios logueados
 Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', function (Request $request) {
@@ -49,8 +49,7 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/');
     })->name('logout');
 
-    // --- RUTAS DE ADMINISTRACIÓN ---
-    // Usamos el middleware CheckAdmin para bloquear a cualquiera que no tenga role_id = 1
+    // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
 
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -68,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-// --- RUTAS DE CONSULTA (PÚBLICAS) ---
+// Ruta de entradas
 Route::get('/entradas', function (Request $request) {
     $query = Entrada::with(['tipoEntrada.dia', 'zona']);
 
