@@ -11,7 +11,8 @@ class Artista extends Model
         'imagen',
         'es_headliner',
         'dia_id',
-        'orden'
+        'orden',
+        'esta_oculto'
     ];
 
     public function dia() 

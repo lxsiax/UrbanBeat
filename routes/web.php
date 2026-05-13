@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArtistaController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CarritoController;
@@ -63,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+        //Rutas crud entradas
         Route::resource('entradas', EntradaController::class)->names([
             'index' => 'admin.entradas.index',
             'edit' => 'admin.entradas.edit',
@@ -71,8 +73,20 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.entradas.update',
         ])->only(['index', 'edit', 'create', 'store', 'update']);
 
+        //Rutas crud artistas 
+        Route::resource('artistas', ArtistaController::class)->names([
+            'index' => 'admin.artistas.index',
+            'edit' => 'admin.artistas.edit',
+            'create' => 'admin.artistas.create',
+            'store' => 'admin.artistas.store',
+            'update' => 'admin.artistas.update',
+        ])->only(['index', 'edit', 'create', 'store', 'update']);
+
+        //Rutas de visibilidad para ocultar
         Route::patch('/entradas/{id}/cambiar-visibilidad', [EntradaController::class, 'cambiarVisibilidad'])
             ->name('admin.entradas.cambiarVisibilidad');
+        Route::patch('/artistas/{id}/cambiar-visibilidad', [ArtistaController::class, 'cambiarVisibilidad'])
+            ->name('admin.artistas.cambiarVisibilidad');
     });
 });
 

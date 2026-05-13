@@ -106,12 +106,14 @@ class DatabaseSeeder extends Seeder
                 'imagen' => 'https://www.letrasboom.com/thumbs/artistas/img_1576275520.jpg',
                 'es_headliner' => true,
                 'dia_id' => $dia23->id,
+                'esta_oculto' => false,
                 'orden' => 1
             ],
             [
                 'nombre' => 'Ruth Empoderada',
                 'imagen' => 'https://yt3.googleusercontent.com/aBdPWXwbaO_G-d-czMNsnZ7G3baSPRUI44f4fFfh4rllyAxJQLrGRy6VxdX_xYdwedGLHnX_=s900-c-k-c0x00ffffff-no-rj',
                 'es_headliner' => false,
+                'esta_oculto' => false,
                 'dia_id' => $dia23->id,
                 'orden' => 2
             ],
@@ -119,6 +121,7 @@ class DatabaseSeeder extends Seeder
                 'nombre' => 'Lia Kali',
                 'imagen' => 'https://los40.com/resizer/v2/PQX7K2UGRVCVRKLKD3CD2EVNIM.jpg?auth=bcae38e8e9eaf876c74cf20a20f66340eb44c0ecd2502c72d81e979a2006ffc5&quality=70&width=706&height=706&focal=1947,1307',
                 'es_headliner' => false,
+                'esta_oculto' => false,
                 'dia_id' => $dia23->id,
                 'orden' => 3
             ],
@@ -127,6 +130,7 @@ class DatabaseSeeder extends Seeder
                 'imagen' => 'https://concertmusicfestival.com/wp-content/uploads/2023/03/Duki_Concert_Music_Festival_2023.jpg',
                 'es_headliner' => false,
                 'dia_id' => $dia23->id,
+                'esta_oculto' => false,
                 'orden' => 4
             ],
             // DÍA 24
@@ -135,6 +139,7 @@ class DatabaseSeeder extends Seeder
                 'imagen' => 'https://www.lavanguardia.com/uploads/2024/10/31/6723516957b50.jpeg',
                 'es_headliner' => true,
                 'dia_id' => $dia24->id,
+                'esta_oculto' => false,
                 'orden' => 1
             ],
             [
@@ -142,6 +147,7 @@ class DatabaseSeeder extends Seeder
                 'imagen' => 'https://concertmusicfestival.com/wp-content/uploads/2024/11/Cruz-Cafune_1000x1000.jpg',
                 'es_headliner' => false,
                 'dia_id' => $dia24->id,
+                'esta_oculto' => false,
                 'orden' => 2
             ],
             // DÍA 25
@@ -150,6 +156,7 @@ class DatabaseSeeder extends Seeder
                 'imagen' => 'https://coolcoruna.com/wp-content/uploads/2025/03/Trueno-foto-promo-1-683x1024.jpg',
                 'es_headliner' => true,
                 'dia_id' => $dia25->id,
+                'esta_oculto' => false,
                 'orden' => 1
             ],
             [
@@ -157,6 +164,7 @@ class DatabaseSeeder extends Seeder
                 'imagen' => 'https://hips.hearstapps.com/hmg-prod/images/photo-feb-16-2024-7-49-10-pm-660f6efbe410b.jpg?crop=1.00xw:0.667xh;0,0.234xh&resize=640:*',
                 'es_headliner' => false,
                 'dia_id' => $dia25->id,
+                'esta_oculto' => false,
                 'orden' => 2
             ],
         ];

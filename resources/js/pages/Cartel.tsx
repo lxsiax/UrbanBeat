@@ -1,43 +1,17 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import NombreArtista from '@/components/festival/NombreArtista';
+import { HiOutlineEye, HiOutlineEyeSlash, HiOutlinePencil } from "react-icons/hi2";
 
-interface Artista {
-    id: number;
-    nombre: string;
-    imagen: string;
-    es_headliner: boolean;
-    orden: number;
-    visible?: boolean; // Añadimos esto para el control de ocultar
-}
+export default function Cartel({ programacion, auth }: { programacion: any[], auth: any }) {
+    const esAdmin = auth.user && auth.user.role_id === 1;
 
-interface Dia {
-    id: number;
-    fecha: string;
-    artistas: Artista[];
-}
-
-interface Props {
-    programacion: Dia[];
-    auth: {
-        user: any;
-    };
-}
-
-export default function Cartel({ programacion, auth }: Props) {
-    
-    // Función para manejar el borrado/ocultado
-    const handleOcultar = (id: number) => {
-        if (confirm('¿Seguro que quieres ocultar este artista del cartel?')) {
-            router.delete(`/admin/artistas/${id}`, {
-                preserveScroll: true
-            });
-        }
+    const cambiarVisibilidad = (id: number) => {
+        router.patch(`/admin/artistas/${id}/cambiar-visibilidad`, {}, { preserveScroll: true });
     };
 
-    // Función para ir a editar
-    const handleEditar = (id: number) => {
+    const irAEditar = (id: number) => {
         router.get(`/admin/artistas/${id}/edit`);
     };
 
@@ -48,75 +22,63 @@ export default function Cartel({ programacion, auth }: Props) {
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-7xl mx-auto">
-                    
-                    <div className="text-center mb-16">
+
+                    <div className="text-center mb-24">
                         <h1 className="text-black text-7xl md:text-9xl font-black italic uppercase tracking-tighter mb-4">
                             CARTEL <span className="text-pink-500">2026</span>
                         </h1>
-                        <div className="flex justify-center items-center gap-4">
-                            <div className="h-[2px] w-12 bg-black/20"></div>
-                            <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">
-                                UrbanBeat Festival 2026
-                            </p>
-                            <div className="h-[2px] w-12 bg-black/20"></div>
-                        </div>
                     </div>
 
-                    <div className="space-y-24">
+                    <div className="space-y-32">
                         {programacion.map((dia) => (
                             <section key={dia.id}>
-                                <div className="flex items-center gap-4 mb-10">
-                                    <h2 className="text-4xl font-black uppercase italic tracking-tighter whitespace-nowrap">
-                                        {new Date(dia.fecha).toLocaleDateString('es-ES', { 
-                                            day: 'numeric', 
-                                            month: 'long' 
-                                        })}
-                                    </h2>
-                                    <div className="h-[2px] w-full bg-black/10"></div>
+                                <div className="flex flex-col mb-12">
+                                    <div className="flex items-center gap-6">
+                                        <h2 className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter text-black shrink-0">
+                                            {new Date(dia.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}
+                                        </h2>
+                                        <div className="h-[4px] w-full bg-black"></div>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {dia.artistas.map((artista) => (
-                                        <div 
-                                            key={artista.id}
-                                            className={`group relative overflow-hidden rounded-[2.5rem] bg-black border-2 border-black transition-all duration-500 hover:-translate-y-2 shadow-xl ${
-                                                artista.es_headliner ? 'col-span-2 row-span-2' : 'col-span-1'
-                                            }`}
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+                                    {dia.artistas.map((e: any) => (
+                                        <div
+                                            key={e.id}
+                                            className={`group relative rounded-[2.5rem] bg-black border-[3px] overflow-hidden transition-all duration-500 ${e.es_headliner ? 'col-span-2 row-span-2' : 'col-span-1'
+                                                } ${e.esta_oculto ? 'opacity-50 grayscale border-dashed border-gray-400' : 'border-black hover:-translate-y-2 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]'}`}
                                         >
-                                            {/* Botones de Admin - Solo visibles si hay usuario logueado */}
-                                            {auth.user && (
-                                                <div className="absolute top-4 right-4 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button 
-                                                        onClick={() => handleEditar(artista.id)}
-                                                        className="bg-white text-black p-2 rounded-full hover:bg-pink-500 hover:text-white transition-colors"
-                                                        title="Editar Artista"
+                                            {esAdmin && (
+                                                <div className="absolute top-4 right-4 flex flex-col gap-3 z-30">
+                                                    <button
+                                                            onClick={() => cambiarVisibilidad(e.id)}
+                                                            className={`p-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 ${e.esta_oculta ? 'bg-black text-white' : 'bg-yellow-400 text-black'}`}
+                                                        >
+                                                            {e.esta_oculto ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
+                                                        </button>
+                                                    <button
+                                                        onClick={(ev) => { ev.preventDefault(); irAEditar(e.id); }}
+                                                        className="p-3 bg-pink-500 text-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 hover:bg-black"
                                                     >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleOcultar(artista.id)}
-                                                        className="bg-white text-red-600 p-2 rounded-full hover:bg-red-600 hover:text-white transition-colors"
-                                                        title="Ocultar Artista"
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                                        <HiOutlinePencil size={22} />
                                                     </button>
                                                 </div>
                                             )}
 
-                                            <div className="aspect-[4/5] h-full w-full">
-                                                <img 
-                                                    src={artista.imagen} 
-                                                    alt={artista.nombre}
-                                                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 grayscale group-hover:grayscale-0"
+                                            <div className="aspect-[4/5] w-full h-full">
+                                                <img
+                                                    src={e.imagen}
+                                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
                                                 />
                                             </div>
 
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-6 md:p-10">
-                                                <NombreArtista 
-                                                    nombre={artista.nombre} 
-                                                    esHeadliner={artista.es_headliner} 
-                                                />
-                                                <div className="h-1 w-0 bg-pink-500 mt-2 group-hover:w-full transition-all duration-500"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-6 md:p-10 pointer-events-none">
+                                                <NombreArtista nombre={e.nombre} esHeadliner={e.es_headliner} />
+                                                {e.esta_oculto && (
+                                                    <span className="mt-3 text-[11px] bg-red-600 text-white font-black px-3 py-1 w-fit rounded-full uppercase italic border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                                        Oculto/a para el público
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -126,7 +88,6 @@ export default function Cartel({ programacion, auth }: Props) {
                     </div>
                 </div>
             </main>
-
             <Footer />
         </div>
     );

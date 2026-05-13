@@ -10,8 +10,13 @@ class CartelController extends Controller
 {
     public function index()
     {
+        $esAdmin = auth()->check();
+
         $programacion = Dia::with([
-            'artistas' => function ($query) {
+            'artistas' => function ($query) use ($esAdmin) {
+                if (!$esAdmin) {
+                    $query->where('esta_oculto', false);
+                }
                 $query->orderBy('orden', 'asc');
             }
         ])->get();
