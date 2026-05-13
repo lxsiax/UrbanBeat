@@ -109,11 +109,25 @@ class DatabaseSeeder extends Seeder
                 'orden' => 1
             ],
             [
-                'nombre' => 'Saiko',
-                'imagen' => 'https://tse3.mm.bing.net/th/id/OIP.M8Wo9-OU3-evHAHo-VUntgHaKe?w=1414&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3',
+                'nombre' => 'Ruth Empoderada',
+                'imagen' => 'https://yt3.googleusercontent.com/aBdPWXwbaO_G-d-czMNsnZ7G3baSPRUI44f4fFfh4rllyAxJQLrGRy6VxdX_xYdwedGLHnX_=s900-c-k-c0x00ffffff-no-rj',
                 'es_headliner' => false,
                 'dia_id' => $dia23->id,
                 'orden' => 2
+            ],
+            [
+                'nombre' => 'Lia Kali',
+                'imagen' => 'https://los40.com/resizer/v2/PQX7K2UGRVCVRKLKD3CD2EVNIM.jpg?auth=bcae38e8e9eaf876c74cf20a20f66340eb44c0ecd2502c72d81e979a2006ffc5&quality=70&width=706&height=706&focal=1947,1307',
+                'es_headliner' => false,
+                'dia_id' => $dia23->id,
+                'orden' => 3
+            ],
+                        [
+                'nombre' => 'Duki',
+                'imagen' => 'https://concertmusicfestival.com/wp-content/uploads/2023/03/Duki_Concert_Music_Festival_2023.jpg',
+                'es_headliner' => false,
+                'dia_id' => $dia23->id,
+                'orden' => 4
             ],
             // DÍA 24
             [
@@ -133,14 +147,14 @@ class DatabaseSeeder extends Seeder
             // DÍA 25
             [
                 'nombre' => 'Trueno',
-                'imagen' => 'https://i.pinimg.com/originals/d7/60/ce/d760ce4455478c4924ca6167c339f3e3.jpg',
+                'imagen' => 'https://coolcoruna.com/wp-content/uploads/2025/03/Trueno-foto-promo-1-683x1024.jpg',
                 'es_headliner' => true,
                 'dia_id' => $dia25->id,
                 'orden' => 1
             ],
             [
                 'nombre' => 'Young Miko',
-                'imagen' => 'https://i.pinimg.com/236x/9c/d7/3f/9cd73fdad60e37e6c65a12235090c3a9.jpg',
+                'imagen' => 'https://hips.hearstapps.com/hmg-prod/images/photo-feb-16-2024-7-49-10-pm-660f6efbe410b.jpg?crop=1.00xw:0.667xh;0,0.234xh&resize=640:*',
                 'es_headliner' => false,
                 'dia_id' => $dia25->id,
                 'orden' => 2

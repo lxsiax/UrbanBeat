@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\CartelController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Middleware\CheckAdmin; // Asegúrate de que este archivo exista
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ use App\Models\Entrada;
 Route::get('/', function () {
     return Inertia::render('home');
 });
+Route::get('/cartel', [CartelController::class, 'index'])->name('cartel.index');
 
 // Rutas para usuarios no logueados
 Route::middleware('guest')->group(function () {
@@ -91,6 +93,7 @@ Route::get('/entradas', function (Request $request) {
         'titulo' => $request->tipo === 'abono' ? 'Abonos Generales' : ($request->dia ? 'Entradas Diarias' : 'Tickets')
     ]);
 });
+
 
 
 require __DIR__ . '/settings.php';
