@@ -10,7 +10,7 @@ class CartelController extends Controller
 {
     public function index()
     {
-        $esAdmin = auth()->check();
+        $esAdmin = auth()->check() && auth()->user()->role_id === 1;
 
         $programacion = Dia::with([
             'artistas' => function ($query) use ($esAdmin) {
@@ -19,7 +19,7 @@ class CartelController extends Controller
                 }
                 $query->orderBy('orden', 'asc');
             }
-        ])->get();
+        ])->orderBy('fecha', 'asc')->get();
 
         return Inertia::render('Cartel', [
             'programacion' => $programacion

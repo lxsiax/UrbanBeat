@@ -1,7 +1,7 @@
 import { useForm, Head, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
-import { HiOutlineArrowLeft, HiOutlinePhoto } from "react-icons/hi2";
+import { HiOutlineArrowLeft } from "react-icons/hi2";
 
 interface Props {
     artista: any;
@@ -11,17 +11,17 @@ interface Props {
 export default function Edit({ artista, dias }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         nombre: artista.nombre,
-        es_headliner: artista.es_headliner,
+        es_headliner: !!artista.es_headliner, // Forzamos booleano
         dia_id: artista.dia_id,
         orden: artista.orden,
         imagen: null as File | null,
-        _method: 'PATCH', // Necesario para que Laravel procese el archivo en una actualización
+        _method: 'PATCH',
     });
 
     const enviar = (e: React.FormEvent) => {
         e.preventDefault();
-        // Usamos post porque enviar archivos vía PATCH directamente a veces da problemas en PHP
         post(`/admin/artistas/${artista.id}`, {
+            forceFormData: true, 
             preserveScroll: true,
         });
     };
@@ -62,21 +62,20 @@ export default function Edit({ artista, dias }: Props) {
                                 {errors.nombre && <p className="text-red-500 text-xs mt-2 font-bold uppercase">{errors.nombre}</p>}
                             </div>
 
-                            {/* Día Selector */}
+                            {/* Día */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Día de actuación</label>
                                 <select 
                                     value={data.dia_id} 
                                     onChange={e => setData('dia_id', e.target.value)}
-                                    className="w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:border-pink-500 bg-white appearance-none cursor-pointer"
+                                    className="w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:border-pink-500 bg-white cursor-pointer"
                                 >
                                     {dias.map((d) => (
-                                        <option key={d.id} value={d.id}>{d.nombre}</option>
+                                        <option key={d.id} value={d.id}> {new Date(d.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}</option>
                                     ))}
                                 </select>
                             </div>
 
-                            {/* Orden */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Orden en el Cartel</label>
                                 <input 
@@ -88,27 +87,25 @@ export default function Edit({ artista, dias }: Props) {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Nueva Imagen (Opcional)</label>
-                                <div className="relative border-2 border-black border-dashed rounded-2xl p-4 flex items-center gap-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <HiOutlinePhoto size={24} className="text-gray-400" />
-                                    <input 
-                                        type="file" 
-                                        onChange={e => setData('imagen', e.target.files ? e.target.files[0] : null)}
-                                        className="text-xs font-bold uppercase cursor-pointer"
-                                    />
-                                </div>
+                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Cambiar Imagen</label>
+                                <input 
+                                    type="file" 
+                                    onChange={e => setData('imagen', e.target.files ? e.target.files[0] : null)}
+                                    className="w-full border-2 border-black rounded-2xl p-4 font-bold text-sm outline-none bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:uppercase file:bg-black file:text-white hover:file:bg-pink-500 cursor-pointer"
+                                />
                                 {errors.imagen && <p className="text-red-500 text-xs mt-2 font-bold uppercase">{errors.imagen}</p>}
                             </div>
 
+                            {/* Checkbox Headliner */}
                             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border-2 border-black border-dashed">
                                 <input 
                                     type="checkbox"
                                     id="headliner"
                                     checked={data.es_headliner}
                                     onChange={e => setData('es_headliner', e.target.checked)}
-                                    className="w-5 h-5 border-2 border-black rounded text-pink-500 focus:ring-0"
+                                    className="w-5 h-5 border-2 border-black rounded text-pink-500 focus:ring-0 cursor-pointer"
                                 />
-                                <label htmlFor="headliner" className="font-black uppercase italic text-sm cursor-pointer select-none">
+                                <label htmlFor="headliner" className="font-black uppercase italic text-sm cursor-pointer">
                                     ¿Es <span className="text-pink-500">Headliner</span>?
                                 </label>
                             </div>
@@ -118,7 +115,7 @@ export default function Edit({ artista, dias }: Props) {
                                 disabled={processing}
                                 className="w-full bg-black text-white font-black uppercase py-5 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(236,72,153,1)] hover:bg-pink-500 hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50"
                             >
-                                {processing ? 'Actualizando...' : 'Actualizar Artista'}
+                                {processing ? 'Guardando...' : 'Actualizar Artista'}
                             </button>
                         </form>
                     </div>

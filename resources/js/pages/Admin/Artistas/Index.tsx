@@ -64,7 +64,8 @@ export default function GestionArtistas({ artistas: artistasIniciales = [] }: Pr
                                         <td className="p-6">
                                             <div className="flex items-center gap-3">
                                                 <img
-                                                    src={a.imagen || '/storage/default-artist.jpg'}
+                                                    // Concatenamos /storage/ a la ruta que viene de la base de datos
+                                                    src={a.imagen ? `/storage/${a.imagen}` : '/storage/default-artist.jpg'}
                                                     className="w-10 h-10 rounded-lg object-cover border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                                                     alt={a.nombre}
                                                 />

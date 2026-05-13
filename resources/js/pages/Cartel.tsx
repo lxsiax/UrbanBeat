@@ -67,7 +67,7 @@ export default function Cartel({ programacion, auth }: { programacion: any[], au
 
                                             <div className="aspect-[4/5] w-full h-full">
                                                 <img
-                                                    src={e.imagen}
+                                                    src={e.imagen ? `/storage/${e.imagen}` : '/storage/default-artist.jpg'}
                                                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
                                                 />
                                             </div>
