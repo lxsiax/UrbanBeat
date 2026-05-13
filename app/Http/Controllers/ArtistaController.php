@@ -35,25 +35,30 @@ class ArtistaController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
-            'genero' => 'nullable|string|max:255',
-            'es_headliner' => 'required|boolean',
-            'dia_id' => 'required|exists:dias,id',
-            'orden' => 'required|integer',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'dia_id' => 'required',
+            'imagen' => 'nullable|image|max:2048',
         ]);
 
+        $artista = new Artista();
+        $artista->nombre = $request->nombre;
+        $artista->dia_id = $request->dia_id;
+
+        // Si el usuario no envía orden, buscamos el máximo actual y sumamos 1
+        // Si la tabla está vacía, empezará en 1
+        $artista->orden = $request->orden ?? (Artista::max('orden') + 1);
+
+        $artista->es_headliner = filter_var($request->es_headliner, FILTER_VALIDATE_BOOLEAN);
+
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('artistas', 'public');
-            $validated['imagen'] = '/storage/' . $path;
+            $artista->imagen = $request->file('imagen')->store('artistas', 'public');
         }
 
-        Artista::create($validated);
+        $artista->save();
 
-        return redirect()->route('admin.artistas.index')->with('message', 'Artista creado correctamente');
+        return redirect()->route('admin.artistas.index');
     }
-
     /**
      * Formulario de edición
      */

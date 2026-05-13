@@ -24,7 +24,7 @@ export default function Cartel({ programacion, auth }: { programacion: any[], au
                 <div className="max-w-7xl mx-auto">
 
                     <div className="text-center mb-24">
-                        <h1 className="text-black text-7xl md:text-9xl font-black italic uppercase tracking-tighter mb-4">
+                        <h1 className="text-black text-6xl md:text-9xl font-black italic uppercase tracking-tighter mb-4">
                             CARTEL <span className="text-pink-500">2026</span>
                         </h1>
                     </div>
@@ -51,11 +51,11 @@ export default function Cartel({ programacion, auth }: { programacion: any[], au
                                             {esAdmin && (
                                                 <div className="absolute top-4 right-4 flex flex-col gap-3 z-30">
                                                     <button
-                                                            onClick={() => cambiarVisibilidad(e.id)}
-                                                            className={`p-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 ${e.esta_oculta ? 'bg-black text-white' : 'bg-yellow-400 text-black'}`}
-                                                        >
-                                                            {e.esta_oculto ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
-                                                        </button>
+                                                        onClick={() => cambiarVisibilidad(e.id)}
+                                                        className={`p-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 ${e.esta_oculta ? 'bg-black text-white' : 'bg-yellow-400 text-black'}`}
+                                                    >
+                                                        {e.esta_oculto ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
+                                                    </button>
                                                     <button
                                                         onClick={(ev) => { ev.preventDefault(); irAEditar(e.id); }}
                                                         className="p-3 bg-pink-500 text-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 hover:bg-black"
@@ -67,7 +67,11 @@ export default function Cartel({ programacion, auth }: { programacion: any[], au
 
                                             <div className="aspect-[4/5] w-full h-full">
                                                 <img
-                                                    src={e.imagen ? `/storage/${e.imagen}` : '/storage/default-artist.jpg'}
+                                                    src={
+                                                        e.imagen
+                                                            ? (e.imagen.startsWith('http') ? e.imagen : `/storage/${e.imagen}`)
+                                                            : '/storage/default-artist.jpg'
+                                                    }
                                                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
                                                 />
                                             </div>

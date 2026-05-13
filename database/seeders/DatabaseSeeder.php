@@ -103,7 +103,7 @@ class DatabaseSeeder extends Seeder
             // DÍA 23
             [
                 'nombre' => 'Bad Gyal',
-                'imagen' => 'public/artistas/badgyal.jpg',
+                'imagen' => 'artistas/badgyal.jpeg',
                 'es_headliner' => true,
                 'dia_id' => $dia23->id,
                 'esta_oculto' => false,
@@ -111,7 +111,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nombre' => 'Ruth Empoderada',
-                'imagen' => 'public/artistas/ruth.jpg',
+                'imagen' => 'artistas/ruth.jpg',
                 'es_headliner' => false,
                 'esta_oculto' => false,
                 'dia_id' => $dia23->id,
@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nombre' => 'Lia Kali',
-                'imagen' => 'public/artistas/lia.jpg',
+                'imagen' => 'artistas/lia.jpg',
                 'es_headliner' => false,
                 'esta_oculto' => false,
                 'dia_id' => $dia23->id,
@@ -127,7 +127,7 @@ class DatabaseSeeder extends Seeder
             ],
                         [
                 'nombre' => 'Duki',
-                'imagen' => 'public/artistas/duki.jpg',
+                'imagen' => 'artistas/duki.jpg',
                 'es_headliner' => false,
                 'dia_id' => $dia23->id,
                 'esta_oculto' => false,
@@ -136,7 +136,7 @@ class DatabaseSeeder extends Seeder
             // DÍA 24
             [
                 'nombre' => 'Quevedo',
-                'imagen' => 'public/artistas/quevedo.jpeg',
+                'imagen' => 'artistas/quevedo.jpeg',
                 'es_headliner' => true,
                 'dia_id' => $dia24->id,
                 'esta_oculto' => false,
@@ -144,7 +144,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nombre' => 'Cruz Cafuné',
-                'imagen' => 'public/artistas/cruzi.jpg',
+                'imagen' => 'artistas/cruzi.jpg',
                 'es_headliner' => false,
                 'dia_id' => $dia24->id,
                 'esta_oculto' => false,
@@ -153,7 +153,7 @@ class DatabaseSeeder extends Seeder
             // DÍA 25
             [
                 'nombre' => 'Trueno',
-                'imagen' => 'public/artistas/trueno.jpg',
+                'imagen' => 'artistas/trueno.jpg',
                 'es_headliner' => true,
                 'dia_id' => $dia25->id,
                 'esta_oculto' => false,
@@ -161,7 +161,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nombre' => 'Young Miko',
-                'imagen' => 'public/artistas/miko.jpg',
+                'imagen' => 'artistas/miko.jpg',
                 'es_headliner' => false,
                 'dia_id' => $dia25->id,
                 'esta_oculto' => false,
