@@ -25,26 +25,32 @@ export default function Entradas({ entradas, titulo }: Props) {
     const [cantidades, setCantidades] = useState<Record<number, number>>({});
     const [procesando, setProcesando] = useState<number | null>(null);
 
-    
     const entradasVisibles = esAdmin ? entradas : entradas.filter(e => !e.esta_oculta);
-    
     const filtradas = zona 
         ? entradasVisibles.filter(e => e.zona.nombre === zona) 
         : entradasVisibles;
 
-    
-    const entradasDia: Record<string, any[]> = {};
-    
+    const zonasMapa: Record<string, any[]> = {};
     filtradas.forEach(e => {
         const etiqueta = e.tipo_entrada.dia
             ? new Date(e.tipo_entrada.dia.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })
             : 'Abonos Full Festival';
         
-        if (!entradasDia[etiqueta]) entradasDia[etiqueta] = [];
-        entradasDia[etiqueta].push(e);
+        if (!zonasMapa[etiqueta]) zonasMapa[etiqueta] = [];
+        zonasMapa[etiqueta].push(e);
     });
 
-    const cambiarCantidad = (id: number, delta: number) => {
+    const diasOrdenados = Object.entries(zonasMapa).sort(([etiqueta1], [etiqueta2]) => {
+        if (etiqueta1 === 'Abonos Full Festival') return -1;
+        if (etiqueta2 === 'Abonos Full Festival') return 1;
+        
+        
+        const diaA = parseInt(etiqueta1.split(' ')[0]);
+        const diaB = parseInt(etiqueta2.split(' ')[0]);
+        return diaA - diaB;
+    });
+
+    const updateCant = (id: number, delta: number) => {
         setCantidades(prev => ({
             ...prev,
             [id]: Math.max(1, Math.min((prev[id] || 1) + delta, 10))
@@ -53,7 +59,6 @@ export default function Entradas({ entradas, titulo }: Props) {
 
     const aniadirAlCarrito = (entradaId: number) => {
         if (!auth.user) return router.get('/login');
-        
         const cantidad = cantidades[entradaId] || 1;
         setProcesando(entradaId);
         router.post('/carrito/aniadir', { entrada_id: entradaId, cantidad }, {
@@ -77,7 +82,6 @@ export default function Entradas({ entradas, titulo }: Props) {
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-7xl mx-auto">
-
                     <div className="text-center mb-10">
                         <h1 className="text-black text-6xl md:text-8xl font-black italic uppercase tracking-tighter mb-4">
                             {titulo} <span className="text-pink-500">2026</span>
@@ -95,8 +99,8 @@ export default function Entradas({ entradas, titulo }: Props) {
                     </div>
 
                     <div className="space-y-20">
-                        {Object.keys(entradasDia).length > 0 ? (
-                            Object.entries(entradasDia).map(([fecha, listaEntradas]) => (
+                        {diasOrdenados.length > 0 ? (
+                            diasOrdenados.map(([fecha, listaEntradas]) => (
                                 <section key={fecha}>
                                     <div className="flex items-center gap-4 mb-10">
                                         <h2 className="text-4xl font-black uppercase italic tracking-tighter whitespace-nowrap">
@@ -147,7 +151,7 @@ export default function Entradas({ entradas, titulo }: Props) {
                                                         <div className="flex items-center justify-between bg-gray-100 rounded-full p-2 mb-4">
                                                             <button
                                                                 type="button"
-                                                                onClick={() => cambiarCantidad(e.id, -1)}
+                                                                onClick={() => updateCant(e.id, -1)}
                                                                 className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-pink-500 transition-all active:scale-90"
                                                             >
                                                                 <HiMinus />
@@ -155,7 +159,7 @@ export default function Entradas({ entradas, titulo }: Props) {
                                                             <span className="font-black text-lg">{cantidades[e.id] || 1}</span>
                                                             <button
                                                                 type="button"
-                                                                onClick={() => cambiarCantidad(e.id, 1)}
+                                                                onClick={() => updateCant(e.id, 1)}
                                                                 className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:text-pink-500 transition-all active:scale-90"
                                                             >
                                                                 <HiPlus />

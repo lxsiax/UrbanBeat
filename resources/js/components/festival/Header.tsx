@@ -41,9 +41,9 @@ export default function Header() {
                         onMouseEnter={() => setMenuOpen(true)}
                         onMouseLeave={() => setMenuOpen(false)}
                     >
-                        <button className="flex items-center text-white font-black text-[16px] uppercase hover:opacity-70 transition-opacity">
-                            ENTRADAS <HiChevronDown className={`transition-transform duration-300 ${menuOpen ? 'rotate-180' : ''}`} />
-                        </button>
+                        <Link href='/entradas' className="flex items-center text-white font-black text-[16px] uppercase hover:opacity-70 transition-opacity">
+                            ENTRADAS <HiChevronDown className={`ml-2 transition-transform duration-300 ${menuOpen ? 'rotate-180' : ''}`} />
+                        </Link>
 
                         {menuOpen && (
                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-white shadow-2xl rounded-xl py-2 mt-0 border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2">
