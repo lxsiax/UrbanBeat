@@ -18,4 +18,9 @@ class Dia extends Model
     {
         return $this->hasMany(TipoEntrada::class);
     }
+
+    public function artistas()
+    {
+        return $this->hasMany(Artista::class);
+    }
 }

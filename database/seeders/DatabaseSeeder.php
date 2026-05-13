@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Artista;
 use App\Models\Chat;
 use App\Models\Dia;
 use App\Models\Entrada;
@@ -61,7 +62,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($tipos as $tipo) {
             $categoria = ($tipo->nombre === 'Abono General') ? 'Abono General' : 'Entrada de Día';
-            
+
             Entrada::create([
                 'tipo_entrada_id' => $tipo->id,
                 'zona_id' => $zonaPista->id,
@@ -97,5 +98,57 @@ class DatabaseSeeder extends Seeder
             'nombre' => 'General',
             'descripcion' => 'Chat oficial'
         ]);
+
+        $artistas = [
+            // DÍA 23
+            [
+                'nombre' => 'Bad Gyal',
+                'imagen' => 'https://www.letrasboom.com/thumbs/artistas/img_1576275520.jpg',
+                'es_headliner' => true,
+                'dia_id' => $dia23->id,
+                'orden' => 1
+            ],
+            [
+                'nombre' => 'Saiko',
+                'imagen' => 'https://tse3.mm.bing.net/th/id/OIP.M8Wo9-OU3-evHAHo-VUntgHaKe?w=1414&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3',
+                'es_headliner' => false,
+                'dia_id' => $dia23->id,
+                'orden' => 2
+            ],
+            // DÍA 24
+            [
+                'nombre' => 'Quevedo',
+                'imagen' => 'https://www.lavanguardia.com/uploads/2024/10/31/6723516957b50.jpeg',
+                'es_headliner' => true,
+                'dia_id' => $dia24->id,
+                'orden' => 1
+            ],
+            [
+                'nombre' => 'Cruz Cafuné',
+                'imagen' => 'https://concertmusicfestival.com/wp-content/uploads/2024/11/Cruz-Cafune_1000x1000.jpg',
+                'es_headliner' => false,
+                'dia_id' => $dia24->id,
+                'orden' => 2
+            ],
+            // DÍA 25
+            [
+                'nombre' => 'Trueno',
+                'imagen' => 'https://i.pinimg.com/originals/d7/60/ce/d760ce4455478c4924ca6167c339f3e3.jpg',
+                'es_headliner' => true,
+                'dia_id' => $dia25->id,
+                'orden' => 1
+            ],
+            [
+                'nombre' => 'Young Miko',
+                'imagen' => 'https://i.pinimg.com/236x/9c/d7/3f/9cd73fdad60e37e6c65a12235090c3a9.jpg',
+                'es_headliner' => false,
+                'dia_id' => $dia25->id,
+                'orden' => 2
+            ],
+        ];
+
+        foreach ($artistas as $artista) {
+            Artista::create($artista);
+        }
     }
 }

@@ -110,8 +110,6 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
                         {/* Panel de Pago */}
                         <aside className="w-full lg:w-[400px] sticky top-40">
                             <div className="bg-white border-2 border-black p-8 shadow-[10px_10px_0px_0px_rgba(236,72,153,1)] relative">
-                                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#fcfcfc] border-2 border-black rounded-full" />
-                                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#fcfcfc] border-2 border-black rounded-full" />
                                 
                                 <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-8 pb-3 border-b-2 border-black">
                                     Resumen de <span className="text-pink-500"> pago</span>
