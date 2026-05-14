@@ -5,15 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
+use Inertia\Inertia;
 
 class ProductoController extends Controller
 {
+    public function cambiarVisibilidad($id)
+    {
+        $producto = Producto::findOrFail($id);
+
+        $producto->esta_oculto = !$producto->esta_oculto;
+        $producto->save();
+
+        return back();
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $productos = Producto::with('tallas')->get();
+        return Inertia::render('Admin/Productos/Index', [
+            'productos' => $productos
+        ]);
     }
 
     /**

@@ -12,7 +12,8 @@ class Artista extends Model
         'es_headliner',
         'dia_id',
         'orden',
-        'esta_oculto'
+        'esta_oculto',
+        'link_spotify',
     ];
 
     public function dia() 

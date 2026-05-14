@@ -1,41 +1,36 @@
 import { useForm, Head, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
-import { HiOutlineArrowLeft, HiOutlinePhoto } from "react-icons/hi2";
+import { HiOutlineArrowLeft } from "react-icons/hi2";
 
 interface Props {
-    artista: any;
-    dias: any[];
+    entrada: any;
 }
 
-export default function Edit({ artista, dias }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
-        nombre: artista.nombre,
-        es_headliner: artista.es_headliner,
-        dia_id: artista.dia_id,
-        orden: artista.orden,
-        imagen: null as File | null,
-        _method: 'PATCH', // Necesario para que Laravel procese el archivo en una actualización
+export default function Edit({ entrada }: Props) {
+    const { data, setData, patch, processing, errors } = useForm({
+        precio: entrada.precio,
+        stock: entrada.stock,
     });
 
     const enviar = (e: React.FormEvent) => {
         e.preventDefault();
-        // Usamos post porque enviar archivos vía PATCH directamente a veces da problemas en PHP
-        post(`/admin/artistas/${artista.id}`, {
+        patch(`/admin/entradas/${entrada.id}`, {
             preserveScroll: true,
+            onSuccess: () => console.log("Actualizado con éxito")
         });
     };
 
     return (
         <div className="bg-gray-50 min-h-screen flex flex-col">
-            <Head title={`Editar - ${artista.nombre}`} />
+            <Head title={`Editar - ${entrada.tipo_entrada?.nombre}`} />
             <Header />
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-2xl mx-auto">
 
                     <button 
-                        onClick={() => router.get('/admin/artistas')}
+                        onClick={() => router.get('/admin/entradas')}
                         className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest mb-8 hover:text-pink-500 transition-colors"
                     >
                         <HiOutlineArrowLeft size={16} />
@@ -43,74 +38,39 @@ export default function Edit({ artista, dias }: Props) {
                     </button>
 
                     <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black mb-12">
-                        Editar <span className="text-pink-500">Artista</span>
+                        Editar <span className="text-pink-500">Entrada</span>
                     </h1>
 
                     <div className="bg-white p-10 rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-                        
+                        <div className="mb-8">
+                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Tipo de entrada</p>
+                            <p className="text-2xl font-black uppercase italic">{entrada.tipo_entrada?.nombre}</p>
+                            <p className="text-sm font-bold text-pink-500 uppercase">{entrada.zona?.nombre}</p>
+                        </div>
+
                         <form onSubmit={enviar} className="space-y-6">
 
-                            {/* Nombre */}
                             <div>
-                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Nombre del Artista</label>
-                                <input 
-                                    type="text" 
-                                    value={data.nombre} 
-                                    onChange={e => setData('nombre', e.target.value)}
-                                    className={`w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.nombre ? 'border-red-500' : 'focus:border-pink-500'}`}
-                                />
-                                {errors.nombre && <p className="text-red-500 text-xs mt-2 font-bold uppercase">{errors.nombre}</p>}
-                            </div>
-
-                            {/* Día Selector */}
-                            <div>
-                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Día de actuación</label>
-                                <select 
-                                    value={data.dia_id} 
-                                    onChange={e => setData('dia_id', e.target.value)}
-                                    className="w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:border-pink-500 bg-white appearance-none cursor-pointer"
-                                >
-                                    {dias.map((d) => (
-                                        <option key={d.id} value={d.id}>{d.nombre}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Orden */}
-                            <div>
-                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Orden en el Cartel</label>
+                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Precio (€)</label>
                                 <input 
                                     type="number" 
-                                    value={data.orden} 
-                                    onChange={e => setData('orden', e.target.value)}
-                                    className="w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:border-pink-500"
+                                    step="0.01"
+                                    value={data.precio} 
+                                    onChange={e => setData('precio', e.target.value)}
+                                    className={`w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.precio ? 'border-red-500' : 'focus:border-pink-500'}`}
                                 />
+                                {errors.precio && <p className="text-red-500 text-xs mt-2 font-bold uppercase">{errors.precio}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Nueva Imagen (Opcional)</label>
-                                <div className="relative border-2 border-black border-dashed rounded-2xl p-4 flex items-center gap-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <HiOutlinePhoto size={24} className="text-gray-400" />
-                                    <input 
-                                        type="file" 
-                                        onChange={e => setData('imagen', e.target.files ? e.target.files[0] : null)}
-                                        className="text-xs font-bold uppercase cursor-pointer"
-                                    />
-                                </div>
-                                {errors.imagen && <p className="text-red-500 text-xs mt-2 font-bold uppercase">{errors.imagen}</p>}
-                            </div>
-
-                            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border-2 border-black border-dashed">
+                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Stock Disponible</label>
                                 <input 
-                                    type="checkbox"
-                                    id="headliner"
-                                    checked={data.es_headliner}
-                                    onChange={e => setData('es_headliner', e.target.checked)}
-                                    className="w-5 h-5 border-2 border-black rounded text-pink-500 focus:ring-0"
+                                    type="number" 
+                                    value={data.stock} 
+                                    onChange={e => setData('stock', e.target.value)}
+                                    className={`w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.stock ? 'border-red-500' : 'focus:border-pink-500'}`}
                                 />
-                                <label htmlFor="headliner" className="font-black uppercase italic text-sm cursor-pointer select-none">
-                                    ¿Es <span className="text-pink-500">Headliner</span>?
-                                </label>
+                                {errors.stock && <p className="text-red-500 text-xs mt-2 font-bold uppercase">{errors.stock}</p>}
                             </div>
 
                             <button 
@@ -118,7 +78,7 @@ export default function Edit({ artista, dias }: Props) {
                                 disabled={processing}
                                 className="w-full bg-black text-white font-black uppercase py-5 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(236,72,153,1)] hover:bg-pink-500 hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50"
                             >
-                                {processing ? 'Actualizando...' : 'Actualizar Artista'}
+                                {processing ? 'Guardando cambios...' : 'Actualizar Entrada'}
                             </button>
                         </form>
                     </div>

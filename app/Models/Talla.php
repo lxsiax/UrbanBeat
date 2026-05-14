@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Talla extends Model
 {
-    protected $fillable = [
-        'nombre'
-    ];
+    protected $fillable = ['nombre'];
 
-    public function productos()
+    public function productos(): BelongsToMany
     {
-        return $this->hasMany(Producto::class);
+        return $this->belongsToMany(Producto::class, 'producto_talla')
+                    ->withPivot('stock')
+                    ->withTimestamps();
     }
 }

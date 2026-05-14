@@ -4,35 +4,42 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Producto extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductoFactory> */
     use HasFactory;
 
     protected $fillable = [
-        'nombre', 
-        'descripcion', 
+        'nombre',
+        'descripcion',
         'precio',
-        'stock',
         'imagen_url',
+        'esta_oculto',
     ];
 
-    public function talla()
+    public function tallas(): BelongsToMany
     {
-        return $this->belongsTo(Talla::class);
+        return $this->belongsToMany(Talla::class, 'producto_talla')
+            ->withPivot('stock') // Importante para acceder al stock de cada talla
+            ->withTimestamps();
     }
 
-    public function users()
+    public function users(): BelongsToMany
     {
-        return $this->BelongsToMany(User::class, 'producto_user')
-        ->withPivot('cantidad');
+        return $this->belongsToMany(User::class, 'producto_user')
+            ->withPivot('cantidad');
     }
 
     public function facturas()
     {
         return $this->hasMany(Factura::class);
+    }
+
+    protected $appends = ['stock_total'];
+
+    public function getStockTotalAttribute()
+    {
+        return $this->tallas->sum('pivot.stock');
     }
 }

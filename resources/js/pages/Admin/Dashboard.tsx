@@ -23,7 +23,7 @@ export default function Dashboard() {
             nombre: 'Merchandising', 
             desc: 'Control de stock de ropa, accesorios y merch oficial.', 
             icon: <HiShoppingBag strokeWidth={2} />, 
-            href: '/admin/merch', 
+            href: '/admin/productos', 
             color: 'bg-cyan-400' 
         },
         { 

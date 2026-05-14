@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('precio', 8, 2);
             $table->integer('stock');
             $table->foreignId('talla_id')->constrained()->nullable();
+            $table->boolean('esta_oculto');
             $table->string('imagen_url')->nullable();
             $table->timestamps();
         });

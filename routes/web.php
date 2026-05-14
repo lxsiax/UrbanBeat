@@ -6,6 +6,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CartelController;
 use App\Http\Controllers\EntradaController;
+use App\Http\Controllers\MerchandisingController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Middleware\CheckAdmin; // Asegúrate de que este archivo exista
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +20,7 @@ Route::get('/', function () {
     return Inertia::render('home');
 });
 Route::get('/cartel', [CartelController::class, 'index'])->name('cartel.index');
+Route::get('/merchandising', [MerchandisingController::class, 'index'])->name('merchandising');
 
 // Rutas para usuarios no logueados
 Route::middleware('guest')->group(function () {
@@ -82,11 +85,22 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.artistas.update',
         ])->only(['index', 'edit', 'create', 'store', 'update']);
 
+        //Rutas crud productos 
+        Route::resource('productos', ProductoController::class)->names([
+            'index' => 'admin.productos.index',
+            'edit' => 'admin.productos.edit',
+            'create' => 'admin.productos.create',
+            'store' => 'admin.productos.store',
+            'update' => 'admin.productos.update',
+        ])->only(['index', 'edit', 'create', 'store', 'update']);
+
         //Rutas de visibilidad para ocultar
         Route::patch('/entradas/{id}/cambiar-visibilidad', [EntradaController::class, 'cambiarVisibilidad'])
             ->name('admin.entradas.cambiarVisibilidad');
         Route::patch('/artistas/{id}/cambiar-visibilidad', [ArtistaController::class, 'cambiarVisibilidad'])
             ->name('admin.artistas.cambiarVisibilidad');
+            Route::patch('/productos/{id}/cambiar-visibilidad', [ProductoController::class, 'cambiarVisibilidad'])
+            ->name('admin.productos.cambiarVisibilidad');
     });
 });
 

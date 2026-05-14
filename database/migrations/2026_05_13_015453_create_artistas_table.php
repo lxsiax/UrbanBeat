@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->foreignId('dia_id')->constrained('dias')->onDelete('cascade');
 
             $table->integer('orden')->default(0); 
+            $table->string('link_spotify');
             $table->timestamps();
         });
     }
