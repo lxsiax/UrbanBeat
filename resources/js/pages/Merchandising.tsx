@@ -12,8 +12,6 @@ export default function Merchandising({ productos }: Props) {
     const { auth } = usePage().props as any;
     const esAdmin = auth.user && auth.user.role_id === 1;
 
-    // Ya no filtramos aquí porque el controlador se encarga de enviar 
-    // solo lo visible a usuarios y todo a los admins.
     const productosAMostrar = productos;
 
     const cambiarVisibilidad = (e: React.MouseEvent, id: number) => {

@@ -12,7 +12,7 @@ class StoreProductoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->role_id == 1;
     }
 
     /**
@@ -23,7 +23,11 @@ class StoreProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nombre' => 'required|string|min:3|max:255',
+            'precio' => 'required|numeric|gt:0',
+            'esta_oculto' => 'required|boolean',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'stocks' => 'required|array',
         ];
     }
 }

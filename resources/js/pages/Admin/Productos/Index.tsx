@@ -18,7 +18,7 @@ interface Producto {
     precio: number;
     esta_oculto: boolean;
     tallas: Talla[];
-    stock_total?: number; 
+    stock_total?: number;
 }
 
 interface Props {
@@ -38,6 +38,10 @@ export default function Productos({ productos: productosIniciales = [] }: Props)
         });
     };
 
+    const irAEditar = (id: number) => {
+        router.get(`/admin/productos/${id}/edit`);
+    };
+
     return (
         <div className="bg-gray-50 min-h-screen flex flex-col">
             <Head title="Gestión Merch - UrbanBeat" />
@@ -48,7 +52,7 @@ export default function Productos({ productos: productosIniciales = [] }: Props)
                     <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black mb-8">
                         Gestión <span className="text-pink-500">Productos</span>
                     </h1>
-                    
+
                     <div className="flex justify-between items-center mb-6">
                         <Link
                             href="/admin/productos/create"
@@ -75,12 +79,12 @@ export default function Productos({ productos: productosIniciales = [] }: Props)
                                         const cantidad = t.pivot ? Number(t.pivot.stock) : 0;
                                         return acc + cantidad;
                                     }, 0);
-                                    
+
                                     const esTallaUnica = p.tallas.length === 1;
 
                                     return (
-                                        <tr 
-                                            key={p.id} 
+                                        <tr
+                                            key={p.id}
                                             className={`transition-all ${p.esta_oculto ? 'opacity-40 bg-gray-50' : 'bg-white'}`}
                                         >
                                             <td className="p-6 font-black uppercase italic text-sm">
@@ -89,15 +93,13 @@ export default function Productos({ productos: productosIniciales = [] }: Props)
                                             <td className="p-6 font-black text-lg">
                                                 {Number(p.precio).toFixed(2)}€
                                             </td>
-                                            
-                                            {/* PARTE MODIFICADA: CELDA DE STOCK SIMPLE */}
+
                                             <td className="p-6">
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-2">
-                                                        <span className={`w-2 h-2 rounded-full ${
-                                                            totalCalculado > 10 ? 'bg-green-500' : 
-                                                            totalCalculado <= 0 ? 'bg-red-500' : 'bg-yellow-500' 
-                                                        }`}></span>
+                                                        <span className={`w-2 h-2 rounded-full ${totalCalculado > 10 ? 'bg-green-500' :
+                                                                totalCalculado <= 0 ? 'bg-red-500' : 'bg-yellow-500'
+                                                            }`}></span>
                                                         <span className="font-mono font-bold text-sm">
                                                             {totalCalculado} {esTallaUnica ? 'uds.' : 'total'}
                                                         </span>
@@ -115,12 +117,10 @@ export default function Productos({ productos: productosIniciales = [] }: Props)
                                                     )}
                                                 </div>
                                             </td>
-                                            {/* FIN DE PARTE MODIFICADA */}
 
                                             <td className="p-6">
-                                                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                                                    p.esta_oculto ? 'text-red-500 bg-red-50' : 'text-green-600 bg-green-50'
-                                                }`}>
+                                                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${p.esta_oculto ? 'text-red-500 bg-red-50' : 'text-green-600 bg-green-50'
+                                                    }`}>
                                                     {p.esta_oculto ? 'Oculto' : 'Visible'}
                                                 </span>
                                             </td>
@@ -128,9 +128,8 @@ export default function Productos({ productos: productosIniciales = [] }: Props)
                                                 <div className="flex justify-end gap-3">
                                                     <button
                                                         onClick={() => cambiarVisibilidad(p.id)}
-                                                        className={`p-2 rounded-xl border-2 border-black transition-all active:scale-90 ${
-                                                            p.esta_oculto ? 'bg-black text-white' : 'bg-white hover:bg-pink-500 hover:text-white'
-                                                        }`}
+                                                        className={`p-2 rounded-xl border-2 border-black transition-all active:scale-90 ${p.esta_oculto ? 'bg-black text-white' : 'bg-white hover:bg-pink-500 hover:text-white'
+                                                            }`}
                                                     >
                                                         {p.esta_oculto ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
                                                     </button>

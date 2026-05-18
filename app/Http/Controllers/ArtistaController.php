@@ -75,46 +75,32 @@ class ArtistaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Buscamos el artista
         $artista = Artista::findOrFail($id);
 
-        // 1. Validar los campos básicos
         $request->validate([
             'nombre' => 'required|string|max:255',
             'dia_id' => 'required',
             'orden' => 'required|integer',
         ]);
 
-        // 2. Actualizar textos (Asignación manual para evitar fallos de fillable)
         $artista->nombre = $request->nombre;
         $artista->dia_id = $request->dia_id;
         $artista->orden = $request->orden;
-        // En JS llega "1" o "0", lo convertimos a booleano real
         $artista->es_headliner = filter_var($request->es_headliner, FILTER_VALIDATE_BOOLEAN);
 
-        // 3. Gestionar la imagen
         if ($request->hasFile('imagen')) {
-            // Borrar la vieja si existe
             if ($artista->imagen) {
                 \Storage::disk('public')->delete($artista->imagen);
             }
-
-            // Guardar la nueva en 'storage/app/public/artistas'
             $path = $request->file('imagen')->store('artistas', 'public');
 
-            // Guardamos la ruta resultante en la columna imagen
             $artista->imagen = $path;
         }
-
-        // 4. GUARDAR CAMBIOS
         $artista->save();
 
-        // Redirigir de vuelta
         return redirect()->route('admin.artistas.index')->with('success', 'Artista actualizado con éxito');
     }
-    /**
-     * Alterna la visibilidad (Oculto/Visible)
-     */
+
     public function cambiarVisibilidad($id)
     {
         $artista = Artista::findOrFail($id);
