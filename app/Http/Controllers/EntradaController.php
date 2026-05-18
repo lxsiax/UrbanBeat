@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entrada;
+use App\Models\TipoEntrada;
+use App\Models\Zona;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -32,31 +34,31 @@ class EntradaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-   public function create()
-{
-    return Inertia::render('Admin/Entradas/Create', [
-        'tipos' => \App\Models\TipoEntrada::with('dia')->get(),
-        'zonas' => \App\Models\Zona::all(),
-    ]);
-}
+    public function create()
+    {
+        return Inertia::render('Admin/Entradas/Create', [
+            'tipos' => TipoEntrada::with('dia')->get(),
+            'zonas' => Zona::all(),
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'tipo_entrada_id' => 'required|exists:tipo_entradas,id',
-        'zona_id'         => 'required|exists:zonas,id',
-        'precio'          => 'required|numeric|min:0',
-        'stock'           => 'required|integer|min:0',
-        'esta_oculta'     => 'boolean',
-    ]);
+    {
+        $validated = $request->validate([
+            'tipo_entrada_id' => 'required|exists:tipo_entradas,id',
+            'zona_id' => 'required|exists:zonas,id',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'esta_oculta' => 'boolean',
+        ]);
 
-    Entrada::create($validated);
+        Entrada::create($validated);
 
-    return redirect()->route('admin.entradas.index')->with('success', 'Entrada creada correctamente.');
-}
+        return redirect()->route('admin.entradas.index')->with('success', 'Entrada creada correctamente.');
+    }
 
     /**
      * Display the specified resource.
@@ -69,27 +71,33 @@ class EntradaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Entrada $entrada)
     {
-        $entrada = Entrada::with(['tipoEntrada', 'zona'])->findOrFail($id);
+        $tipos = TipoEntrada::all();
+        $zonas = Zona::all();
+
         return Inertia::render('Admin/Entradas/Edit', [
-            'entrada' => $entrada
+            'entrada' => $entrada,
+            'tipos' => $tipos,
+            'zonas' => $zonas,
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Entrada $entrada)
     {
-        $entrada = Entrada::findOrFail($id);
-
-        $validado = $request->validate([
-            'precio' => 'required|numeric|min:0',
+        $validated = $request->validate([
+            'tipo_entrada_id' => 'required|exists:tipo_entradas,id',
+            'zona_id' => 'required|exists:zonas,id',
+            'precio' => 'required|numeric|min:0.01',
             'stock' => 'required|integer|min:0',
         ]);
 
-        $entrada->update($validado);
+        $entrada->update($validated);
 
-        return redirect()->route('admin.entradas.index');
+        return redirect()->route('admin.entradas.index')
+            ->with('success', 'Entrada actualizada con éxito.');
     }
+
 
     /**
      * Remove the specified resource from storage.

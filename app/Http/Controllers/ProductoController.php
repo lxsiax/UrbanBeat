@@ -65,9 +65,17 @@ class ProductoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Producto $producto)
+    public function show($id)
     {
-        //
+        $producto = Producto::with([
+            'tallas' => function ($query) {
+                $query->where('stock', '>', 0);
+            }
+        ])->findOrFail($id);
+
+        return Inertia::render('Producto', [
+            'producto' => $producto
+        ]);
     }
 
     /**

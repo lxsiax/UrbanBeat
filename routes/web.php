@@ -21,6 +21,7 @@ Route::get('/', function () {
 });
 Route::get('/cartel', [CartelController::class, 'index'])->name('cartel.index');
 Route::get('/merchandising', [MerchandisingController::class, 'index'])->name('merchandising');
+Route::get('/merchandising/{id}', [ProductoController::class, 'show'])->name('merchandising.show');
 
 // Rutas para usuarios no logueados
 Route::middleware('guest')->group(function () {
@@ -61,7 +62,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/carrito/actualizar/{id}', [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
     Route::delete('/carrito/eliminar/{id}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
     Route::post('/carrito/aniadir', [CarritoController::class, 'aniadir'])->name('carrito.aniadir');
-
+    Route::post('/carrito/agregar', [CarritoController::class, 'aniadirProducto'])->name('carrito.agregar');
+    
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
 
@@ -99,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
             ->name('admin.entradas.cambiarVisibilidad');
         Route::patch('/artistas/{id}/cambiar-visibilidad', [ArtistaController::class, 'cambiarVisibilidad'])
             ->name('admin.artistas.cambiarVisibilidad');
-            Route::patch('/productos/{id}/cambiar-visibilidad', [ProductoController::class, 'cambiarVisibilidad'])
+        Route::patch('/productos/{id}/cambiar-visibilidad', [ProductoController::class, 'cambiarVisibilidad'])
             ->name('admin.productos.cambiarVisibilidad');
     });
 });

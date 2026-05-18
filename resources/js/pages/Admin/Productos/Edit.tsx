@@ -75,7 +75,7 @@ export default function Edit({ producto, todaslasTallas }: Props) {
 
     const enviar = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!validarFormulario()) return;
 
         post(`/admin/productos/${producto.id}`, {
@@ -92,12 +92,13 @@ export default function Edit({ producto, todaslasTallas }: Props) {
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-2xl mx-auto">
 
-                    <button 
-                        onClick={() => router.get('/admin/productos')}
+                    <button
+                        type="button"
+                        onClick={() => window.history.back()}
                         className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest mb-8 hover:text-pink-500 transition-colors"
                     >
                         <HiOutlineArrowLeft size={16} />
-                        Volver a gestión
+                        Volver atrás
                     </button>
 
                     <h1 className="text-5xl font-black italic uppercase tracking-tighter text-black mb-12">
@@ -105,14 +106,14 @@ export default function Edit({ producto, todaslasTallas }: Props) {
                     </h1>
 
                     <div className="bg-white p-10 rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-                        
+
                         <form onSubmit={enviar} className="space-y-6" noValidate>
 
                             <div>
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Nombre del Producto</label>
-                                <input 
-                                    type="text" 
-                                    value={data.nombre} 
+                                <input
+                                    type="text"
+                                    value={data.nombre}
                                     onChange={e => setData('nombre', e.target.value)}
                                     className={`w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.nombre ? 'border-red-500 bg-red-50' : 'focus:border-pink-500'}`}
                                     required
@@ -122,11 +123,11 @@ export default function Edit({ producto, todaslasTallas }: Props) {
 
                             <div>
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Precio (€)</label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     step="0.01"
                                     min="0.01"
-                                    value={data.precio} 
+                                    value={data.precio}
                                     onChange={e => setData('precio', parseFloat(e.target.value) || 0)}
                                     className={`w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.precio ? 'border-red-500 bg-red-50' : 'focus:border-pink-500'}`}
                                     required
@@ -136,8 +137,8 @@ export default function Edit({ producto, todaslasTallas }: Props) {
 
                             <div>
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Cambiar Imagen</label>
-                                <input 
-                                    type="file" 
+                                <input
+                                    type="file"
                                     accept="image/*"
                                     onChange={e => setData('imagen', e.target.files ? e.target.files[0] : null)}
                                     className={`w-full border-2 border-black rounded-2xl p-4 font-bold text-sm outline-none bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:uppercase file:bg-black file:text-white hover:file:bg-pink-500 cursor-pointer ${errors.imagen ? 'border-red-500 bg-red-50' : ''}`}
@@ -164,7 +165,7 @@ export default function Edit({ producto, todaslasTallas }: Props) {
                             </div>
 
                             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border-2 border-black border-dashed">
-                                <input 
+                                <input
                                     type="checkbox"
                                     id="esta_oculto"
                                     checked={data.esta_oculto}
@@ -176,7 +177,7 @@ export default function Edit({ producto, todaslasTallas }: Props) {
                                 </label>
                             </div>
 
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={processing}
                                 className="w-full bg-black text-white font-black uppercase py-5 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(236,72,153,1)] hover:bg-pink-500 hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50"
