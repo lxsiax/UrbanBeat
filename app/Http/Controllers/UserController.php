@@ -10,7 +10,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $usuarios = User::select('id', 'name', 'apellidos', 'email', 'role_id', 'created_at')->get();
+        $usuarios = User::select('id', 'name', 'apellidos', 'email', 'role_id', 'baneado', 'created_at')
+            ->get();
 
         return Inertia::render('Admin/Usuarios/Index', [
             'usuarios' => $usuarios

@@ -1,12 +1,16 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { HiOutlinePaperAirplane } from "react-icons/hi2";
+import { HiOutlinePaperAirplane, HiOutlineNoSymbol } from "react-icons/hi2";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 interface User {
     id: number;
     name: string;
     apellidos: string | null;
+    role_id: number;
+    baneado: boolean;
 }
 
 interface Mensaje {
@@ -27,10 +31,10 @@ interface ChatProps {
 interface Props {
     chat: ChatProps;
     usuarioActualId: number;
+    esAdmin: boolean;
 }
 
-export default function Chat({ chat, usuarioActualId }: Props) {
-    // Guardo los mensajes en un estado local para inyectar los nuevos en caliente
+export default function Chat({ chat, usuarioActualId, esAdmin }: Props) {
     const [listaMensajes, setListaMensajes] = useState<Mensaje[]>(chat.mensajes);
 
     const { data, setData, post, processing, reset } = useForm({
@@ -39,38 +43,37 @@ export default function Chat({ chat, usuarioActualId }: Props) {
 
     const contenedorMensajes = useRef<HTMLDivElement>(null);
 
-    // Si cambian las props desde el servidor, actualizo la lista por si acaso
     useEffect(() => {
         setListaMensajes(chat.mensajes);
     }, [chat.mensajes]);
 
-    // Control del scroll automático al final de la pantalla cuando hay mensajes nuevos
     useEffect(() => {
         if (contenedorMensajes.current) {
             contenedorMensajes.current.scrollTop = contenedorMensajes.current.scrollHeight;
         }
     }, [listaMensajes]);
 
-    // ESCUCHAR REVERB EN TIEMPO REAL
     useEffect(() => {
-        // Echo se registra globalmente en bootstrap.js, compruebo que exista
-        // @ts-ignore
-        if (window.Echo) {
-            // @ts-ignore
-            window.Echo.channel(`chat.${chat.id}`)
-                .listen('.mensaje.enviado', (e: { mensaje: Mensaje }) => {
-                    // El servidor nos avisa de un mensaje nuevo y lo metemos al estado al momento
-                    setListaMensajes((prev) => [...prev, e.mensaje]);
-                });
-        }
+        window.Pusher = Pusher;
 
-        // Si cambio de sala o cierro la vista, dejo de escuchar el canal para no saturar
+        const echoInstance = new Echo({
+            broadcaster: 'reverb',
+            key: import.meta.env.VITE_REVERB_APP_KEY || 'maby7pdoyfscs9ax6i8w',
+            wsHost: window.location.hostname,
+            wsPort: 8080,
+            wssPort: 8080,
+            forceTLS: false,
+            enabledTransports: ['ws', 'wss'],
+        });
+
+        echoInstance.channel(`chat.${chat.id}`)
+            .listen('.mensaje.enviado', (e: { mensaje: Mensaje }) => {
+                setListaMensajes((prev) => [...prev, e.mensaje]);
+            });
+
         return () => {
-            // @ts-ignore
-            if (window.Echo) {
-                // @ts-ignore
-                window.Echo.leaveChannel(`chat.${chat.id}`);
-            }
+            echoInstance.leaveChannel(`chat.${chat.id}`);
+            echoInstance.disconnect();
         };
     }, [chat.id]);
 
@@ -78,23 +81,29 @@ export default function Chat({ chat, usuarioActualId }: Props) {
         e.preventDefault();
         if (data.contenido.trim() === '') return;
 
-        // Meto mi mensaje en pantalla al instante (Optimistic UI) para que se sienta instantáneo
         const mensajeTemporal: Mensaje = {
             id: Date.now(),
             user_id: usuarioActualId,
             contenido: data.contenido,
             created_at: new Date().toISOString(),
-            user: { id: usuarioActualId, name: 'Tú', apellidos: '' }
+            user: { id: usuarioActualId, name: 'Tú', apellidos: '', role_id: 2, baneado: false }
         };
         setListaMensajes((prev) => [...prev, mensajeTemporal]);
 
         reset('contenido');
 
-        // Lanzo la petición real a Laravel para guardarlo en la BD y difundirlo
         post(`/chats/${chat.id}/mensajes`, {
             preserveScroll: true,
         });
     };
+
+    const alternarBan = (userId: number) => {
+        if (confirm('¿Cambiar estado de acceso al chat de este usuario?')) {
+            router.post(`/usuarios/${userId}/banear`, {}, { preserveScroll: true });
+        }
+    };
+
+    const estoyBan = listaMensajes.find(m => m.user_id === usuarioActualId)?.user.baneado || false;
 
     return (
         <div className="bg-gray-50 min-h-screen flex flex-col h-screen">
@@ -125,9 +134,20 @@ export default function Chat({ chat, usuarioActualId }: Props) {
                             const esMio = msg.user_id === usuarioActualId;
                             return (
                                 <div key={msg.id} className={`flex flex-col ${esMio ? 'items-end' : 'items-start'}`}>
-                                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider mb-1 px-1">
-                                        {esMio ? 'Tú' : `${msg.user.name} ${msg.user.apellidos || ''}`}
-                                    </span>
+                                    <div className="flex items-center gap-2 mb-1 px-1">
+                                        <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                                            {esMio ? 'Tú' : `${msg.user.name} ${msg.user.apellidos || ''}`} 
+                                            {msg.user.baneado && <span className="text-red-500 font-bold ml-1">(Baneado)</span>}
+                                        </span>
+                                        {esAdmin && !esMio && msg.user.role_id !== 1 && (
+                                            <button 
+                                                onClick={() => alternarBan(msg.user_id)}
+                                                className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-px transition-all ${msg.user.baneado ? 'bg-green-400' : 'bg-red-400'}`}
+                                            >
+                                                {msg.user.baneado ? 'Desbanear' : 'Banear'}
+                                            </button>
+                                        )}
+                                    </div>
                                     <div className={`max-w-md p-4 rounded-2xl border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] break-words ${
                                         esMio ? 'bg-pink-500 text-white' : 'bg-gray-100 text-black'
                                     }`}>
@@ -147,17 +167,17 @@ export default function Chat({ chat, usuarioActualId }: Props) {
                         type="text"
                         value={data.contenido}
                         onChange={(e) => setData('contenido', e.target.value)}
-                        placeholder="Escribe algo..."
+                        placeholder={estoyBan ? "No puedes escribir, estás baneado del chat." : "Escribe algo..."}
                         maxLength={1000}
-                        disabled={processing}
-                        className="flex-grow bg-white border-2 border-black rounded-xl p-4 font-bold text-sm focus:outline-none focus:ring-0 focus:border-pink-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:text-gray-400"
+                        disabled={processing || estoyBan}
+                        className="flex-grow bg-white border-2 border-black rounded-xl p-4 font-bold text-sm focus:outline-none focus:ring-0 focus:border-pink-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] placeholder:text-gray-400 disabled:bg-gray-100 disabled:text-gray-400"
                     />
                     <button
                         type="submit"
-                        disabled={processing || data.contenido.trim() === ''}
+                        disabled={processing || data.contenido.trim() === '' || estoyBan}
                         className="bg-black text-white p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(236,72,153,1)] hover:bg-pink-500 hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:pointer-events-none"
                     >
-                        <HiOutlinePaperAirplane size={20} className="-rotate-45" />
+                        {estoyBan ? <HiOutlineNoSymbol size={20} /> : <HiOutlinePaperAirplane size={20} className="-rotate-45" />}
                     </button>
                 </form>
 

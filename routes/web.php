@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat-general', [ChatController::class, 'chatGeneral'])->name('chat.general');
     Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
     Route::post('/chats/{chat}/mensajes', [ChatController::class, 'enviarMensaje'])->name('chats.enviarMensaje');
+    Route::post('/usuarios/{user}/banear', [ChatController::class, 'banearUsuario'])->name('usuarios.banear');
 
     // Rutas del carrito 
     Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');

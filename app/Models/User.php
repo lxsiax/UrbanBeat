@@ -25,7 +25,8 @@ class User extends Authenticatable
         'email',
         'password',
         'fecha_registro',
-        'role_id'
+        'role_id',
+        'baneado'
     ];
 
     /**
@@ -72,7 +73,7 @@ class User extends Authenticatable
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'producto_user')
-            ->withPivot('id', 'talla_id', 'cantidad') 
+            ->withPivot('id', 'talla_id', 'cantidad')
             ->withTimestamps();
     }
 
@@ -81,5 +82,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Entrada::class, 'entrada_user')
             ->withPivot('cantidad')
             ->withTimestamps();
+    }
+
+    public function esAdmin()
+    {
+        return $this->role_id === 1;
     }
 }
