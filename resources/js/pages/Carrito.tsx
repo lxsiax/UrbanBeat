@@ -58,7 +58,6 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
                 {articulos.length > 0 ? (
                     <div className="flex flex-col lg:flex-row gap-16 items-start">
                         
-                        {/* Columna de Productos con sus componentes de fila */}
                         <div className="flex-[1.5] w-full space-y-0 divide-y-2 divide-black">
                             {articulos.map((articulo) => (
                                 <ArticuloCarritoFila 
@@ -70,7 +69,6 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
                             ))}
                         </div>
 
-                        {/* 👈 Usamos el nuevo componente PanelPago */}
                         <PanelPago total={total} />
                         
                     </div>

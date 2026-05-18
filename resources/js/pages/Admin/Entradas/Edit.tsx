@@ -11,7 +11,6 @@ interface Props {
 }
 
 export default function Edit({ entrada, tipos, zonas }: Props) {
-    // 1. Inicializamos useForm con los valores de la entrada a editar
     const { data, setData, patch, processing, errors, setError, clearErrors } = useForm({
         tipo_entrada_id: entrada.tipo_entrada_id || '',
         zona_id: entrada.zona_id || '',
@@ -25,7 +24,6 @@ export default function Edit({ entrada, tipos, zonas }: Props) {
         clearErrors();
         let tieneErrores = false;
 
-        // 2. Validación de Campos de Selección
         if (!data.tipo_entrada_id) {
             setError('tipo_entrada_id', 'Debes seleccionar un tipo de entrada.');
             tieneErrores = true;
@@ -35,7 +33,6 @@ export default function Edit({ entrada, tipos, zonas }: Props) {
             tieneErrores = true;
         }
 
-        // 3. Validación de Valores Numéricos
         const precioNumerico = Number(data.precio);
         const stockNumerico = Number(data.stock);
 
@@ -88,7 +85,6 @@ export default function Edit({ entrada, tipos, zonas }: Props) {
                         
                         <form onSubmit={enviar} className="space-y-6">
 
-                            {/* Campo: Tipo de Entrada */}
                             <div className="group">
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest text-gray-400 group-focus-within:text-pink-500 transition-colors">
                                     Tipo y fecha de la entrada
@@ -111,7 +107,6 @@ export default function Edit({ entrada, tipos, zonas }: Props) {
                                 )}
                             </div>
 
-                            {/* Campo: Zona */}
                             <div className="group">
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest text-gray-400 group-focus-within:text-pink-500 transition-colors">
                                     Zona de la entrada
@@ -134,7 +129,6 @@ export default function Edit({ entrada, tipos, zonas }: Props) {
                                 )}
                             </div>
 
-                            {/* Grid de Precio y Stock */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Precio (€)</label>

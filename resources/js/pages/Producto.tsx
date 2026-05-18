@@ -36,7 +36,6 @@ export default function Producto({ producto }: Props) {
     const maxStock = tallaActual ? tallaActual.pivot.stock : 1;
 
     const añadirAlCarrito = () => {
-        // Validación en Frontend antes de realizar la petición HTTP
         if (producto.tallas.length > 0 && !tallaSeleccionada) {
             setError('Selecciona una talla antes de añadir al carrito.');
             return;
@@ -45,19 +44,16 @@ export default function Producto({ producto }: Props) {
         setError(null);
         setProcesando(true);
 
-        // Enviamos los parámetros tal y como los espera el método 'aniadirProducto' del controlador
         router.post('/carrito/agregar', {
             producto_id: producto.id,
             talla_id: tallaSeleccionada,
             cantidad: cantidad
         }, {
-            // Si el backend procesa todo bien, reiniciamos estados locales de la compra
+            
             onSuccess: () => {
                 setProcesando(false);
                 setCantidad(1);
-                // Opcional: puedes mandar una alerta de éxito si lo deseas
             },
-            // Si el backend falla (ej: error de stock o validación de Laravel)
             onError: (errors) => {
                 setProcesando(false);
                 if (errors.error) {
@@ -78,7 +74,6 @@ export default function Producto({ producto }: Props) {
 
             <main className="flex-grow pt-40 pb-20 px-4 md:px-10 max-w-7xl w-full mx-auto flex flex-col justify-center">
                 
-                {/* Botón Volver */}
                 <div className="mb-8 flex-shrink-0">
                     <button 
                         onClick={() => router.get('/merchandising')}
@@ -126,7 +121,6 @@ export default function Producto({ producto }: Props) {
                                 {producto.descripcion}
                             </p>
 
-                            {/* Selector de Tallas */}
                             {producto.tallas.length > 0 && (
                                 <div className="flex flex-col gap-3">
                                     <label className="text-xs font-black uppercase tracking-widest text-gray-400">
@@ -163,7 +157,6 @@ export default function Producto({ producto }: Props) {
                                 </div>
                             )}
 
-                            {/* Selector de Cantidad */}
                             <div className="flex flex-col gap-3">
                                 <label className="text-xs font-black uppercase tracking-widest text-gray-400 flex items-center justify-between max-w-xs">
                                     <span>Cantidad</span>
@@ -194,11 +187,10 @@ export default function Producto({ producto }: Props) {
                                 </div>
                             </div>
 
-                            {/* Bloque de visualización de errores unificado */}
                             {error && (
                                 <div className="bg-red-50 border-2 border-red-500 rounded-xl p-3 max-w-md shadow-[3px_3px_0px_0px_rgba(239,68,68,1)]">
                                     <p className="text-red-600 text-xs font-black uppercase tracking-wide flex items-center gap-2">
-                                        ⚠️ {error}
+                                        {error}
                                     </p>
                                 </div>
                             )}

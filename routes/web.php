@@ -7,7 +7,9 @@ use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CartelController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\MerchandisingController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckAdmin; // Asegúrate de que este archivo exista
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -57,17 +59,26 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/');
     })->name('logout');
 
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    });
+
     // Rutas del carrito 
     Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
     Route::post('/carrito/actualizar/{id}', [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
     Route::delete('/carrito/eliminar/{id}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
     Route::post('/carrito/aniadir', [CarritoController::class, 'aniadir'])->name('carrito.aniadir');
     Route::post('/carrito/agregar', [CarritoController::class, 'aniadirProducto'])->name('carrito.agregar');
-    
+
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
 
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+        //Rutas crud usuarios
+        Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
+        Route::patch('/usuarios/{usuario}/rol', [UserController::class, 'updateRole'])->name('usuarios.updateRole');
+        Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
 
         //Rutas crud entradas
         Route::resource('entradas', EntradaController::class)->names([

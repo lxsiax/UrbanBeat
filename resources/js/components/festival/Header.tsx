@@ -77,12 +77,15 @@ export default function Header() {
                                     </Link>
                                 )}
 
-                                <div className="flex items-center gap-2 bg-black/15 px-5 py-2.5 rounded-full border border-black/10 backdrop-blur-sm">
-                                    <HiOutlineUser className="text-white text-lg" />
-                                    <span className="text-white text-xs font-black uppercase tracking-widest pt-0.5">
+                                <Link
+                                    href="/perfil"
+                                    className="flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-full border-2 border-black tracking-widest hover:bg-white hover:text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] group"
+                                >
+                                    <HiOutlineUser className="text-white text-lg group-hover:text-black transition-colors" />
+                                    <span className="text-xs font-black uppercase pt-0.5">
                                         {auth.user.name}
                                     </span>
-                                </div>
+                                </Link>
 
                                 <Link
                                     href="/logout"
