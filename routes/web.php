@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CartelController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\MerchandisingController;
 use App\Http\Controllers\PerfilController;
@@ -62,6 +63,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     });
+
+    Route::get('/chat-general', [ChatController::class, 'chatGeneral'])->name('chat.general');
+    Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
+    Route::post('/chats/{chat}/mensajes', [ChatController::class, 'enviarMensaje'])->name('chats.enviarMensaje');
 
     // Rutas del carrito 
     Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');

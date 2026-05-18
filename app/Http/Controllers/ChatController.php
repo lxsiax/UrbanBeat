@@ -3,64 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
-use App\Http\Requests\StoreChatRequest;
-use App\Http\Requests\UpdateChatRequest;
+use App\Models\Mensaje;
+use App\Events\NuevoMensaje; 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ChatController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreChatRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Chat $chat)
     {
-        //
+        $chat->load([
+            'mensajes.user' => function ($query) {
+                $query->select('id', 'name', 'apellidos');
+            }
+        ]);
+
+        return Inertia::render('Chat', [
+            'chat' => $chat,
+            'usuarioActualId' => Auth::id()
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Chat $chat)
+    public function enviarMensaje(Request $request, Chat $chat)
     {
-        //
+        $request->validate([
+            'contenido' => 'required|string|max:1000',
+        ]);
+
+        $mensaje = $chat->mensajes()->create([
+            'user_id' => Auth::id(),
+            'contenido' => $request->contenido,
+        ]);
+
+        broadcast(new NuevoMensaje($mensaje))->toOthers();
+
+        return back();
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateChatRequest $request, Chat $chat)
+    public function chatGeneral()
     {
-        //
-    }
+        $chat = Chat::firstOrCreate(
+            ['nombre' => 'Foro General'],
+            ['descripcion' => '¡El espacio oficial de la comunidad UrbanBeat! 📢']
+        );
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Chat $chat)
-    {
-        //
+        return redirect()->route('chats.show', $chat->id);
     }
 }
