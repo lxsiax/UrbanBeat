@@ -1,4 +1,4 @@
-import { useForm, Head, router } from '@inertiajs/react';
+import { useForm, Head, router, Link } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import { HiOutlineArrowLeft, HiChevronDown } from "react-icons/hi2";
@@ -22,7 +22,18 @@ export default function Create({ dias }: { dias: any[] }) {
             <Head title="Nuevo Artista" />
             <Header />
             <main className="pt-40 pb-20 px-6 max-w-2xl mx-auto">
-                <button onClick={() => router.get('/admin/artistas')} className="flex items-center gap-2 text-[10px] font-black uppercase mb-8"><HiOutlineArrowLeft /> Volver</button>
+                                    <button 
+                        onClick={() => router.get('/admin/artistas')}
+                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest mb-8 hover:text-pink-500 transition-colors"
+                    >
+                        <HiOutlineArrowLeft size={16} />
+                        Ir a gestión
+                    </button>
+                <div className="flex items-center gap-4 mb-8">
+                    <h1 className="text-4xl font-black uppercase tracking-tighter italic text-black">
+                        Añadir <span className="text-pink-500">Artista</span>
+                    </h1>
+                </div>
 
                 <div className="bg-white p-10 rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
                     <form onSubmit={enviar} className="space-y-6">

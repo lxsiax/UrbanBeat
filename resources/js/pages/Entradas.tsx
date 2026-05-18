@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { Head, usePage, router } from '@inertiajs/react'; 
+import { Head, usePage, router, Link } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import MapaRecinto from '@/components/festival/MapaRecinto';
-import { 
-    HiOutlineShoppingBag, 
-    HiPlus, 
-    HiMinus, 
-    HiOutlinePencil, 
-    HiOutlineEye, 
-    HiOutlineEyeSlash 
-} from "react-icons/hi2"; 
+import {
+    HiOutlineShoppingBag,
+    HiPlus,
+    HiMinus,
+    HiOutlinePencil,
+    HiOutlineEye,
+    HiOutlineEyeSlash
+} from "react-icons/hi2";
 
 interface Props {
     entradas: any[];
@@ -26,8 +26,8 @@ export default function Entradas({ entradas, titulo }: Props) {
     const [procesando, setProcesando] = useState<number | null>(null);
 
     const entradasVisibles = esAdmin ? entradas : entradas.filter(e => !e.esta_oculta);
-    const filtradas = zona 
-        ? entradasVisibles.filter(e => e.zona.nombre === zona) 
+    const filtradas = zona
+        ? entradasVisibles.filter(e => e.zona.nombre === zona)
         : entradasVisibles;
 
     const zonasMapa: Record<string, any[]> = {};
@@ -35,7 +35,7 @@ export default function Entradas({ entradas, titulo }: Props) {
         const etiqueta = e.tipo_entrada.dia
             ? new Date(e.tipo_entrada.dia.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })
             : 'Abonos Full Festival';
-        
+
         if (!zonasMapa[etiqueta]) zonasMapa[etiqueta] = [];
         zonasMapa[etiqueta].push(e);
     });
@@ -43,8 +43,8 @@ export default function Entradas({ entradas, titulo }: Props) {
     const diasOrdenados = Object.entries(zonasMapa).sort(([etiqueta1], [etiqueta2]) => {
         if (etiqueta1 === 'Abonos Full Festival') return -1;
         if (etiqueta2 === 'Abonos Full Festival') return 1;
-        
-        
+
+
         const diaA = parseInt(etiqueta1.split(' ')[0]);
         const diaB = parseInt(etiqueta2.split(' ')[0]);
         return diaA - diaB;
@@ -89,6 +89,16 @@ export default function Entradas({ entradas, titulo }: Props) {
                         <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">
                             Selecciona tu zona en el mapa y añade tus entradas
                         </p>
+                        {esAdmin && (
+                            <div className="flex justify-between items-center mb-6">
+                                <Link
+                                    href="/admin/entradas/create"
+                                    className="bg-green-600 hover:bg-green-800 text-white px-10 py-2 rounded-full font-black text-xs uppercase tracking-widest transition-colors shadow-md"
+                                >
+                                    Añadir entrada
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
                     <div className="mb-20 bg-gray-50 p-10 rounded-[40px] border-2 border-black/5 shadow-inner">
@@ -111,8 +121,8 @@ export default function Entradas({ entradas, titulo }: Props) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                         {listaEntradas.map((e) => (
-                                            <div 
-                                                key={e.id} 
+                                            <div
+                                                key={e.id}
                                                 className={`relative p-8 rounded-3xl border-2 border-black flex flex-col h-full bg-white shadow-xl transition-all hover:-translate-y-2 ${e.esta_oculta ? 'opacity-70 grayscale-[0.5] border-dashed bg-gray-50' : ''}`}
                                             >
                                                 {esAdmin && (

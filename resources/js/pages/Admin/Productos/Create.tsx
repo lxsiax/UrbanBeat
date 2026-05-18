@@ -79,7 +79,6 @@ export default function Create({ todaslasTallas }: Props) {
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-2xl mx-auto">
-
                     <button 
                         onClick={() => router.get('/admin/productos')}
                         className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest mb-8 hover:text-pink-500 transition-colors"
