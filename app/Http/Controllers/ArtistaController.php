@@ -39,14 +39,14 @@ class ArtistaController extends Controller
             'nombre' => 'required|string|max:255',
             'dia_id' => 'required',
             'imagen' => 'nullable|image|max:2048',
+            'link_spotify' => 'nullable|url|max:255',
         ]);
 
         $artista = new Artista();
         $artista->nombre = $request->nombre;
         $artista->dia_id = $request->dia_id;
+        $artista->link_spotify = $request->link_spotify;
 
-        // Si el usuario no envía orden, buscamos el máximo actual y sumamos 1
-        // Si la tabla está vacía, empezará en 1
         $artista->orden = $request->orden ?? (Artista::max('orden') + 1);
 
         $artista->es_headliner = filter_var($request->es_headliner, FILTER_VALIDATE_BOOLEAN);
@@ -59,6 +59,7 @@ class ArtistaController extends Controller
 
         return redirect()->route('admin.artistas.index');
     }
+    
     /**
      * Formulario de edición
      */
@@ -81,16 +82,18 @@ class ArtistaController extends Controller
             'nombre' => 'required|string|max:255',
             'dia_id' => 'required',
             'orden' => 'required|integer',
+            'link_spotify' => 'nullable|url|max:255',
         ]);
 
         $artista->nombre = $request->nombre;
         $artista->dia_id = $request->dia_id;
         $artista->orden = $request->orden;
+        $artista->link_spotify = $request->link_spotify;
         $artista->es_headliner = filter_var($request->es_headliner, FILTER_VALIDATE_BOOLEAN);
 
         if ($request->hasFile('imagen')) {
             if ($artista->imagen) {
-                \Storage::disk('public')->delete($artista->imagen);
+                Storage::disk('public')->delete($artista->imagen);
             }
             $path = $request->file('imagen')->store('artistas', 'public');
 

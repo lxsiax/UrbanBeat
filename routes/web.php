@@ -8,10 +8,11 @@ use App\Http\Controllers\CartelController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\MerchandisingController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\CheckAdmin; // Asegúrate de que este archivo exista
+use App\Http\Controllers\UserController; // Tu controlador de usuarios real
+use App\Http\Middleware\CheckAdmin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -60,9 +61,8 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/');
     })->name('logout');
 
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
-    });
+
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
 
     Route::get('/chat-general', [ChatController::class, 'chatGeneral'])->name('chat.general');
     Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
@@ -76,17 +76,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/carrito/aniadir', [CarritoController::class, 'aniadir'])->name('carrito.aniadir');
     Route::post('/carrito/agregar', [CarritoController::class, 'aniadirProducto'])->name('carrito.agregar');
 
+    //Rutas para el pago
+    Route::prefix('pago')->group(function () {
+        Route::post('/iniciar', [PagoController::class, 'iniciarPago'])->name('pago.iniciar');
+        Route::get('/exito', [PagoController::class, 'exito'])->name('pago.exito');
+        Route::get('/cancelado', [PagoController::class, 'cancelado'])->name('pago.cancelado');
+    });
+
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
-
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
-        //Rutas crud usuarios
+        // Rutas crud usuarios
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
         Route::patch('/usuarios/{usuario}/rol', [UserController::class, 'updateRole'])->name('usuarios.updateRole');
-        Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+        Route::patch('/usuarios/{usuario}/acceso', [UserController::class, 'alternarAcceso'])->name('usuarios.acceso');
 
-        //Rutas crud entradas
+        // Rutas crud entradas
         Route::resource('entradas', EntradaController::class)->names([
             'index' => 'admin.entradas.index',
             'edit' => 'admin.entradas.edit',
@@ -95,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.entradas.update',
         ])->only(['index', 'edit', 'create', 'store', 'update']);
 
-        //Rutas crud artistas 
+        // Rutas crud artistas 
         Route::resource('artistas', ArtistaController::class)->names([
             'index' => 'admin.artistas.index',
             'edit' => 'admin.artistas.edit',
@@ -104,7 +109,7 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.artistas.update',
         ])->only(['index', 'edit', 'create', 'store', 'update']);
 
-        //Rutas crud productos 
+        // Rutas crud productos 
         Route::resource('productos', ProductoController::class)->names([
             'index' => 'admin.productos.index',
             'edit' => 'admin.productos.edit',
@@ -113,7 +118,7 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.productos.update',
         ])->only(['index', 'edit', 'create', 'store', 'update']);
 
-        //Rutas de visibilidad para ocultar
+        // Rutas de visibilidad para ocultar
         Route::patch('/entradas/{id}/cambiar-visibilidad', [EntradaController::class, 'cambiarVisibilidad'])
             ->name('admin.entradas.cambiarVisibilidad');
         Route::patch('/artistas/{id}/cambiar-visibilidad', [ArtistaController::class, 'cambiarVisibilidad'])
@@ -140,7 +145,5 @@ Route::get('/entradas', function (Request $request) {
         'titulo' => $request->tipo === 'abono' ? 'Abonos Generales' : ($request->dia ? 'Entradas Diarias' : 'Tickets')
     ]);
 });
-
-
 
 require __DIR__ . '/settings.php';

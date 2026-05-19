@@ -25,4 +25,9 @@ class Compra extends Model
     {
         return $this->hasMany(Factura::class);
     }
+
+    public function asistentes()
+    {
+        return $this->hasMany(Asistente::class);
+    }
 }

@@ -5,13 +5,16 @@ import {
     HiOutlineShoppingBag,
     HiOutlineUser,
     HiChevronDown,
-    HiOutlineAdjustmentsHorizontal
+    HiOutlineAdjustmentsHorizontal,
+    HiBars3,
+    HiXMark
 } from "react-icons/hi2";
 import { Link, usePage } from '@inertiajs/react';
 
 export default function Header() {
     const { auth } = usePage().props as any;
     const [menuOpen, setMenuOpen] = useState(false);
+    const [menuMovil, setmenuMovil] = useState(false);
 
     const opcionesEntradas = [
         { nombre: 'Abonos Generales', href: '/entradas?tipo=abono' },
@@ -22,15 +25,15 @@ export default function Header() {
 
     return (
         <header className="fixed top-0 w-full z-50 bg-pink-500 shadow-lg">
-            <nav className="max-w-[1500px] mx-auto flex justify-between items-center py-4 px-10">
+            <nav className="max-w-[1500px] mx-auto flex justify-between items-center py-4 px-6 md:px-10">
 
                 <div className="flex items-center">
                     <LinkHeader href="/">
-                        <Logo className="h-22 w-auto transition-transform" />
+                        <Logo className="h-16 md:h-22 w-auto transition-transform" />
                     </LinkHeader>
                 </div>
 
-                <div className="flex gap-8 items-center">
+                <div className="hidden lg:flex gap-8 items-center">
                     <LinkHeader href="/">HOME</LinkHeader>
                     <LinkHeader href="/cartel">CARTEL</LinkHeader>
                     <LinkHeader href="/informacion">INFORMACIÓN</LinkHeader>
@@ -63,8 +66,13 @@ export default function Header() {
                     <div className="flex items-center gap-6 ml-4">
                         {auth.user ? (
                             <div className="flex items-center gap-4">
-                                <Link href='/carrito' className="text-white hover:scale-110 transition-transform text-3xl">
+                                <Link href='/carrito' className="relative text-white hover:scale-110 transition-transform text-3xl block p-1">
                                     <HiOutlineShoppingBag />
+                                    {auth.carrito_count > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-pink-500 animate-in zoom-in duration-200">
+                                            {auth.carrito_count}
+                                        </span>
+                                    )}
                                 </Link>
 
                                 {auth.user.role_id === 1 && (
@@ -107,7 +115,112 @@ export default function Header() {
                         )}
                     </div>
                 </div>
+
+                <div className="flex items-center gap-4 lg:hidden">
+                    {auth.user && (
+                        <Link href='/carrito' className="relative text-white text-3xl block p-1">
+                            <HiOutlineShoppingBag />
+                            {auth.carrito_count > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-pink-500">
+                                    {auth.carrito_count}
+                                </span>
+                            )}
+                        </Link>
+                    )}
+                    <button
+                        onClick={() => setmenuMovil(true)}
+                        className="text-white text-3xl focus:outline-none"
+                    >
+                        <HiBars3 />
+                    </button>
+                </div>
             </nav>
+
+            {menuMovil && (
+                <div className="fixed inset-0 z-50 flex lg:hidden">
+                    <div 
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+                        onClick={() => setmenuMovil(false)}
+                    />
+
+                    <div className="relative ml-auto w-full max-w-xs h-full bg-white border-l-4 border-black p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+                        <div>
+                            <div className="flex items-center justify-between mb-8">
+                                <span className="font-black italic text-xl tracking-tighter text-pink-500">MENÚ</span>
+                                <button
+                                    onClick={() => setmenuMovil(false)}
+                                    className="text-black text-3xl focus:outline-none"
+                                >
+                                    <HiXMark />
+                                </button>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <Link href="/" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">HOME</Link>
+                                <Link href="/cartel" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">CARTEL</Link>
+                                <Link href="/informacion" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">INFORMACIÓN</Link>
+                                <Link href="/merchandising" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">MERCHANDISING</Link>
+                                
+                                <div className="border-t-2 border-black pt-4 mt-2">
+                                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider block mb-2">Entradas</span>
+                                    {opcionesEntradas.map((opcion) => (
+                                        <Link
+                                            key={opcion.nombre}
+                                            href={opcion.href}
+                                            onClick={() => setmenuMovil(false)}
+                                            className="block py-2 text-sm font-black uppercase text-gray-700 hover:text-pink-500"
+                                        >
+                                            {opcion.nombre}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="border-t-2 border-black pt-6 flex flex-col gap-4">
+                            {auth.user ? (
+                                <>
+                                    {auth.user.role_id === 1 && (
+                                        <Link
+                                            href="/admin/dashboard"
+                                            onClick={() => setmenuMovil(false)}
+                                            className="flex items-center justify-center gap-2 bg-yellow-400 text-black py-3 rounded-xl border-2 border-black font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                                        >
+                                            <HiOutlineAdjustmentsHorizontal className="text-lg" />
+                                            Panel Admin
+                                        </Link>
+                                    )}
+
+                                    <Link
+                                        href="/perfil"
+                                        onClick={() => setmenuMovil(false)}
+                                        className="flex items-center justify-center gap-2 bg-black text-white py-3 rounded-xl border-2 border-black font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                                    >
+                                        <HiOutlineUser className="text-lg" />
+                                        {auth.user.name}
+                                    </Link>
+
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        onClick={() => setmenuMovil(false)}
+                                        className="w-full border-2 border-black text-black py-3 rounded-xl text-xs font-black tracking-widest bg-gray-100 hover:bg-red-500 hover:text-white transition-all text-center uppercase"
+                                    >
+                                        SALIR
+                                    </Link>
+                                </>
+                            ) : (
+                                <Link href="/login" onClick={() => setmenuMovil(false)}>
+                                    <span className="block border-2 border-black bg-pink-500 text-white py-3 rounded-xl text-sm font-black tracking-widest text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        LOGIN
+                                    </span>
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }

@@ -10,12 +10,23 @@ class UserController extends Controller
 {
     public function index()
     {
-        $usuarios = User::select('id', 'name', 'apellidos', 'email', 'role_id', 'baneado', 'created_at')
+        $usuarios = User::select('id', 'name', 'apellidos', 'email', 'role_id', 'baneado', 'acceso_permitido', 'created_at')
             ->get();
 
         return Inertia::render('Admin/Usuarios/Index', [
             'usuarios' => $usuarios
         ]);
+    }
+
+    public function alternarAcceso($id)
+    {
+        $usuario = User::findOrFail($id);
+
+        $usuario->update([
+            'acceso_permitido' => !$usuario->acceso_permitido
+        ]);
+
+        return redirect()->back();
     }
 
     public function updateRole(Request $request, User $usuario)

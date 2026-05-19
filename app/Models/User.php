@@ -26,7 +26,8 @@ class User extends Authenticatable
         'password',
         'fecha_registro',
         'role_id',
-        'baneado'
+        'baneado',
+        'acceso_permitido'
     ];
 
     /**
@@ -52,6 +53,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'baneado' => 'boolean',
+            'acceso_permitido' => 'boolean',
         ];
     }
 

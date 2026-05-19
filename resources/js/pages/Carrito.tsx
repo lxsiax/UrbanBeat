@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import Footer from '@/components/festival/Footer';
 import Header from '@/components/festival/Header';
 import ArticuloCarritoFila from '@/components/festival/ArticuloCarritoFila';
-import PanelPago from '@/components/festival/PanelPago'; // 👈 Importamos el nuevo componente
+import PanelPago from '@/components/festival/PanelPago';
+import FormularioAsistentes from '@/components/festival/FormularioAsistentes';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 
 interface ArticuloCarrito {
@@ -15,6 +17,14 @@ interface ArticuloCarrito {
     imagen: string | null;
 }
 
+interface AsistenteData {
+    entrada_id: number;
+    nombre: string;
+    dni: string;
+    email: string;
+    numero: string; 
+}
+
 interface Props {
     articulos: ArticuloCarrito[];
     total: number;
@@ -22,6 +32,45 @@ interface Props {
 
 export default function Carrito({ articulos = [], total = 0 }: Props) {
     const { delete: destroy } = useForm();
+    
+    const [asistentes, setAsistentes] = useState<AsistenteData[]>([]);
+    const [erroresAsistentes, setErroresAsistentes] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        const nuevosAsistentes: AsistenteData[] = [];
+        
+        articulos.forEach(articulo => {
+            if (articulo.tipo === 'entrada') {
+                for (let i = 0; i < articulo.cantidad; i++) {
+                    nuevosAsistentes.push({
+                        entrada_id: articulo.id,
+                        nombre: '',
+                        dni: '',
+                        email: '',
+                        numero: '' // 👈 Inicializado vacío
+                    });
+                }
+            }
+        });
+
+        setAsistentes(nuevosAsistentes);
+        setErroresAsistentes({});
+    }, [articulos]);
+
+    const handleCcangeAsistente = (index: number, campo: keyof AsistenteData, valor: string) => {
+        const copia = [...asistentes];
+        copia[index] = {
+            ...copia[index],
+            [campo]: valor
+        };
+        setAsistentes(copia);
+        
+        if (erroresAsistentes[`asistentes.${index}.${campo}`]) {
+            const nuevosErrores = { ...erroresAsistentes };
+            delete nuevosErrores[`asistentes.${index}.${campo}`];
+            setErroresAsistentes(nuevosErrores);
+        }
+    };
 
     const actualizarCantidad = (carritoId: string, nuevaCantidad: number) => {
         if (nuevaCantidad < 1) return;
@@ -58,18 +107,31 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
                 {articulos.length > 0 ? (
                     <div className="flex flex-col lg:flex-row gap-16 items-start">
                         
-                        <div className="flex-[1.5] w-full space-y-0 divide-y-2 divide-black">
-                            {articulos.map((articulo) => (
-                                <ArticuloCarritoFila 
-                                    key={articulo.carrito_id}
-                                    articulo={articulo}
-                                    onActualizarCantidad={actualizarCantidad}
-                                    onEliminarArticulo={eliminarArticulo}
-                                />
-                            ))}
+                        <div className="flex-[1.5] w-full space-y-12">
+                            <div className="divide-y-2 divide-black">
+                                {articulos.map((articulo) => (
+                                    <ArticuloCarritoFila 
+                                        key={articulo.carrito_id}
+                                        articulo={articulo}
+                                        onActualizarCantidad={actualizarCantidad}
+                                        onEliminarArticulo={eliminarArticulo}
+                                    />
+                                ))}
+                            </div>
+
+                            <FormularioAsistentes 
+                                articulos={articulos}
+                                asistentes={asistentes}
+                                onChangeAsistente={handleCcangeAsistente}
+                                errores={erroresAsistentes}
+                            />
                         </div>
 
-                        <PanelPago total={total} />
+                        <PanelPago 
+                            total={total} 
+                            asistentes={asistentes} 
+                            setErroresAsistentes={setErroresAsistentes} 
+                        />
                         
                     </div>
                 ) : (

@@ -35,15 +35,31 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $usuario = $request->user();
+        $carritoCount = 0;
+
+        if ($usuario) {
+            $cantidadesEntradas = \DB::table('entrada_user')
+                ->where('user_id', $usuario->id)
+                ->sum('cantidad');
+
+            $cantidadesProductos = \DB::table('producto_user')
+                ->where('user_id', $usuario->id)
+                ->sum('cantidad');
+
+            $carritoCount = $cantidadesEntradas + $cantidadesProductos;
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user() ? [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'role_id' => $request->user()->role_id,
+                'user' => $usuario ? [
+                    'id' => $usuario->id,
+                    'name' => $usuario->name,
+                    'role_id' => $usuario->role_id,
                 ] : null,
+                'carrito_count' => $carritoCount,
             ],
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
