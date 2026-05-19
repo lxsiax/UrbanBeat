@@ -42,6 +42,15 @@ class DatabaseSeeder extends Seeder
             'role_id' => $clienteRol->id,
         ]);
 
+        User::create([
+            'name' => 'Lucía',
+            'apellidos' => 'Robles López',
+            'email' => 'lucia.robles@iesdonana.org',
+            'password' => Hash::make('lucia'),
+            'fecha_registro' => Carbon::now(),
+            'role_id' => $clienteRol->id,
+        ]);
+
         // --- ZONAS Y DÍAS ---
         $zonaPista = Zona::create(['nombre' => 'Pista', 'aforo' => 5000]);
         $zonaGrada = Zona::create(['nombre' => 'Grada', 'aforo' => 3000]);

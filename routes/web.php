@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/exito', [PagoController::class, 'exito'])->name('pago.exito');
         Route::get('/cancelado', [PagoController::class, 'cancelado'])->name('pago.cancelado');
     });
+    Route::get('/pago/factura/{id}/pdf', [PagoController::class, 'descargarPdf'])->name('pago.pdf');
 
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
