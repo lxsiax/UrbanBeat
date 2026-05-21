@@ -25,16 +25,45 @@ interface AsistenteData {
     numero: string; 
 }
 
+interface CompradorData {
+    nombre: string;
+    apellidos: string;
+    dni: string;
+    telefono: string;
+    email: string;
+    direccion: string;
+}
+
 interface Props {
+    usuario: any;
     articulos: ArticuloCarrito[];
     total: number;
 }
 
-export default function Carrito({ articulos = [], total = 0 }: Props) {
+export default function Carrito({ usuario, articulos = [], total = 0 }: Props) {
     const { delete: destroy } = useForm();
     
     const [asistentes, setAsistentes] = useState<AsistenteData[]>([]);
     const [erroresAsistentes, setErroresAsistentes] = useState<Record<string, string>>({});
+
+    const userId = usuario?.id || 'guest';
+    const SESSION_KEY = `urbanbeat_comprador_user_${userId}`;
+
+    const [comprador, setComprador] = useState<CompradorData>(() => {
+        const guardado = sessionStorage.getItem(SESSION_KEY);
+        return guardado ? JSON.parse(guardado) : { 
+            nombre: usuario?.name || '', 
+            apellidos: usuario?.apellidos || '', 
+            dni: usuario?.dni || '', 
+            telefono: usuario?.telefono || '', 
+            email: usuario?.email || '', 
+            direccion: usuario?.direccion || '' 
+        };
+    });
+
+    useEffect(() => {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(comprador));
+    }, [comprador, SESSION_KEY]);
 
     useEffect(() => {
         const nuevosAsistentes: AsistenteData[] = [];
@@ -47,7 +76,7 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
                         nombre: '',
                         dni: '',
                         email: '',
-                        numero: '' // 👈 Inicializado vacío
+                        numero: '' 
                     });
                 }
             }
@@ -119,6 +148,47 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
                                 ))}
                             </div>
 
+                            <div className="bg-white p-6 rounded-3xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-4">
+                                <h3 className="text-xl font-black uppercase italic text-pink-500">Datos de Envío y Comprador</h3>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase mb-1">Nombre</label>
+                                        <input type="text" value={comprador.nombre} onChange={e => setComprador({...comprador, nombre: e.target.value})} className="w-full p-3 border-2 border-black rounded-xl" />
+                                        {erroresAsistentes['comprador.nombre'] && <p className="text-red-600 text-xs mt-1 font-bold">{erroresAsistentes['comprador.nombre']}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase mb-1">Apellidos (Mínimo un apellido)</label>
+                                        <input type="text" value={comprador.apellidos} onChange={e => setComprador({...comprador, apellidos: e.target.value})} className="w-full p-3 border-2 border-black rounded-xl" />
+                                        {erroresAsistentes['comprador.apellidos'] && <p className="text-red-600 text-xs mt-1 font-bold">{erroresAsistentes['comprador.apellidos']}</p>}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase mb-1">DNI / NIE España</label>
+                                        <input type="text" value={comprador.dni} onChange={e => setComprador({...comprador, dni: e.target.value.toUpperCase()})} className="w-full p-3 border-2 border-black rounded-xl uppercase" />
+                                        {erroresAsistentes['comprador.dni'] && <p className="text-red-600 text-xs mt-1 font-bold">{erroresAsistentes['comprador.dni']}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase mb-1">Teléfono España</label>
+                                        <input type="text" value={comprador.telefono} onChange={e => setComprador({...comprador, telefono: e.target.value})} className="w-full p-3 border-2 border-black rounded-xl" placeholder="Ej: 600123456" />
+                                        {erroresAsistentes['comprador.telefono'] && <p className="text-red-600 text-xs mt-1 font-bold">{erroresAsistentes['comprador.telefono']}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase mb-1">Correo Electrónico</label>
+                                        <input type="email" value={comprador.email} onChange={e => setComprador({...comprador, email: e.target.value})} className="w-full p-3 border-2 border-black rounded-xl" />
+                                        {erroresAsistentes['comprador.email'] && <p className="text-red-600 text-xs mt-1 font-bold">{erroresAsistentes['comprador.email']}</p>}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase mb-1">Dirección de Envío (Uso exclusivo para reposiciones de material)</label>
+                                    <input type="text" value={comprador.direccion} onChange={e => setComprador({...comprador, direccion: e.target.value})} className="w-full p-3 border-2 border-black rounded-xl" placeholder="Calle, Número, Piso, Código Postal, Localidad" />
+                                    {erroresAsistentes['comprador.direccion'] && <p className="text-red-600 text-xs mt-1 font-bold">{erroresAsistentes['comprador.direccion']}</p>}
+                                </div>
+                            </div>
+
                             <FormularioAsistentes 
                                 articulos={articulos}
                                 asistentes={asistentes}
@@ -129,6 +199,7 @@ export default function Carrito({ articulos = [], total = 0 }: Props) {
 
                         <PanelPago 
                             total={total} 
+                            comprador={comprador}
                             asistentes={asistentes} 
                             setErroresAsistentes={setErroresAsistentes} 
                         />

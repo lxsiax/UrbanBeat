@@ -11,7 +11,8 @@ use App\Http\Controllers\MerchandisingController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\UserController; // Tu controlador de usuarios real
+use App\Http\Controllers\UserController; 
+use App\Http\Controllers\PedidoAdminController; 
 use App\Http\Middleware\CheckAdmin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -64,7 +65,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/perfil/entrada/{id}/pdf', [PerfilController::class, 'descargarEntradaPdf'])->name('perfil.entrada.pdf');
 
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
-    //Rutas del chat
+    
+    // Rutas del chat
     Route::get('/chat-general', [ChatController::class, 'chatGeneral'])->name('chat.general');
     Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
     Route::post('/chats/{chat}/mensajes', [ChatController::class, 'enviarMensaje'])->name('chats.enviarMensaje');
@@ -77,11 +79,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/carrito/aniadir', [CarritoController::class, 'aniadir'])->name('carrito.aniadir');
     Route::post('/carrito/agregar', [CarritoController::class, 'aniadirProducto'])->name('carrito.agregar');
 
-    //Rutas para el pago
+    // Rutas para el pago
     Route::prefix('pago')->group(function () {
         Route::post('/iniciar', [PagoController::class, 'iniciarPago'])->name('pago.iniciar');
-        Route::get('/exito', [PagoController::class, 'exito'])->name('pago.exito'); // Aquí procesamos
-        Route::get('/confirmacion/{id}', [PagoController::class, 'confirmacion'])->name('pago.confirmacion'); // Aquí pintamos con Inertia
+        Route::get('/exito', [PagoController::class, 'exito'])->name('pago.exito'); 
+        Route::get('/confirmacion/{id}', [PagoController::class, 'confirmacion'])->name('pago.confirmacion'); 
         Route::get('/cancelado', [PagoController::class, 'cancelado'])->name('pago.cancelado');
     });
     Route::get('/pago/factura/{id}/pdf', [PagoController::class, 'descargarPdf'])->name('pago.pdf');
@@ -95,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/usuarios/{usuario}/rol', [UserController::class, 'updateRole'])->name('usuarios.updateRole');
         Route::patch('/usuarios/{usuario}/acceso', [UserController::class, 'alternarAcceso'])->name('usuarios.acceso');
         Route::get('/usuarios/{id}/pedidos', [UserController::class, 'verPedidosUsuario'])->name('admin.usuarios.pedidos');
+        
+        // 🔥 CORREGIDO: Eliminado el '/admin' duplicado del string para que concuerde con el prefijo y use el modelo Compra
+        Route::put('/pedidos/{compra}/estado-envio', [PedidoAdminController::class, 'actualizarEnvio'])->name('admin.pedidos.envio');
 
         // Rutas crud entradas
         Route::resource('entradas', EntradaController::class)->names([

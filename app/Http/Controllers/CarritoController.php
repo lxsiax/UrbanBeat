@@ -56,7 +56,8 @@ class CarritoController extends Controller
 
         return Inertia::render('Carrito', [
             'articulos' => $articulos,
-            'total' => (float) $total
+            'total' => (float) $total,
+            'usuario' => $usuario,
         ]);
     }
 

@@ -23,13 +23,25 @@ class PerfilController extends Controller
         $entradas = Asistente::whereHas('compra', function ($query) use ($usuario) {
             $query->where('user_id', $usuario->id)->where('estado', 'Pagado');
         })
-            ->with(['entrada.tipoEntrada.dia', 'entrada.zona']) 
+            ->with(['entrada.tipoEntrada.dia', 'entrada.zona'])
             ->get();
 
         return Inertia::render('Perfil', [
             'usuario' => $usuario,
             'compras' => $compras,
             'entradas' => $entradas
+        ]);
+    }
+
+    public function misPedidos()
+    {
+        $pedidos = Compra::where('user_id', auth()->id())
+            ->with(['facturas.entrada', 'facturas.producto'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Usuario/Pedidos', [
+            'pedidos' => $pedidos
         ]);
     }
 

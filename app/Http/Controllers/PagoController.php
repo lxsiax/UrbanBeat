@@ -18,6 +18,8 @@ class PagoController extends Controller
     {
         $request->validate([
             'total' => 'required|numeric|min:0.01',
+            'telefono_comprador' => 'required|string|max:20',  
+            'direccion_comprador' => 'required|string',        
             'asistentes' => 'nullable|array',
             'asistentes.*.entrada_id' => 'required|integer',
             'asistentes.*.nombre' => 'required|string|max:255',
@@ -72,10 +74,17 @@ class PagoController extends Controller
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         $total = $request->input('total');
         $asistentes = $request->input('asistentes', []);
+        
+         
+        $telefonoComprador = $request->input('telefono_comprador');
+        $direccionComprador = $request->input('direccion_comprador');
 
         try {
+             
             $metadata = [
                 'user_id' => $user->id,
+                'telefono_comprador' => $telefonoComprador,
+                'direccion_comprador' => $direccionComprador,
                 'asistentes_json' => json_encode($asistentes),
                 'carrito_json' => json_encode($itemsTotales)
             ];
@@ -115,8 +124,6 @@ class PagoController extends Controller
             return redirect()->route('carrito.index')->with('error', 'No se encontró sesión de pago.');
         }
 
-         
-         
         $compraExistente = Compra::where('stripe_session_id', $sessionId)->first();
         if ($compraExistente) {
             return redirect()->route('pago.confirmacion', ['id' => $compraExistente->id]);
@@ -131,17 +138,24 @@ class PagoController extends Controller
                 return redirect()->route('carrito.index')->with('error', 'El pago no ha sido completado.');
             }
 
+             
             $userId = $sessionStripe->metadata->user_id;
+            $telefonoComprador = $sessionStripe->metadata->telefono_comprador ?? '';
+            $direccionComprador = $sessionStripe->metadata->direccion_comprador ?? '';
             $asistentesData = json_decode($sessionStripe->metadata->asistentes_json ?? '[]', true);
             $articulosComprados = json_decode($sessionStripe->metadata->carrito_json ?? '[]', true);
 
             DB::beginTransaction();
 
+             
             $compra = Compra::create([
                 'user_id' => $userId,
                 'stripe_session_id' => $sessionId,
                 'total' => $sessionStripe->amount_total / 100,
-                'estado' => 'Pagado'
+                'estado' => 'Pagado',
+                'telefono_comprador' => $telefonoComprador,
+                'direccion_comprador' => $direccionComprador,
+                'estado_envio' => 'pagado'  
             ]);
 
             foreach ($asistentesData as $asistente) {
@@ -180,7 +194,6 @@ class PagoController extends Controller
 
             DB::commit();
 
-             
             return redirect()->route('pago.confirmacion', ['id' => $compra->id]);
 
         } catch (\Throwable $e) {
@@ -193,7 +206,6 @@ class PagoController extends Controller
         }
     }
 
-     
     public function confirmacion($id)
     {
         $compra = Compra::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
@@ -205,7 +217,6 @@ class PagoController extends Controller
 
     public function descargarPdf($id)
     {
-
         $query = Compra::where('id', $id)
             ->with(['user', 'facturas.entrada', 'facturas.producto', 'facturas.talla', 'asistentes']);
 

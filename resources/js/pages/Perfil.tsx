@@ -1,7 +1,16 @@
 import { Head } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
-import { HiOutlineUser, HiOutlineEnvelope, HiOutlineCalendar, HiOutlineArrowDownTray, HiOutlineTicket, HiOutlineShoppingBag, HiQrCode, HiOutlineMapPin } from "react-icons/hi2";
+import {
+    HiOutlineUser,
+    HiOutlineEnvelope,
+    HiOutlineCalendar,
+    HiOutlineArrowDownTray,
+    HiOutlineTicket,
+    HiOutlineShoppingBag,
+    HiQrCode,
+    HiOutlineMapPin
+} from "react-icons/hi2";
 
 interface LineaFactura {
     id: number;
@@ -29,6 +38,10 @@ interface Compra {
     estado: string;
     created_at: string;
     facturas: LineaFactura[];
+    // 📌 NUEVOS CAMPOS DESDE EL BACKEND
+    telefono_comprador?: string | null;
+    direccion_comprador?: string | null;
+    estado_envio?: 'pagado' | 'enviado' | 'entregado' | null;
 }
 
 interface Asistente {
@@ -67,6 +80,7 @@ export default function Perfil({ usuario, compras = [], entradas = [] }: Props) 
                         Mi <span className="text-pink-500">Cuenta</span>
                     </h1>
 
+                    {/* Información del Usuario */}
                     <div className="bg-white p-8 rounded-[30px] border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
                         <div className="flex items-center gap-4 border-b-2 border-black pb-6">
                             <div className="bg-pink-500 text-white p-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
@@ -96,6 +110,7 @@ export default function Perfil({ usuario, compras = [], entradas = [] }: Props) 
                         </div>
                     </div>
 
+                    {/* Pases de Acceso */}
                     <div className="bg-white p-8 rounded-[30px] border-2 border-black shadow-[8px_8px_0px_0px_#ec4899] space-y-6">
                         <div className="flex items-center gap-2">
                             <HiQrCode size={24} className="text-pink-500" />
@@ -110,11 +125,8 @@ export default function Perfil({ usuario, compras = [], entradas = [] }: Props) 
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {entradas.map((asistente) => {
-                                    console.log("Datos del asistente:", asistente);
-
                                     const tipo = asistente.entrada?.tipo_entrada?.nombre || 'Entrada Festival';
                                     const zona = asistente.entrada?.zona?.nombre || 'Zona General';
-
                                     const rawFecha = asistente.entrada?.tipo_entrada?.dia?.fecha;
 
                                     let fecha = '23-25 Julio de 2026';
@@ -158,7 +170,7 @@ export default function Perfil({ usuario, compras = [], entradas = [] }: Props) 
                         )}
                     </div>
 
-
+                    {/* Historial de Pedidos */}
                     <div className="bg-white p-8 rounded-[30px] border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
                         <div className="flex items-center gap-2">
                             <HiOutlineShoppingBag size={24} className="text-black" />
@@ -170,49 +182,82 @@ export default function Perfil({ usuario, compras = [], entradas = [] }: Props) 
                                 Historial de pedidos vacío.
                             </div>
                         ) : (
-                            <div className="space-y-4">
-                                {compras.map((compra) => (
-                                    <div key={compra.id} className="bg-gray-50 border-2 border-black rounded-2xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-black text-xs uppercase bg-black text-white px-2 py-0.5 rounded">Pedido #UB2026-10{compra.id}</span>
-                                                <span className="text-xs text-gray-500 font-bold">{new Date(compra.created_at).toLocaleDateString('es-ES')}</span>
+                            <div className="space-y-6">
+                                {compras.map((compra) => {
+                                    // 📌 Evaluamos si este pedido concreto contiene algún artículo de merchandising
+                                    const tieneEnvioFisico = compra.facturas.some(linea => linea.producto);
+
+                                    return (
+                                        <div key={compra.id} className="bg-gray-50 border-2 border-black rounded-2xl p-5 space-y-4">
+
+                                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-black text-xs uppercase bg-black text-white px-2 py-0.5 rounded">Pedido #UB2026-10{compra.id}</span>
+                                                        <span className="text-xs text-gray-500 font-bold">{new Date(compra.created_at).toLocaleDateString('es-ES')}</span>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        {compra.facturas.map((linea) => {
+                                                            let detalle = '';
+                                                            if (linea.entrada) {
+                                                                const tipo = linea.entrada.tipo_entrada?.nombre || 'Entrada';
+                                                                const zona = linea.entrada.zona?.nombre || 'General';
+                                                                const rawFecha = linea.entrada.tipo_entrada?.dia?.fecha;
+                                                                const fecha = rawFecha
+                                                                    ? new Date(rawFecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+                                                                    : '';
+
+                                                                detalle = `${tipo} [${zona}] ${fecha ? `(${fecha})` : ''}`;
+                                                            } else {
+                                                                detalle = `${linea.producto?.nombre || 'Producto'}${linea.talla ? ` (${linea.talla.nombre})` : ''}`;
+                                                            }
+
+                                                            return (
+                                                                <p key={linea.id} className="text-xs font-bold text-gray-700">
+                                                                    • {linea.cantidad}x {detalle}
+                                                                </p>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    <p className="text-xs font-black">Total: <span className="text-pink-500">{Number(compra.total).toFixed(2)}€</span></p>
+                                                </div>
+
+                                                <a
+                                                    href={`/pago/factura/${compra.id}/pdf`}
+                                                    className="w-full md:w-auto bg-yellow-300 hover:bg-yellow-400 text-black font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 transition-transform active:translate-x-0.5 active:translate-y-0.5"
+                                                >
+                                                    <HiOutlineArrowDownTray size={14} /> Factura PDF
+                                                </a>
                                             </div>
-                                            <div className="space-y-1">
-                                                {compra.facturas.map((linea) => {
-                                                    let detalle = '';
-                                                    if (linea.entrada) {
-                                                        const tipo = linea.entrada.tipo_entrada?.nombre || 'Entrada';
-                                                        const zona = linea.entrada.zona?.nombre || 'General';
 
-                                                        const rawFecha = linea.entrada.tipo_entrada?.dia?.fecha;
-                                                        const fecha = rawFecha
-                                                            ? new Date(rawFecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
-                                                            : '';
+                                            {tieneEnvioFisico && (
+                                                <div className="grid grid-cols-3 gap-2 text-center text-[9px] font-black uppercase tracking-wider">
+                                                    <div className={`p-2.5 border-2 border-black rounded-xl transition-all duration-300 ${compra.estado_envio === 'pagado'
+                                                            ? 'bg-green-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
+                                                            : 'bg-gray-100 text-gray-400 border-gray-200'
+                                                        }`}>
+                                                        📦 Pagado
+                                                    </div>
 
-                                                        detalle = `${tipo} [${zona}] ${fecha ? `(${fecha})` : ''}`;
-                                                    } else {
-                                                        detalle = `${linea.producto?.nombre || 'Producto'}${linea.talla ? ` (${linea.talla.nombre})` : ''}`;
-                                                    }
+                                                    <div className={`p-2.5 border-2 border-black rounded-xl transition-all duration-300 ${compra.estado_envio === 'enviado'
+                                                            ? 'bg-yellow-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
+                                                            : 'bg-gray-100 text-gray-400 border-gray-200'
+                                                        }`}>
+                                                        🚚 Enviado
+                                                    </div>
 
-                                                    return (
-                                                        <p key={linea.id} className="text-xs font-bold text-gray-700">
-                                                            • {linea.cantidad}x {detalle}
-                                                        </p>
-                                                    );
-                                                })}
-                                            </div>
-                                            <p className="text-xs font-black">Total: <span className="text-pink-500">{Number(compra.total).toFixed(2)}€</span></p>
+                                                    <div className={`p-2.5 border-2 border-black rounded-xl transition-all duration-300 ${compra.estado_envio === 'entregado'
+                                                            ? 'bg-cyan-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black'
+                                                            : 'bg-gray-100 text-gray-400 border-gray-200'
+                                                        }`}>
+                                                        🏠 Recibido
+                                                    </div>
+                                                </div>
+                                            )}
+
                                         </div>
-
-                                        <a
-                                            href={`/pago/factura/${compra.id}/pdf`}
-                                            className="w-full md:w-auto bg-yellow-300 hover:bg-yellow-400 text-black font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 transition-transform active:translate-x-0.5 active:translate-y-0.5"
-                                        >
-                                            <HiOutlineArrowDownTray size={14} /> Factura PDF
-                                        </a>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

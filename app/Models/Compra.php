@@ -14,9 +14,28 @@ class Compra extends Model
         'user_id',
         'total',
         'stripe_session_id',
-        'estado'
+        'estado',
+        'telefono_comprador',
+        'direccion_comprador',
+        'estado_envio'
     ];
 
+    /**
+     * Comprueba si el paquete ya ha sido enviado.
+     */
+    public function estaEnviado(): bool
+    {
+        return in_array($this->estado_envio, ['enviado', 'entregado']);
+    }
+
+    /**
+     * Comprueba si el paquete ya ha llegado a su destino.
+     */
+    public function estaEntregado(): bool
+    {
+        return $this->estado_envio === 'entregado';
+    }
+    
     public function user()
     {
         return $this->belongsTo(User::class);
