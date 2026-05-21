@@ -37,7 +37,7 @@ class PagoController extends Controller
             ->where('entrada_user.user_id', $user->id)
             ->select('entradas.id', 'tipo_entradas.nombre as nombre', 'entradas.precio', 'entrada_user.cantidad')
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'nombre' => $item->nombre,
@@ -50,14 +50,15 @@ class PagoController extends Controller
         $productosCarrito = DB::table('producto_user')
             ->join('productos', 'producto_user.producto_id', '=', 'productos.id')
             ->where('producto_user.user_id', $user->id)
-            ->select('productos.id', 'productos.nombre', 'productos.precio', 'producto_user.cantidad')
+            ->select('productos.id', 'productos.nombre', 'productos.precio', 'producto_user.cantidad', 'producto_user.talla_id')
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'nombre' => $item->nombre,
                     'precio' => $item->precio,
                     'cantidad' => $item->cantidad,
+                    'talla_id' => $item->talla_id, // Lo mapeamos para Stripe Metadata
                     'tipo' => 'merchandising'
                 ];
             })->toArray();
@@ -74,26 +75,28 @@ class PagoController extends Controller
 
         try {
             $metadata = [
-                'user_id' => $user->id, 
+                'user_id' => $user->id,
                 'asistentes_json' => json_encode($asistentes),
-                'carrito_json' => json_encode($itemsTotales) 
+                'carrito_json' => json_encode($itemsTotales)
             ];
 
             $session = \Stripe\Checkout\Session::create([
                 'payment_method_types' => ['card'],
-                'line_items' => [[
-                    'price_data' => [
-                        'currency' => 'eur',
-                        'product_data' => [
-                            'name' => 'Compra Total — UrbanBeat Festival',
-                            'description' => 'Entradas y Merchandising oficial del festival.',
+                'line_items' => [
+                    [
+                        'price_data' => [
+                            'currency' => 'eur',
+                            'product_data' => [
+                                'name' => 'Compra Total — UrbanBeat Festival',
+                                'description' => 'Entradas y Merchandising oficial del festival.',
+                            ],
+                            'unit_amount' => $total * 100,
                         ],
-                        'unit_amount' => $total * 100,
-                    ],
-                    'quantity' => 1,
-                ]],
+                        'quantity' => 1,
+                    ]
+                ],
                 'mode' => 'payment',
-                'metadata' => $metadata, 
+                'metadata' => $metadata,
                 'success_url' => route('pago.exito') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('pago.cancelado'),
             ]);
@@ -108,8 +111,8 @@ class PagoController extends Controller
     public function exito(Request $request)
     {
         $sessionId = $request->query('session_id');
-        if (!$sessionId) { 
-            return redirect()->route('carrito.index')->with('error', 'No se encontró sesión de pago.'); 
+        if (!$sessionId) {
+            return redirect()->route('carrito.index')->with('error', 'No se encontró sesión de pago.');
         }
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -122,7 +125,7 @@ class PagoController extends Controller
             }
 
             $userId = $sessionStripe->metadata->user_id;
-            
+
             $asistentesData = json_decode($sessionStripe->metadata->asistentes_json ?? '[]', true);
             $articulosComprados = json_decode($sessionStripe->metadata->carrito_json ?? '[]', true);
 
@@ -130,7 +133,7 @@ class PagoController extends Controller
 
             $compra = Compra::create([
                 'user_id' => $userId,
-                'total' => $sessionStripe->amount_total / 100, 
+                'total' => $sessionStripe->amount_total / 100,
                 'estado' => 'Pagado'
             ]);
 
@@ -141,7 +144,7 @@ class PagoController extends Controller
                     'nombre' => $asistente['nombre'],
                     'dni' => $asistente['dni'],
                     'email' => $asistente['email'],
-                    'numero' => $asistente['numero'], 
+                    'numero' => $asistente['numero'],
                 ]);
             }
 
@@ -150,7 +153,7 @@ class PagoController extends Controller
                     'compra_id' => $compra->id,
                     'producto_id' => $articulo['tipo'] === 'merchandising' ? $articulo['id'] : null,
                     'entrada_id' => $articulo['tipo'] === 'entrada' ? $articulo['id'] : null,
-                    'talla_id' => $articulo['talla_id'] ?? null, 
+                    'talla_id' => $articulo['talla_id'] ?? null,
                     'cantidad' => $articulo['cantidad'],
                     'precio_unitario' => $articulo['precio'],
                 ]);
@@ -186,14 +189,14 @@ class PagoController extends Controller
 
     public function descargarPdf($id)
     {
-        $compra = Compra::with(['user', 'facturas.entrada', 'facturas.producto', 'asistentes'])->findOrFail($id);
-        
-        if (auth()->check() && auth()->id() !== $compra->user_id) {
-            abort(403, 'Acceso no autorizado.');
-        }
+        $compra = Compra::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->with(['user', 'facturas.entrada', 'facturas.producto', 'facturas.talla', 'asistentes'])
+            ->firstOrFail();
 
         $pdf = Pdf::loadView('pdf.factura', compact('compra'));
-        return $pdf->stream('Factura_UrbanBeat_#UB-' . $compra->id . '.pdf');
+
+        return $pdf->download('Factura_UrbanBeat_UB-' . $compra->id . '.pdf');
     }
 
     public function cancelado()

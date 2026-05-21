@@ -61,9 +61,10 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/');
     })->name('logout');
 
+    Route::get('/perfil/entrada/{id}/pdf', [PerfilController::class, 'descargarEntradaPdf'])->name('perfil.entrada.pdf');
 
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
-
+    //Rutas del chat
     Route::get('/chat-general', [ChatController::class, 'chatGeneral'])->name('chat.general');
     Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
     Route::post('/chats/{chat}/mensajes', [ChatController::class, 'enviarMensaje'])->name('chats.enviarMensaje');

@@ -156,7 +156,6 @@
             font-size: 26px; 
             font-weight: 900; 
             color: #000000; 
-            italic: font-style;
         }
 
         /* Sección de Asistentes Nominativos */
@@ -208,7 +207,7 @@
         <div class="info-factura">
             REF: #UB-{{ str_pad($compra->id, 5, '0', STR_PAD_LEFT) }}<br>
             EMISIÓN: {{ $compra->created_at->format('d/m/Y H:i') }}<br>
-            ESTADO: <span style="color: #ec4899;">● {{ strtoupper($compra->estado) }}</span>
+            ESTADO: <span style="color: #ec4899;"> {{ strtoupper($compra->estado) }}</span>
         </div>
         <div class="clear"></div>
     </div>
@@ -226,7 +225,7 @@
         <div class="col-right">
             <div class="titulo-seccion">Comprador / Cliente</div>
             <div class="datos-texto">
-                <strong>{{ $compra->user->name ?? 'Asistente Registrado' }}</strong><br>
+                <strong>{{ $compra->user->name ?? 'Asistente Registrado' }} {{ $compra->user->apellidos ?? '' }}</strong><br>
                 Email: {{ $compra->user->email ?? '-' }}<br>
                 ID Cliente: #URBAN-{{ str_pad($compra->user_id, 4, '0', STR_PAD_LEFT) }}
             </div>
@@ -248,7 +247,7 @@
             <tr>
                 <td>
                     @if($linea->entrada)
-                        <strong style="text-transform: uppercase;">Entrada Nom. — {{ $linea->entrada->nombre ?? 'Abono General' }}</strong>
+                        <strong style="text-transform: uppercase;">Entrada Nom. — {{ $linea->entrada->titulo ?? $linea->entrada->nombre ?? 'Ticket Oficial' }}</strong>
                         <div class="item-detalle">Acceso oficial al recinto del festival</div>
                     @elseif($linea->producto)
                         <strong style="text-transform: uppercase;">Merchandising — {{ $linea->producto->nombre ?? 'Artículo' }}</strong>
@@ -275,11 +274,11 @@
         <div class="clear"></div>
     </div>
 
-    @if($compra->asistentes->count() > 0)
+    @if($compra->asistentes && $compra->asistentes->count() > 0)
     <div class="asistentes-box">
         <div class="titulo-seccion" style="background: #000000;">Accesos Nominativos Vinculados</div>
         <p style="font-size: 11px; margin: 5px 0 15px 0; font-weight: bold; text-transform: uppercase; color: #555555;">
-            ⚠️ Las siguientes entradas son personales e intransferibles. Se requerirá documento de identidad físico en los accesos.
+             Las siguientes entradas son personales e intransferibles. Se requerirá documento de identidad físico en los accesos.
         </p>
         
         <div class="asistente-grid">
