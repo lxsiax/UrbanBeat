@@ -28,7 +28,7 @@ export default function PagoExito({ compra_id }: Props) {
                         ¡Pago <span className="text-pink-500">Completado</span>!
                     </h1>
                     <p className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-8">
-                        Tu entrada se ha procesado con éxito. El carrito ha sido vaciado del sistema.
+                        Tu compra ha sido realizada con éxito. Puedes acceder a ella a través de tu perfil.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

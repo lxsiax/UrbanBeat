@@ -3,16 +3,52 @@ import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 
 export default function Register() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, setError, clearErrors } = useForm({
         name: '',
         apellidos: '',
         email: '',
+        dni: '',
         password: '',
         password_confirmation: '',
     });
 
     const enviarRegistro = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        
+        clearErrors();
+        let tieneErrores = false;
+
+        if (data.name.trim().length <= 3) {
+            setError('name', 'El nombre debe tener más de 3 caracteres');
+            tieneErrores = true;
+        }
+
+        if (data.apellidos.trim().length <= 2) {
+            setError('apellidos', 'El apellido debe tener más de 2 caracteres');
+            tieneErrores = true;
+        }
+
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regexEmail.test(data.email)) {
+            setError('email', 'Introduce un correo electrónico válido');
+            tieneErrores = true;
+        }
+
+        const regexDni = /^[XYZ\d]\d{7}[A-Z]$/i;
+        if (!regexDni.test(data.dni.trim())) {
+            setError('dni', 'El formato del DNI o NIE no es válido en España');
+            tieneErrores = true;
+        }
+
+        if (data.password !== data.password_confirmation) {
+            setError('password', 'Las contraseñas no coinciden');
+            tieneErrores = true;
+        }
+
+        if (tieneErrores) {
+            return;
+        }
+
         post('/register');
     };
 
@@ -58,6 +94,18 @@ export default function Register() {
                                 required
                             />
                             {errors.apellidos && <p className="text-pink-600 text-[10px] mt-1 font-bold uppercase">{errors.apellidos}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-gray-700 text-[10px] font-black uppercase tracking-widest mb-2">DNI / NIE</label>
+                            <input
+                                type="text"
+                                value={data.dni}
+                                onChange={(e) => setData('dni', e.target.value)}
+                                className="w-full bg-white border border-gray-300 text-black p-3 rounded-xl focus:ring-2 focus:ring-pink-500 focus:outline-none transition-all uppercase"
+                                required
+                            />
+                            {errors.dni && <p className="text-pink-600 text-[10px] mt-1 font-bold uppercase">{errors.dni}</p>}
                         </div>
 
                         <div>

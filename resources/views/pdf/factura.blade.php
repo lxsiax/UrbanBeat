@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Factura #{{ $compra->id }} — UrbanBeat</title>
     <style>
-        /* Configuración global de página */
+          
         @page {
             margin: 0px;
         }
@@ -18,7 +18,7 @@
             line-height: 1.4;
         }
         
-        /* Encabezado Estilo Neo-Brutalista */
+          
         .header-container {
             border: 3px solid #000000;
             background: #ffffff;
@@ -36,7 +36,7 @@
             padding: 0;
         }
         .logo-color { 
-            color: #ec4899; /* Rosa fucsia característico */
+            color: #ec4899;   
         } 
         .info-factura { 
             float: right; 
@@ -51,7 +51,7 @@
             clear: both;
         }
 
-        /* Bloques de Datos (Emisor / Receptor) */
+          
         .detalles-bloque { 
             margin-bottom: 35px; 
             width: 100%;
@@ -92,7 +92,7 @@
             color: #333333;
         }
 
-        /* Tabla de artículos */
+          
         table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -130,7 +130,7 @@
             font-weight: bold;
         }
 
-        /* Contenedor de Totales */
+          
         .total-wrapper {
             width: 100%;
             margin-top: 10px;
@@ -156,15 +156,16 @@
             font-size: 26px; 
             font-weight: 900; 
             color: #000000; 
+            italic: font-style;
         }
 
-        /* Sección de Asistentes Nominativos */
+          
         .asistentes-box { 
             border: 2px dashed #000000; 
             padding: 20px; 
-            background: #fffdf5; /* Sutil fondo crema para contrastar */
+            background: #fffdf5;   
             margin-top: 20px;
-            page-break-inside: avoid; /* Evita que se rompa feamente entre páginas */
+            page-break-inside: avoid;   
         }
         .asistente-grid {
             margin-top: 10px;
@@ -187,7 +188,7 @@
             margin-right: 5px;
         }
 
-        /* Pie de página estricto */
+          
         .footer-nota { 
             text-align: center; 
             margin-top: 50px; 
@@ -214,19 +215,20 @@
 
     <div class="detalles-bloque">
         <div class="col">
-            <div class="titulo-seccion">Organizador / Emisor</div>
+            <div class="titulo-seccion">Organizador</div>
             <div class="datos-texto">
                 <strong>UrbanBeat Festival S.L.</strong><br>
                 CIF: B-99999999<br>
-                Av. de la Música de Vanguardia, 42<br>
-                soporte@urbanbeat.com
+                Av. de las Piletas, 13, 11540 Sanlúcar de Barrameda<br>
+                info@urbanbeatfestival.com
             </div>
         </div>
         <div class="col-right">
-            <div class="titulo-seccion">Comprador / Cliente</div>
+            <div class="titulo-seccion">Cliente</div>
             <div class="datos-texto">
-                <strong>{{ $compra->user->name ?? 'Asistente Registrado' }} {{ $compra->user->apellidos ?? '' }}</strong><br>
+                <strong>{{ $compra->user->name ?? 'Asistente Registrado' }}{{ $compra->user->apellidos ?? 'e' }}</strong><br>
                 Email: {{ $compra->user->email ?? '-' }}<br>
+                DNI/NIE: {{ $compra->user->dni ?? 'No especificado' }}<br>
                 ID Cliente: #URBAN-{{ str_pad($compra->user_id, 4, '0', STR_PAD_LEFT) }}
             </div>
         </div>
@@ -247,7 +249,7 @@
             <tr>
                 <td>
                     @if($linea->entrada)
-                        <strong style="text-transform: uppercase;">Entrada Nom. — {{ $linea->entrada->titulo ?? $linea->entrada->nombre ?? 'Ticket Oficial' }}</strong>
+                        <strong style="text-transform: uppercase;">Entrada Nom. — {{ $linea->entrada->nombre ?? 'Abono General' }}</strong>
                         <div class="item-detalle">Acceso oficial al recinto del festival</div>
                     @elseif($linea->producto)
                         <strong style="text-transform: uppercase;">Merchandising — {{ $linea->producto->nombre ?? 'Artículo' }}</strong>
@@ -268,17 +270,17 @@
 
     <div class="total-wrapper">
         <div class="total-container">
-            <span class="total-label">Importe Total Liquidado</span><br>
+            <span class="total-label">Importe Total</span><br>
             <span class="total-precio">{{ number_format($compra->total, 2) }}€</span>
         </div>
         <div class="clear"></div>
     </div>
 
-    @if($compra->asistentes && $compra->asistentes->count() > 0)
+    @if($compra->asistentes->count() > 0)
     <div class="asistentes-box">
-        <div class="titulo-seccion" style="background: #000000;">Accesos Nominativos Vinculados</div>
+        <div class="titulo-seccion" style="background: #000000;">Accesos Vinculados</div>
         <p style="font-size: 11px; margin: 5px 0 15px 0; font-weight: bold; text-transform: uppercase; color: #555555;">
-             Las siguientes entradas son personales e intransferibles. Se requerirá documento de identidad físico en los accesos.
+            Las siguientes entradas son personales e intransferibles. Se requerirá documento de identidad físico en los accesos.
         </p>
         
         <div class="asistente-grid">
@@ -300,8 +302,7 @@
 
     <div class="footer-nota">
         UrbanBeat Festival • Este documento sirve como justificante de pago y asignación de derechos de acceso.<br>
-        Conserva el PDF en tu smartphone o preséntalo impreso en el control de pulseración.<br>
-        ¡Gracias por tu confianza! Nos vemos en el festival.
+        ¡Gracias por tu confianza! Nos vemos en UrbanBeat.
     </div>
 
 </body>

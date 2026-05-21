@@ -1,5 +1,5 @@
+import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { Head, router } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import AlertBonito from '@/components/festival/AlertBonito';
 import { 
@@ -43,14 +43,15 @@ export default function Index({ usuarios }: Props) {
     const cerrarAlert = () => setAlertConfig(prev => ({ ...prev, isOpen: false }));
 
     const cambiarRol = (id: number, currentRoleId: number) => {
-        const nuevoRol = currentRoleId === 1 ? 2 : 1; 
         setAlertConfig({
             isOpen: true,
             titulo: "Cambiar Rango",
             mensaje: "¿Seguro que quieres cambiar el rango de este usuario?",
             colorConfirmar: "bg-yellow-400 text-black",
             onConfirm: () => {
-                router.patch(`/admin/usuarios/${id}/rol`);
+                const url = `/admin/usuarios/${id}/rol`;
+                // @ts-ignore
+                window.Inertia ? window.Inertia.patch(url) : window.location.href = url;
                 cerrarAlert();
             }
         });
@@ -65,7 +66,9 @@ export default function Index({ usuarios }: Props) {
                 : "¿Seguro que quieres banear a este usuario del chat?",
             colorConfirmar: estaBaneado ? "bg-green-400 text-black" : "bg-orange-400 text-black",
             onConfirm: () => {
-                router.post(`/usuarios/${id}/banear`, {}, { preserveScroll: true });
+                const url = `/usuarios/${id}/banear`;
+                // @ts-ignore
+                window.Inertia ? window.Inertia.post(url, {}, { preserveScroll: true }) : window.location.href = url;
                 cerrarAlert();
             }
         });
@@ -80,7 +83,9 @@ export default function Index({ usuarios }: Props) {
                 : "¿Quieres restaurar los permisos de acceso del usuario a UrbanBeat?",
             colorConfirmar: accesoActual ? "bg-pink-500 text-white" : "bg-purple-400 text-black",
             onConfirm: () => {
-                router.patch(`/admin/usuarios/${id}/acceso`, {}, { preserveScroll: true });
+                const url = `/admin/usuarios/${id}/acceso`;
+                // @ts-ignore
+                window.Inertia ? window.Inertia.patch(url, {}, { preserveScroll: true }) : window.location.href = url;
                 cerrarAlert();
             }
         });
@@ -128,9 +133,13 @@ export default function Index({ usuarios }: Props) {
                                     <tr key={usr.id} className={`transition-colors ${!usr.acceso_permitido ? 'bg-gray-100 text-gray-400' : 'hover:bg-gray-50/80'}`}>
                                         <td className="p-5">
                                             <div className="flex items-center gap-2">
-                                                <div className={`font-black text-base uppercase italic ${!usr.acceso_permitido ? 'line-through text-gray-400' : ''}`}>
+                                                {/* Enlace limpio para ir a la nueva vista de Pedidos */}
+                                                <Link 
+                                                    href={`/admin/usuarios/${usr.id}/pedidos`}
+                                                    className={`font-black text-base uppercase italic block hover:text-pink-500 transition-colors ${!usr.acceso_permitido ? 'line-through text-gray-400' : 'text-black'}`}
+                                                >
                                                     {usr.name} {usr.apellidos || ''}
-                                                </div>
+                                                </Link>
                                                 {usr.baneado && (
                                                     <span className="bg-red-500 text-white border border-black text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
                                                         Baneado

@@ -80,7 +80,8 @@ Route::middleware(['auth'])->group(function () {
     //Rutas para el pago
     Route::prefix('pago')->group(function () {
         Route::post('/iniciar', [PagoController::class, 'iniciarPago'])->name('pago.iniciar');
-        Route::get('/exito', [PagoController::class, 'exito'])->name('pago.exito');
+        Route::get('/exito', [PagoController::class, 'exito'])->name('pago.exito'); // Aquí procesamos
+        Route::get('/confirmacion/{id}', [PagoController::class, 'confirmacion'])->name('pago.confirmacion'); // Aquí pintamos con Inertia
         Route::get('/cancelado', [PagoController::class, 'cancelado'])->name('pago.cancelado');
     });
     Route::get('/pago/factura/{id}/pdf', [PagoController::class, 'descargarPdf'])->name('pago.pdf');
@@ -88,10 +89,12 @@ Route::middleware(['auth'])->group(function () {
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
         // Rutas crud usuarios
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
         Route::patch('/usuarios/{usuario}/rol', [UserController::class, 'updateRole'])->name('usuarios.updateRole');
         Route::patch('/usuarios/{usuario}/acceso', [UserController::class, 'alternarAcceso'])->name('usuarios.acceso');
+        Route::get('/usuarios/{id}/pedidos', [UserController::class, 'verPedidosUsuario'])->name('admin.usuarios.pedidos');
 
         // Rutas crud entradas
         Route::resource('entradas', EntradaController::class)->names([

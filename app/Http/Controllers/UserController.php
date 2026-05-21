@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compra;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -51,5 +52,25 @@ class UserController extends Controller
         $usuario->delete();
 
         return back()->with('success', 'Usuario eliminado correctamente.');
+    }
+
+    public function verPedidosUsuario($id)
+    {
+        $usuarioSeleccionado = User::findOrFail($id);
+
+        $compras = Compra::where('user_id', $usuarioSeleccionado->id)
+            ->with([
+                'facturas.producto',
+                'facturas.entrada.tipoEntrada.dia',
+                'facturas.entrada.zona',
+                'facturas.talla'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Admin/Usuarios/Pedidos', [
+            'usuarioSeleccionado' => $usuarioSeleccionado,
+            'compras' => $compras
+        ]);
     }
 }

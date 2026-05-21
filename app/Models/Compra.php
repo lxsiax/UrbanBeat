@@ -13,6 +13,7 @@ class Compra extends Model
     protected $fillable = [
         'user_id',
         'total',
+        'stripe_session_id',
         'estado'
     ];
 

@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'apellidos' => 'UrbanBeat',
             'email' => 'admin@admin.com',
+            'dni' => '55665566T',
             'password' => Hash::make('admin'),
             'fecha_registro' => Carbon::now(),
             'role_id' => $adminRol->id,
@@ -37,6 +38,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Juan',
             'apellidos' => 'Pérez',
             'email' => 'juan@juan.com',
+            'dni' => '22222222L',
             'password' => Hash::make('juan'),
             'fecha_registro' => Carbon::now(),
             'role_id' => $clienteRol->id,
@@ -45,6 +47,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Lucía',
             'apellidos' => 'Robles López',
+            'dni' => '11111111A',
             'email' => 'lucia.robles@iesdonana.org',
             'password' => Hash::make('lucia'),
             'fecha_registro' => Carbon::now(),

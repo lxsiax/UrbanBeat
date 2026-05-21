@@ -58,7 +58,7 @@ class PagoController extends Controller
                     'nombre' => $item->nombre,
                     'precio' => $item->precio,
                     'cantidad' => $item->cantidad,
-                    'talla_id' => $item->talla_id, // Lo mapeamos para Stripe Metadata
+                    'talla_id' => $item->talla_id,
                     'tipo' => 'merchandising'
                 ];
             })->toArray();
@@ -115,6 +115,13 @@ class PagoController extends Controller
             return redirect()->route('carrito.index')->with('error', 'No se encontró sesión de pago.');
         }
 
+         
+         
+        $compraExistente = Compra::where('stripe_session_id', $sessionId)->first();
+        if ($compraExistente) {
+            return redirect()->route('pago.confirmacion', ['id' => $compraExistente->id]);
+        }
+
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
         try {
@@ -125,7 +132,6 @@ class PagoController extends Controller
             }
 
             $userId = $sessionStripe->metadata->user_id;
-
             $asistentesData = json_decode($sessionStripe->metadata->asistentes_json ?? '[]', true);
             $articulosComprados = json_decode($sessionStripe->metadata->carrito_json ?? '[]', true);
 
@@ -133,6 +139,7 @@ class PagoController extends Controller
 
             $compra = Compra::create([
                 'user_id' => $userId,
+                'stripe_session_id' => $sessionId,
                 'total' => $sessionStripe->amount_total / 100,
                 'estado' => 'Pagado'
             ]);
@@ -173,9 +180,8 @@ class PagoController extends Controller
 
             DB::commit();
 
-            return Inertia::render('PagoExito', [
-                'compra_id' => $compra->id
-            ]);
+             
+            return redirect()->route('pago.confirmacion', ['id' => $compra->id]);
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -187,12 +193,27 @@ class PagoController extends Controller
         }
     }
 
+     
+    public function confirmacion($id)
+    {
+        $compra = Compra::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+
+        return Inertia::render('PagoExito', [
+            'compra_id' => $compra->id
+        ]);
+    }
+
     public function descargarPdf($id)
     {
-        $compra = Compra::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->with(['user', 'facturas.entrada', 'facturas.producto', 'facturas.talla', 'asistentes'])
-            ->firstOrFail();
+
+        $query = Compra::where('id', $id)
+            ->with(['user', 'facturas.entrada', 'facturas.producto', 'facturas.talla', 'asistentes']);
+
+        if (auth()->user()->role_id !== 1) {
+            $query->where('user_id', auth()->id());
+        }
+
+        $compra = $query->firstOrFail();
 
         $pdf = Pdf::loadView('pdf.factura', compact('compra'));
 
