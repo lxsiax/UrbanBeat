@@ -96,6 +96,7 @@ class DatabaseSeeder extends Seeder
             'nombre' => 'Camiseta UrbanBeat',
             'descripcion' => 'Edición 2026 oficial del festival',
             'precio' => 25.00,
+            'categoria' => 'ropa',
             'esta_oculto' => false,
             'imagen_url' => 'productos/camisetabuena.png',
         ]);
@@ -106,11 +107,41 @@ class DatabaseSeeder extends Seeder
             $tallaXL->id => ['stock' => 5],
         ]);
 
-        // 2. Gafas (Talla Única)
+        $pantalon = Producto::create([
+            'nombre' => 'Pantalon UrbanBeat',
+            'descripcion' => 'Edición 2026 oficial del festival',
+            'precio' => 25.00,
+            'categoria' => 'ropa',
+            'esta_oculto' => false,
+            'imagen_url' => 'productos/pantalon.png',
+        ]);
+        $pantalon->tallas()->attach([
+            $tallaS->id => ['stock' => 30],
+            $tallaM->id => ['stock' => 50],
+            $tallaL->id => ['stock' => 60],
+            $tallaXL->id => ['stock' => 3],
+        ]);
+
+        $sudadera = Producto::create([
+            'nombre' => 'Sudadera UrbanBeat',
+            'descripcion' => 'Edición 2026 oficial del festival',
+            'precio' => 40.00,
+            'categoria' => 'ropa',
+            'esta_oculto' => false,
+            'imagen_url' => 'productos/sudadera.png',
+        ]);
+        $sudadera->tallas()->attach([
+            $tallaS->id => ['stock' => 20],
+            $tallaM->id => ['stock' => 30],
+            $tallaL->id => ['stock' => 30],
+            $tallaXL->id => ['stock' => 6],
+        ]);
+
         $gafas = Producto::create([
             'nombre' => 'Gafas UrbanBeat',
             'descripcion' => 'Gafas de sol. Perfectas para disfrutar del festival tranquilo.',
             'precio' => 15.00,
+            'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/gafas.png',
         ]);
@@ -121,6 +152,7 @@ class DatabaseSeeder extends Seeder
             'nombre' => 'Gorra UrbanBeat',
             'descripcion' => 'Una gorra moderna de UrbanBeat para disfrutar del festival fresquito',
             'precio' => 12.00,
+            'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/gorra.png',
         ]);
@@ -131,10 +163,21 @@ class DatabaseSeeder extends Seeder
             'nombre' => 'Botella UrbanBeat',
             'descripcion' => 'Con esta botella termo, podrás llevar todas tus bebidas fresquitas',
             'precio' => 20.00,
+            'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/botella.png',
         ]);
         $botella->tallas()->attach($tallaUnica->id, ['stock' => 150]);
+
+        $pulsera = Producto::create([
+            'nombre' => 'Pulsera UrbanBeat',
+            'descripcion' => 'Pulsera de UrbanBeat con estilo festivalero',
+            'precio' => 5.00,
+            'categoria' => 'accesorios',
+            'esta_oculto' => false,
+            'imagen_url' => 'productos/pulsera.png',
+        ]);
+        $pulsera->tallas()->attach($tallaUnica->id, ['stock' => 150]);
 
 
         // --- OTROS ---

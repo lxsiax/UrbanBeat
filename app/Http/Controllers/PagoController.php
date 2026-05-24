@@ -18,8 +18,8 @@ class PagoController extends Controller
     {
         $request->validate([
             'total' => 'required|numeric|min:0.01',
-            'telefono_comprador' => 'required|string|max:20',  
-            'direccion_comprador' => 'required|string',        
+            'telefono_comprador' => 'required|string|max:20',
+            'direccion_comprador' => 'required|string',
             'asistentes' => 'nullable|array',
             'asistentes.*.entrada_id' => 'required|integer',
             'asistentes.*.nombre' => 'required|string|max:255',
@@ -74,13 +74,13 @@ class PagoController extends Controller
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         $total = $request->input('total');
         $asistentes = $request->input('asistentes', []);
-        
-         
+
+
         $telefonoComprador = $request->input('telefono_comprador');
         $direccionComprador = $request->input('direccion_comprador');
 
         try {
-             
+
             $metadata = [
                 'user_id' => $user->id,
                 'telefono_comprador' => $telefonoComprador,
@@ -138,7 +138,7 @@ class PagoController extends Controller
                 return redirect()->route('carrito.index')->with('error', 'El pago no ha sido completado.');
             }
 
-             
+
             $userId = $sessionStripe->metadata->user_id;
             $telefonoComprador = $sessionStripe->metadata->telefono_comprador ?? '';
             $direccionComprador = $sessionStripe->metadata->direccion_comprador ?? '';
@@ -147,7 +147,7 @@ class PagoController extends Controller
 
             DB::beginTransaction();
 
-             
+
             $compra = Compra::create([
                 'user_id' => $userId,
                 'stripe_session_id' => $sessionId,
@@ -155,7 +155,7 @@ class PagoController extends Controller
                 'estado' => 'Pagado',
                 'telefono_comprador' => $telefonoComprador,
                 'direccion_comprador' => $direccionComprador,
-                'estado_envio' => 'pagado'  
+                'estado_envio' => 'pagado'
             ]);
 
             foreach ($asistentesData as $asistente) {
@@ -178,6 +178,16 @@ class PagoController extends Controller
                     'cantidad' => $articulo['cantidad'],
                     'precio_unitario' => $articulo['precio'],
                 ]);
+
+                if ($articulo['tipo'] === 'merchandising') {
+                    DB::table('producto_talla')
+                        ->where('producto_id', $articulo['id'])
+                        ->where('talla_id', $articulo['talla_id'])
+                        ->decrement('stock', $articulo['cantidad']);
+                } else {
+                    \App\Models\Entrada::where('id', $articulo['id'])
+                        ->decrement('stock', $articulo['cantidad']);
+                }
             }
 
             DB::table('entrada_user')->where('user_id', $userId)->delete();

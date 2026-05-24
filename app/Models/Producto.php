@@ -15,13 +15,14 @@ class Producto extends Model
         'descripcion',
         'precio',
         'imagen_url',
+        'categoria',
         'esta_oculto',
     ];
 
     public function tallas(): BelongsToMany
     {
         return $this->belongsToMany(Talla::class, 'producto_talla')
-            ->withPivot('stock') // Importante para acceder al stock de cada talla
+            ->withPivot('stock')
             ->withTimestamps();
     }
 

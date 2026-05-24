@@ -1,37 +1,44 @@
 import { Head } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import BotonDashboard from '@/components/festival/BotonDashboard';
-import { HiTicket, HiShoppingBag, HiUsers, HiStar } from "react-icons/hi2";
+import { HiTicket, HiShoppingBag, HiUsers, HiStar, HiOutlineDocumentText } from "react-icons/hi2";
 
 export default function Dashboard() {
     const botones = [
-        { 
-            nombre: 'Gestión de Entradas', 
-            desc: 'Control de stock, precios y tipos de entrada.', 
-            icon: <HiTicket strokeWidth={2} />, 
+        {
+            nombre: 'Gestión de Entradas',
+            desc: 'Control de stock, precios y tipos de entrada.',
+            icon: <HiTicket strokeWidth={2} />,
             href: '/admin/entradas',
-            color: 'bg-pink-500' 
+            color: 'bg-pink-500'
         },
-        { 
-            nombre: 'Gestión de Artistas', 
-            desc: 'Control del cartel, fotos y orden.', 
-            icon: <HiStar strokeWidth={2} />, 
-            href: '/admin/artistas', 
-            color: 'bg-yellow-400' 
+        {
+            nombre: 'Gestión de Artistas',
+            desc: 'Control del cartel, fotos y orden.',
+            icon: <HiStar strokeWidth={2} />,
+            href: '/admin/artistas',
+            color: 'bg-yellow-400'
         },
-        { 
-            nombre: 'Merchandising', 
-            desc: 'Control de stock de ropa, accesorios y merch oficial.', 
-            icon: <HiShoppingBag strokeWidth={2} />, 
-            href: '/admin/productos', 
-            color: 'bg-cyan-400' 
+        {
+            nombre: 'Merchandising',
+            desc: 'Control de stock de ropa, accesorios y merch oficial.',
+            icon: <HiShoppingBag strokeWidth={2} />,
+            href: '/admin/productos',
+            color: 'bg-cyan-400'
         },
-        { 
-            nombre: 'Gestión Usuarios', 
-            desc: 'Control de clientes, roles y permisos.', 
-            icon: <HiUsers strokeWidth={2} />, 
-            href: '/admin/usuarios', 
-            color: 'bg-black' 
+        {
+            nombre: 'Gestión Usuarios',
+            desc: 'Control de clientes, roles y permisos.',
+            icon: <HiUsers strokeWidth={2} />,
+            href: '/admin/usuarios',
+            color: 'bg-black'
+        },
+        {
+            nombre: 'Gestión Facturas',
+            desc: 'Historial de facturas.',
+            icon: <HiOutlineDocumentText strokeWidth={2} />,
+            href: '/admin/facturas',
+            color: 'bg-green-500'
         },
     ];
 
@@ -46,14 +53,14 @@ export default function Dashboard() {
                         Panel de administrador
                     </span>
                     <h1 className="text-7xl font-black italic uppercase tracking-tighter mt-4 leading-[0.85]">
-                        Panel de 
+                        Panel de
                         <span className="text-pink-500"> Gestión</span>
                     </h1>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {botones.map((boton, i) => (
-                        <BotonDashboard 
+                        <BotonDashboard
                             key={i}
                             {...boton}
                         />
