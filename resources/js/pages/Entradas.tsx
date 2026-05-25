@@ -4,6 +4,7 @@ import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import MapaRecinto from '@/components/festival/MapaRecinto';
 import EntradasSeccion from '@/components/festival/EntradaSeccion'; 
+import WidgetChat from '@/components/festival/WidgetChat';
 
 interface Props {
     entradas: any[];
@@ -127,6 +128,7 @@ export default function Entradas({ entradas, titulo }: Props) {
 
                 </div>
             </main>
+            <WidgetChat />
 
             <Footer />
         </div>

@@ -65,23 +65,41 @@ class DatabaseSeeder extends Seeder
         $dia24 = Dia::create(['fecha' => '2026-07-24']);
         $dia25 = Dia::create(['fecha' => '2026-07-25']);
 
-        // --- ENTRADAS ---
+        // --- TIPOS ---
         $tipoAbono = TipoEntrada::create(['nombre' => 'Abono General', 'dia_id' => null]);
         $tipoD23 = TipoEntrada::create(['nombre' => 'Entrada 23 de Julio', 'dia_id' => $dia23->id]);
         $tipoD24 = TipoEntrada::create(['nombre' => 'Entrada 24 de Julio', 'dia_id' => $dia24->id]);
         $tipoD25 = TipoEntrada::create(['nombre' => 'Entrada 25 de Julio', 'dia_id' => $dia25->id]);
 
-        $tipos = [$tipoAbono, $tipoD23, $tipoD24, $tipoD25];
+        $zonas = [$zonaPista, $zonaGrada, $zonaFront];
         $preciosBase = [
-            'Abono General' => ['Pista' => 120, 'Grada' => 100, 'Front Stage' => 170],
-            'Entrada de Día' => ['Pista' => 60, 'Grada' => 45, 'Front Stage' => 100]
+            'Abono' => ['Pista' => 120, 'Grada' => 100, 'Front Stage' => 170],
+            'Dia' => ['Pista' => 60, 'Grada' => 45, 'Front Stage' => 100]
         ];
 
-        foreach ($tipos as $tipo) {
-            $categoria = ($tipo->nombre === 'Abono General') ? 'Abono General' : 'Entrada de Día';
-            Entrada::create(['tipo_entrada_id' => $tipo->id, 'zona_id' => $zonaPista->id, 'precio' => $preciosBase[$categoria]['Pista'], 'stock' => 1000]);
-            Entrada::create(['tipo_entrada_id' => $tipo->id, 'zona_id' => $zonaGrada->id, 'precio' => $preciosBase[$categoria]['Grada'], 'stock' => 800]);
-            Entrada::create(['tipo_entrada_id' => $tipo->id, 'zona_id' => $zonaFront->id, 'precio' => $preciosBase[$categoria]['Front Stage'], 'stock' => 200]);
+        foreach ($zonas as $z) {
+            // Definimos qué parte del aforo va a qué tipo (ejemplo: 40% abonos, 20% por día)
+            // Asegúrate de que la suma no supere el 100%
+            $distribucion = [
+                $tipoAbono->id => 0.40, // 40% del aforo para abonos
+                $tipoD23->id => 0.20, // 20% para cada día
+                $tipoD24->id => 0.20,
+                $tipoD25->id => 0.20
+            ];
+
+            foreach ($distribucion as $tipoId => $porcentaje) {
+                $stockCalculado = floor($z->aforo * $porcentaje);
+                $esAbono = ($tipoId === $tipoAbono->id);
+                $precio = $esAbono ? $preciosBase['Abono'][$z->nombre] : $preciosBase['Dia'][$z->nombre];
+
+                Entrada::create([
+                    'tipo_entrada_id' => $tipoId,
+                    'zona_id' => $z->id,
+                    'precio' => $precio,
+                    'stock' => $stockCalculado,
+                    'stock_inicial' => $stockCalculado
+                ]);
+            }
         }
 
         // --- TALLAS ---

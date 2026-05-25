@@ -3,6 +3,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { HiOutlinePencil, HiPlus, HiOutlineEye, HiOutlineEyeSlash } from 'react-icons/hi2';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
+import WidgetChat from '@/components/festival/WidgetChat';
 
 interface NoticiaItemProps {
     n: {
@@ -142,6 +143,7 @@ export default function Informacion({ novedades, horario, ubicacion, normas, map
                     )}
                 </div>
             </section>
+            <WidgetChat />
             <Footer />
         </div>
     );

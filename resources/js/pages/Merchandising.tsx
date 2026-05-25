@@ -3,6 +3,7 @@ import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import ProductoMerch from '@/components/festival/ProductoMerch';
 import { HiOutlineEye, HiOutlineEyeSlash, HiOutlinePencil } from "react-icons/hi2";
+import WidgetChat from '@/components/festival/WidgetChat';
 
 interface Props {
     productos: any[];
@@ -92,6 +93,7 @@ export default function Merchandising({ productos }: Props) {
                     )}
                 </div>
             </main>
+            <WidgetChat />
             <Footer />
         </div>
     );

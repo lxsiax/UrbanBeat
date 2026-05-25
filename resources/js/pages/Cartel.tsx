@@ -3,6 +3,7 @@ import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 import ImagenArtista from '@/components/festival/ImagenArtista';
 import { HiOutlineEye, HiOutlineEyeSlash, HiOutlinePencil } from "react-icons/hi2";
+import WidgetChat from '@/components/festival/WidgetChat';
 
 interface Props {
     programacion: any[];
@@ -97,6 +98,7 @@ export default function Cartel({ programacion, auth }: Props) {
                     </div>
                 </div>
             </main>
+            <WidgetChat />
 
             <Footer />
         </div>

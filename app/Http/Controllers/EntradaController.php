@@ -36,7 +36,7 @@ class EntradaController extends Controller
      */
     public function create()
     {
-        $tipos = TipoEntrada::with('dia')->get(); 
+        $tipos = TipoEntrada::with('dia')->get();
         $zonas = Zona::all();
 
         return inertia('Admin/Entradas/Create', [
@@ -53,14 +53,14 @@ class EntradaController extends Controller
         $validated = $request->validate([
             'tipo_entrada_id' => 'required|exists:tipo_entradas,id',
             'zona_id' => 'required|exists:zonas,id',
-            'precio' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'esta_oculta' => 'boolean',
+            'precio' => 'required|numeric',
+            'stock' => 'required|integer',
         ]);
 
-        Entrada::create($validated);
+        $validated['stock_inicial'] = $validated['stock'];
 
-        return redirect()->route('admin.entradas.index')->with('success', 'Entrada creada correctamente.');
+        Entrada::create($validated);
+        return redirect()->route('admin.entradas.index');
     }
 
     /**

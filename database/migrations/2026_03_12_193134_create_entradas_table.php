@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('precio', 8, 2);
             $table->integer('stock');
+            $table->integer('stock_inicial')->default(0)->after('stock');
             $table->foreignId('tipo_entrada_id')->constrained();
             $table->foreignId('zona_id')->constrained();
             $table->boolean('esta_oculta')->default(false);

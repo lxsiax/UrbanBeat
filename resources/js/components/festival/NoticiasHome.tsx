@@ -101,7 +101,7 @@ export default function NoticiasHome({ noticias }: NoticiasHomeProps) {
                 <div className="mt-20 text-center">
                     <Link
                         href="/informacion"
-                        className="inline-block px-16 py-6 bg-black text-white font-black uppercase text-xs tracking-widest italic rounded-full hover:bg-pink-500 hover:scale-105 transition-all duration-300 shadow-xl"
+                        className="inline-block px-16 py-6 bg-black text-white font-black uppercase text-xs tracking-widest rounded-full hover:bg-pink-500 hover:scale-105 transition-all duration-300 shadow-xl"
                     >
                         Ver todas las noticias
                     </Link>

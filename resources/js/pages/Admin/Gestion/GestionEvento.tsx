@@ -52,7 +52,7 @@ export default function GestionEvento({ fecha_actual, duracion_actual, dias, con
                                     </div>
                                 </div>
                                 <button disabled={processing} className="w-full bg-pink-500 text-white border-4 border-black py-4 rounded-2xl font-black uppercase italic tracking-tighter text-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50">
-                                    {processing ? 'Actualizando...' : 'Guardar Configuración Maestra'}
+                                    {processing ? 'Actualizando...' : 'Guardar configuración'}
                                 </button>
                             </form>
                             <div className="lg:col-span-1">
