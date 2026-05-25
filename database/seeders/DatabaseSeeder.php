@@ -185,7 +185,7 @@ class DatabaseSeeder extends Seeder
         Chat::create(['nombre' => 'General', 'descripcion' => 'Chat oficial']);
 
         $artistas = [
-            ['nombre' => 'Bad Gyal', 'imagen' => 'artistas/badgyal.jpeg', 'es_headliner' => true, 'dia_id' => $dia23->id, 'esta_oculto' => false, 'link_spotify' => 'https://open.spotify.com/intl-es/artist/4F4pp8NUW08JuXwnoxglpN?si=6386f732291f4836', 'orden' => 1],
+            ['nombre' => 'Bad Gyal', 'imagen' => 'artistas/badgyal.jpg', 'es_headliner' => true, 'dia_id' => $dia23->id, 'esta_oculto' => false, 'link_spotify' => 'https://open.spotify.com/intl-es/artist/4F4pp8NUW08JuXwnoxglpN?si=6386f732291f4836', 'orden' => 1],
             ['nombre' => 'Lia Kali', 'imagen' => 'artistas/lia.jpg', 'es_headliner' => false, 'esta_oculto' => false, 'dia_id' => $dia23->id, 'link_spotify' => 'https://open.spotify.com/intl-es/artist/7rFHoDuiSlV0DGHxckjm89?si=bb30d6e2eb2f4639', 'orden' => 3],
             ['nombre' => 'Duki', 'imagen' => 'artistas/duki.jpg', 'es_headliner' => false, 'link_spotify' => 'https://open.spotify.com/intl-es/artist/1bAftSH8umNcGZ0uyV7LMg?si=2138df945e2243f5', 'dia_id' => $dia23->id, 'esta_oculto' => false, 'orden' => 4],
             ['nombre' => 'Quevedo', 'imagen' => 'artistas/quevedo.jpeg', 'es_headliner' => true, 'dia_id' => $dia24->id, 'link_spotify' => 'https://open.spotify.com/intl-es/artist/52iwsT98xCoGgiGntTiR7K?si=081ffb2a73b64396', 'esta_oculto' => false, 'orden' => 1],

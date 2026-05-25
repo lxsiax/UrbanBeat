@@ -1,7 +1,15 @@
 import { Head } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import BotonDashboard from '@/components/festival/BotonDashboard';
-import { HiTicket, HiShoppingBag, HiUsers, HiStar, HiOutlineDocumentText, HiOutlineCalendarDays } from "react-icons/hi2";
+import { 
+    HiTicket, 
+    HiShoppingBag, 
+    HiUsers, 
+    HiStar, 
+    HiOutlineDocumentText, 
+    HiOutlineCalendarDays,
+    HiOutlineMegaphone // Importamos el icono
+} from "react-icons/hi2";
 
 export default function Dashboard() {
     const botones = [
@@ -20,7 +28,7 @@ export default function Dashboard() {
             color: 'bg-yellow-400'
         },
         {
-            nombre: 'Merchandising',
+            nombre: ' Gestión de Productos',
             desc: 'Control de stock de ropa, accesorios y merch oficial.',
             icon: <HiShoppingBag strokeWidth={2} />,
             href: '/admin/productos',
@@ -42,10 +50,17 @@ export default function Dashboard() {
         },
         {
             nombre: 'Gestión del Evento',
-            desc: 'Cambiar fechas del festival, información y noticias',
+            desc: 'Cambiar información relevante del evento',
             icon: <HiOutlineCalendarDays strokeWidth={2} />,
             href: '/admin/evento',
             color: 'bg-orange-500'
+        },
+        {
+            nombre: 'Gestión de Noticias',
+            desc: 'Publicación de comunicados y novedades del festival.',
+            icon: <HiOutlineMegaphone strokeWidth={2} />,
+            href: '/admin/noticias',
+            color: 'bg-indigo-500'
         },
     ];
 

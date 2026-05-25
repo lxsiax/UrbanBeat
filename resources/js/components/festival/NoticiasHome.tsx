@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { HiOutlinePencil } from 'react-icons/hi2';
 
 interface Noticia {
     id: number;
@@ -13,6 +14,9 @@ interface NoticiasHomeProps {
 }
 
 export default function NoticiasHome({ noticias }: NoticiasHomeProps) {
+    const { auth } = usePage().props as any;
+    const esAdmin = auth?.user?.role_id === 1;
+
     if (!noticias || noticias.length === 0) return null;
 
     const noticiasMostradas = noticias.slice(0, 3);
@@ -23,7 +27,7 @@ export default function NoticiasHome({ noticias }: NoticiasHomeProps) {
                 
                 <div className="mb-20 text-center lg:text-left">
                     <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter italic text-black leading-none">
-                        ÚLTIMAS <span className="text-pink-500">NOTICIAS</span>
+                        ÚLTIMAS <span className="text-pink-500">NOVEDADES</span>
                     </h2>
                 </div>
 
@@ -31,8 +35,17 @@ export default function NoticiasHome({ noticias }: NoticiasHomeProps) {
                     {noticiasMostradas.map((n) => (
                         <div 
                             key={n.id} 
-                            className="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+                            className="relative bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
                         >
+                            {esAdmin && (
+                                <button
+                                    onClick={() => router.get(`/admin/noticias/${n.id}/edit`)}
+                                    className="absolute top-4 right-4 z-20 p-3 bg-pink-500 text-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 active:shadow-none hover:bg-black hover:-translate-y-1"
+                                >
+                                    <HiOutlinePencil size={20} />
+                                </button>
+                            )}
+
                             {n.imagen && (
                                 <div className="w-full relative overflow-hidden bg-white">
                                     <img 
@@ -78,7 +91,6 @@ export default function NoticiasHome({ noticias }: NoticiasHomeProps) {
                         Ver todas las noticias
                     </Link>
                 </div>
-
             </div>
         </section>
     );

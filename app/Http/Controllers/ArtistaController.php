@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Artista;
 use App\Models\Dia;
+use App\Models\Noticia;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -87,6 +88,7 @@ class ArtistaController extends Controller
             'dia_id' => 'required',
             'orden' => 'required|integer',
             'link_spotify' => 'nullable|url|max:255',
+            'imagen' => 'nullable|image|max:2048'  
         ]);
 
         $artista->nombre = $request->nombre;
@@ -98,16 +100,23 @@ class ArtistaController extends Controller
         if ($request->hasFile('imagen')) {
             if ($artista->imagen) {
                 Storage::disk('public')->delete($artista->imagen);
-            }
+            } 
             $path = $request->file('imagen')->store('artistas', 'public');
-
             $artista->imagen = $path;
+
+            $noticia = Noticia::where('tipo', 'novedad')
+                ->where('titulo', 'like', '%' . $artista->nombre . '%')
+                ->first();
+
+            if ($noticia) {
+                $noticia->update(['imagen' => $path]);
+            }
         }
+
         $artista->save();
 
-        return redirect()->route('admin.artistas.index')->with('success', 'Artista actualizado con éxito');
+        return redirect()->route('admin.artistas.index')->with('success', 'Artista y noticia actualizada con éxito');
     }
-
     public function cambiarVisibilidad($id)
     {
         $artista = Artista::findOrFail($id);

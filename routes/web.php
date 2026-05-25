@@ -120,6 +120,14 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.entradas.update',
         ])->only(['index', 'edit', 'create', 'store', 'update']);
 
+        // Rutas de noticias 
+        Route::get('/noticias', [NoticiaController::class, 'index'])->name('admin.noticias.index');
+        Route::get('/noticias/create', [NoticiaController::class, 'create'])->name('admin.noticias.create');
+        Route::post('/noticias', [NoticiaController::class, 'store'])->name('admin.noticias.store');
+        Route::get('/noticias/{noticia}/edit', [NoticiaController::class, 'edit'])->name('admin.noticias.edit');
+        Route::put('/noticias/{noticia}', [NoticiaController::class, 'update'])->name('admin.noticias.update');
+        Route::delete('/noticias/{noticia}', [NoticiaController::class, 'destroy'])->name('admin.noticias.destroy');
+
         // Rutas crud artistas 
         Route::resource('artistas', ArtistaController::class)->names([
             'index' => 'admin.artistas.index',

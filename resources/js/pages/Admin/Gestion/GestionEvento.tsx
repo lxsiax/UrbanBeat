@@ -29,16 +29,7 @@ export default function GestionEvento({ fecha_actual, duracion_actual, dias, con
             <Header />
             <main className="flex-grow pt-44 pb-20 px-4 sm:px-6 max-w-7xl mx-auto w-full">
                 <div className="mb-10">
-                    <span className="bg-black text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Panel de Configuración</span>
                     <h1 className="text-4xl sm:text-6xl font-black italic uppercase tracking-tighter mt-4 leading-none text-black">Gestión del <span className="text-pink-500">Festival</span></h1>
-                </div>
-                <div className="flex gap-4 mb-12 border-b-4 border-black pb-4">
-                    <button onClick={() => setTabActiva('evento')} className={`flex items-center gap-2 px-6 py-3 border-3 border-black font-black uppercase tracking-tight text-sm sm:text-base rounded-xl transition-all ${tabActiva === 'evento' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}>
-                        <HiOutlineCog6Tooth className="size-5" /> Info del Evento
-                    </button>
-                    <button onClick={() => setTabActiva('noticias')} className={`flex items-center gap-2 px-6 py-3 border-3 border-black font-black uppercase tracking-tight text-sm sm:text-base rounded-xl transition-all ${tabActiva === 'noticias' ? 'bg-pink-500 text-white' : 'bg-white text-black hover:bg-gray-100'}`}>
-                        <HiOutlineMegaphone className="size-5" /> Noticias
-                    </button>
                 </div>
                 {tabActiva === 'evento' && (
                     <div className="space-y-8 animate-fade-in">

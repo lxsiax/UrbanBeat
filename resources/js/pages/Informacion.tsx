@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { HiOutlinePencil, HiPlus } from 'react-icons/hi2';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
 
@@ -19,15 +21,18 @@ interface InformacionProps {
 }
 
 export default function Informacion({ novedades, horario, ubicacion, normas, mapa_src }: InformacionProps) {
+    const { auth } = usePage().props as any;
+    const esAdmin = auth?.user?.role_id === 1;
     const [visibles, setVisibles] = useState(6);
 
-    const noticiasMostradas = novedades.slice(0, visibles);
-    const tieneMasNoticias = novedades.length > visibles;
+    const noticiasOrdenadas = [...novedades].sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
-    const cargarMas = () => {
-        setVisibles((prev) => prev + 6);
-    };
+    const noticiasMostradas = noticiasOrdenadas.slice(0, visibles);
+    const tieneMasNoticias = noticiasOrdenadas.length > visibles;
 
+    const cargarMas = () => setVisibles((prev) => prev + 6);
     const srcMapaPublico = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ubicacion)}`;
 
     return (
@@ -36,15 +41,36 @@ export default function Informacion({ novedades, horario, ubicacion, normas, map
 
             <section className="pt-52 pb-24 bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-8">
-                    <div className="mb-16 text-center lg:text-left">
-                        <span className="text-xs font-black tracking-widest text-pink-500 uppercase block mb-3">Urban Beat Feed</span>
-                        <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter italic text-black">Últimas <span className="text-pink-500">Noticias</span></h1>
+                    <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 text-center lg:text-left">
+                        <div>
+                            <span className="text-xs font-black tracking-widest text-pink-500 uppercase block mb-3">Urban Beat</span>
+                            <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter italic text-black">
+                                Últimas <span className="text-pink-500">Noticias</span>
+                            </h1>
+                        </div>
+                        {esAdmin && (
+                            <Link
+                                href="/admin/noticias/create"
+                                className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-800 text-white px-10 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                            >
+                                <HiPlus size={16} /> Añadir Noticia
+                            </Link>
+                        )}
                     </div>
 
                     {noticiasMostradas.length > 0 ? (
                         <div className="space-y-12">
                             {noticiasMostradas.map((n) => (
-                                <div key={n.id} className="bg-gray-50 rounded-[40px] border border-gray-100 overflow-hidden shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div key={n.id} className="relative bg-gray-50 rounded-[40px] border border-gray-100 overflow-hidden shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    {esAdmin && (
+                                        <button
+                                            onClick={() => router.get(`/admin/noticias/${n.id}/edit`)}
+                                            className="absolute top-4 right-4 z-20 p-3 bg-pink-500 text-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:scale-90 active:shadow-none hover:bg-black hover:-translate-y-1"
+                                        >
+                                            <HiOutlinePencil size={22} />
+                                        </button>
+                                    )}
+
                                     {n.imagen && (
                                         <div className="w-full h-80 relative overflow-hidden bg-zinc-100">
                                             <img src={`/storage/${n.imagen}`} alt={n.titulo} className="w-full h-full object-cover" />
@@ -60,7 +86,11 @@ export default function Informacion({ novedades, horario, ubicacion, normas, map
                                 </div>
                             ))}
                             {tieneMasNoticias && (
-                                <div className="text-center"><button onClick={cargarMas} className="px-12 py-5 bg-black text-white font-black uppercase rounded-full">Mostrar más</button></div>
+                                <div className="text-center">
+                                    <button onClick={cargarMas} className="px-12 py-5 bg-black text-white font-black uppercase rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-pink-500 transition-all">
+                                        Mostrar más
+                                    </button>
+                                </div>
                             )}
                         </div>
                     ) : <p className="text-center text-gray-400">No hay novedades por ahora.</p>}
@@ -98,6 +128,17 @@ export default function Informacion({ novedades, horario, ubicacion, normas, map
                             referrerPolicy="no-referrer-when-downgrade"
                         />
                     </div>
+
+                    {esAdmin && (
+                        <div className="mt-20 text-center">
+                            <Link
+                                href="/admin/evento"
+                                className="inline-block bg-pink-500 text-white px-10 py-4 rounded-xl font-black uppercase tracking-widest border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all active:scale-90"
+                            >
+                                Editar información del evento
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </section>
             <Footer />

@@ -51,7 +51,6 @@ export default function Create({ dias }: { dias: any[] }) {
         if (Object.keys(errores).length > 0) {
             setErroresForm(errores);
             const primerError = Object.keys(errores)[0];
-            // Asegúrate de que el elemento tenga el atributo name correspondiente
             document.getElementsByName(primerError)[0]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
@@ -60,7 +59,7 @@ export default function Create({ dias }: { dias: any[] }) {
         post('/admin/artistas', { forceFormData: true });
     };
 
-    // Función auxiliar para formatear la fecha de manera segura
+
     const formatearFecha = (fechaStr: string) => {
         // Reemplazar guiones por barras previene desfases de zona horaria en algunos navegadores
         const fecha = new Date(fechaStr.replace(/-/g, '\/'));
@@ -89,8 +88,6 @@ export default function Create({ dias }: { dias: any[] }) {
 
                 <div className="bg-white p-10 rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
                     <form onSubmit={enviar} className="space-y-6">
-                        
-                        {/* NOMBRE */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2">Nombre</label>
                             <input 
@@ -106,8 +103,6 @@ export default function Create({ dias }: { dias: any[] }) {
                                 </p>
                             )}
                         </div>
-
-                        {/* DÍA */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2">Día</label>
                             <div className="relative">
@@ -131,8 +126,6 @@ export default function Create({ dias }: { dias: any[] }) {
                                 </p>
                             )}
                         </div>
-
-                        {/* SPOTIFY */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2 tracking-widest text-black">
                                 Perfil de Spotify
@@ -153,8 +146,6 @@ export default function Create({ dias }: { dias: any[] }) {
                                 </p>
                             )}
                         </div>
-
-                        {/* IMAGEN */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2">Imagen</label>
                             <input 
@@ -175,8 +166,6 @@ export default function Create({ dias }: { dias: any[] }) {
                                 </p>
                             )}
                         </div>
-
-                        {/* ORDEN */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2 tracking-widest text-gray-500">
                                 Orden en el cartel (Opcional)
@@ -193,8 +182,6 @@ export default function Create({ dias }: { dias: any[] }) {
                                 Por defecto se añade al final
                             </p>
                         </div>
-
-                        {/* HEADLINER */}
                         <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border-2 border-black border-dashed">
                             <input 
                                 type="checkbox" 
@@ -205,8 +192,6 @@ export default function Create({ dias }: { dias: any[] }) {
                             />
                             <label htmlFor="hl" className="font-black uppercase italic text-sm cursor-pointer select-none">¿Es Headliner?</label>
                         </div>
-
-                        {/* BOTÓN SUBMIT */}
                         <button 
                             disabled={processing} 
                             className="w-full bg-black text-white font-black uppercase py-5 rounded-2xl shadow-[4px_4px_0px_0px_rgba(236,72,153,1)] hover:bg-pink-500 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:bg-gray-400 disabled:shadow-none transition-all"
