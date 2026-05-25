@@ -35,8 +35,8 @@ export default function Header() {
 
                 <div className="hidden lg:flex gap-8 items-center">
                     <LinkHeader href="/">HOME</LinkHeader>
-                    <LinkHeader href="/cartel">CARTEL</LinkHeader>
                     <LinkHeader href="/informacion">INFORMACIÓN</LinkHeader>
+                    <LinkHeader href="/cartel">CARTEL</LinkHeader>
                     <LinkHeader href="/merchandising">MERCHANDISING</LinkHeader>
 
                     <div
@@ -138,8 +138,8 @@ export default function Header() {
 
             {menuMovil && (
                 <div className="fixed inset-0 z-50 flex lg:hidden">
-                    <div 
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+                    <div
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
                         onClick={() => setmenuMovil(false)}
                     />
 
@@ -160,7 +160,7 @@ export default function Header() {
                                 <Link href="/cartel" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">CARTEL</Link>
                                 <Link href="/informacion" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">INFORMACIÓN</Link>
                                 <Link href="/merchandising" onClick={() => setmenuMovil(false)} className="text-black font-black text-lg uppercase border-b-2 border-transparent hover:border-black py-1">MERCHANDISING</Link>
-                                
+
                                 <div className="border-t-2 border-black pt-4 mt-2">
                                     <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider block mb-2">Entradas</span>
                                     {opcionesEntradas.map((opcion) => (

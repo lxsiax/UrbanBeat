@@ -17,12 +17,9 @@ class NoticiaController extends Controller
         $user = auth()->user();
         $esAdmin = $user && $user->role_id === 1;
 
-
-
         $query = Noticia::whereIn('tipo', ['novedad', 'producto', 'artista'])->latest();
 
         if (!$esAdmin) {
-            // Nota: El where('esta_oculta', false) se aplica correctamente sobre la query base
             $ultimasNoticias = $query->where('esta_oculta', false)->take(3)->get();
         } else {
             $ultimasNoticias = $query->take(10)->get();
