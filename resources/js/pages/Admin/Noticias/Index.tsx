@@ -2,10 +2,17 @@ import { useState } from 'react';
 import { Head, router, Link } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import Footer from '@/components/festival/Footer';
-import { HiOutlinePencil, HiOutlineTrash, HiPlus } from "react-icons/hi2";
+import { HiOutlinePencil, HiOutlineTrash, HiPlus, HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
+
+interface Noticia {
+    id: number;
+    titulo: string;
+    created_at: string;
+    esta_oculta: boolean;
+}
 
 interface Props {
-    noticias: any[];
+    noticias: Noticia[];
 }
 
 export default function GestionNoticias({ noticias: noticiasIniciales = [] }: Props) {
@@ -19,6 +26,17 @@ export default function GestionNoticias({ noticias: noticiasIniciales = [] }: Pr
                 onSuccess: () => setNoticias(prev => prev.filter(n => n.id !== id))
             });
         }
+    };
+
+    const cambiarVisibilidad = (id: number) => {
+        router.post(`/admin/noticias/${id}/cambiar-visibilidad`, {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setNoticias(prev => prev.map(n => 
+                    n.id === id ? { ...n, esta_oculta: !n.esta_oculta } : n
+                ));
+            }
+        });
     };
 
     const irAEditar = (id: number) => {
@@ -77,7 +95,7 @@ export default function GestionNoticias({ noticias: noticiasIniciales = [] }: Pr
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {noticiasFiltradas.map((n) => (
-                                        <tr key={n.id} className="hover:bg-pink-50/30 transition-all">
+                                        <tr key={n.id} className={`transition-all ${n.esta_oculta ? 'bg-gray-50 opacity-60' : 'hover:bg-pink-50/30'}`}>
                                             <td className="p-6 font-black uppercase italic text-sm text-black">{n.titulo}</td>
                                             <td className="p-6">
                                                 <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black uppercase">
@@ -86,6 +104,12 @@ export default function GestionNoticias({ noticias: noticiasIniciales = [] }: Pr
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex justify-end gap-3">
+                                                    <button
+                                                        onClick={() => cambiarVisibilidad(n.id)}
+                                                        className={`p-2 border-2 border-black rounded-xl transition-all active:scale-90 ${n.esta_oculta ? 'bg-black text-white' : 'bg-white text-black hover:bg-yellow-400'}`}
+                                                    >
+                                                        {n.esta_oculta ? <HiOutlineEyeSlash size={20} /> : <HiOutlineEye size={20} />}
+                                                    </button>
                                                     <button
                                                         onClick={() => irAEditar(n.id)}
                                                         className="p-2 bg-white border-2 border-black rounded-xl text-black hover:bg-black hover:text-white transition-all active:scale-90"

@@ -25,8 +25,14 @@ class NoticiaController extends Controller
 
     public function informacion()
     {
+        $user = auth()->user();
+        $esAdmin = $user && $user->role_id === 1;
+        $query = Noticia::where('tipo', 'novedad');
+        if (!$esAdmin) {
+            $query->where('esta_oculta', false);
+        }
         return Inertia::render('Informacion', [
-            'novedades' => Noticia::where('tipo', 'novedad')->latest()->get(),
+            'novedades' => $query->latest()->get(),
             'horario' => AjusteFestival::where('clave', 'horario')->value('valor'),
             'ubicacion' => AjusteFestival::where('clave', 'ubicacion')->value('valor'),
             'normas' => AjusteFestival::where('clave', 'normas')->value('valor'),
@@ -42,14 +48,27 @@ class NoticiaController extends Controller
 
     public function create()
     {
+        session(['url.anterior' => url()->previous()]);
+
         return Inertia::render('Admin/Noticias/Create');
     }
 
     public function edit(Noticia $noticia)
     {
+        session(['url.anterior' => url()->previous()]);
+
         return Inertia::render('Admin/Noticias/Edit', [
             'noticia' => $noticia
         ]);
+    }
+
+    public function cambiarVisibilidad($id)
+    {
+        $noticia = Noticia::findOrFail($id);
+        $noticia->esta_oculta = !$noticia->esta_oculta;
+        $noticia->save();
+
+        return back()->with('message', 'Visibilidad actualizada');
     }
 
     public function update(Request $request, Noticia $noticia)
@@ -73,7 +92,8 @@ class NoticiaController extends Controller
         }
 
         $noticia->update($validated);
-        return redirect()->route('admin.noticias.index')->with('message', 'Noticia actualizada correctamente');
+        $url = session('url.anterior', route('admin.noticias.index'));
+        return redirect($url)->with('message', 'Noticia actualizada correctamente');
     }
 
     public function store(Request $request)
@@ -91,7 +111,8 @@ class NoticiaController extends Controller
         }
 
         Noticia::create($validated);
-        return redirect()->back()->with('message', 'Noticia creada correctamente');
+        $url = session('url.anterior', route('admin.noticias.index'));
+        return redirect($url)->with('message', 'Noticia creada correctamente');
     }
 
     public function destroy(Noticia $noticia)

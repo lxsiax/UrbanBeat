@@ -14,6 +14,7 @@ return new class extends Migration
             $table->text('contenido');
             $table->string('imagen')->nullable();
             $table->string('tipo')->default('novedad'); 
+            $table->boolean('esta_oculta')->default(false);
             $table->timestamps();
         });
     }

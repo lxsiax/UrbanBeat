@@ -21,11 +21,6 @@ export default function Create() {
         if (!data.titulo.trim()) errores.titulo = 'El título es obligatorio.';
         if (!data.contenido.trim()) errores.contenido = 'El contenido es obligatorio.';
         
-        if (!data.imagen) {
-            errores.imagen = 'Debes seleccionar una imagen para la noticia.';
-        } else if (!data.imagen.type.startsWith('image/')) {
-            errores.imagen = 'El archivo debe ser una imagen válida.';
-        }
 
         if (Object.keys(errores).length > 0) {
             setErroresForm(errores);

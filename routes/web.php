@@ -158,6 +158,7 @@ Route::middleware(['auth'])->group(function () {
             ->name('admin.artistas.cambiarVisibilidad');
         Route::patch('/productos/{id}/cambiar-visibilidad', [ProductoController::class, 'cambiarVisibilidad'])
             ->name('admin.productos.cambiarVisibilidad');
+        Route::post('/noticias/{id}/cambiar-visibilidad', [NoticiaController::class, 'cambiarVisibilidad'])->name('admin.noticias.cambiarVisibilidad');
     });
 });
 

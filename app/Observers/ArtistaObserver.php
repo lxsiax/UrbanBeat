@@ -13,7 +13,8 @@ class ArtistaObserver
             'titulo' => '¡NUEVO ARTISTA CONFIRMADO: ' . strtoupper($artista->nombre) . '!',
             'contenido' => 'El festival Urban Beat 2026 anuncia la confirmación de ' . $artista->nombre . '. ¡Prepárate para el show!',
             'imagen' => $artista->imagen,
-            'tipo' => 'novedad'
+            'tipo' => 'novedad',
+            'created_at' => $artista->created_at, 
         ]);
     }
 }

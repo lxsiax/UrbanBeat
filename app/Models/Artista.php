@@ -14,6 +14,7 @@ class Artista extends Model
         'orden',
         'esta_oculto',
         'link_spotify',
+        'created_at',
     ];
 
     public function dia() 
