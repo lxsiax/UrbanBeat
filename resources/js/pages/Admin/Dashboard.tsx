@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import Header from '@/components/festival/Header';
 import BotonDashboard from '@/components/festival/BotonDashboard';
-import { HiTicket, HiShoppingBag, HiUsers, HiStar, HiOutlineDocumentText } from "react-icons/hi2";
+import { HiTicket, HiShoppingBag, HiUsers, HiStar, HiOutlineDocumentText, HiOutlineCalendarDays } from "react-icons/hi2";
 
 export default function Dashboard() {
     const botones = [
@@ -39,6 +39,13 @@ export default function Dashboard() {
             icon: <HiOutlineDocumentText strokeWidth={2} />,
             href: '/admin/facturas',
             color: 'bg-green-500'
+        },
+        {
+            nombre: 'Gestión del Evento',
+            desc: 'Cambiar fechas del festival, información y noticias',
+            icon: <HiOutlineCalendarDays strokeWidth={2} />,
+            href: '/admin/evento',
+            color: 'bg-orange-500'
         },
     ];
 

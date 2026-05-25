@@ -163,9 +163,6 @@ export default function GestionFacturas({ compras }: Props) {
                                                 : (item.entrada?.tipo_entrada?.nombre || 'Entrada Festival')
                                             }
                                         </span>
-                                        {item.talla_id && (
-                                            <span className="text-[9px] text-pink-500 font-bold tracking-wider mt-0.5">TALLA ID: {item.talla_id}</span>
-                                        )}
                                     </div>
                                     <div className="text-center font-mono text-sm bg-gray-200/60 inline-block mx-auto px-3 py-0.5 rounded-md border border-black/10">
                                         x{item.quantity || item.cantidad}

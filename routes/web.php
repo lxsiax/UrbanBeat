@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FestivalController;
 use App\Http\Controllers\ArtistaController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
@@ -15,16 +16,20 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PedidoAdminController;
 use App\Http\Middleware\CheckAdmin;
+use App\Models\AjusteFestival;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Entrada;
+use App\Http\Controllers\NoticiaController;
 
 // Rutas públicas
-Route::get('/', function () {
-    return Inertia::render('home');
-});
+Route::get('/', [NoticiaController::class, 'home'])->name('home');
+
+// Ruta para la sección de Información
+Route::get('/informacion', [NoticiaController::class, 'informacion'])->name('informacion');
+
 Route::get('/cartel', [CartelController::class, 'index'])->name('cartel.index');
 Route::get('/merchandising', [MerchandisingController::class, 'index'])->name('merchandising');
 Route::get('/merchandising/{id}', [ProductoController::class, 'show'])->name('merchandising.show');
@@ -92,6 +97,10 @@ Route::middleware(['auth'])->group(function () {
     // Rutas para el admin
     Route::middleware([CheckAdmin::class])->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+        //Rutas gestión del evento
+        Route::get('/evento', [FestivalController::class, 'edit'])->name('admin.evento.edit');
+        Route::patch('/evento/fecha', [FestivalController::class, 'updateFecha'])->name('admin.evento.update');
 
         // Rutas crud usuarios
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');

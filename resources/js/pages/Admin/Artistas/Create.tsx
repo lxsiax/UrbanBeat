@@ -51,12 +51,22 @@ export default function Create({ dias }: { dias: any[] }) {
         if (Object.keys(errores).length > 0) {
             setErroresForm(errores);
             const primerError = Object.keys(errores)[0];
+            // Asegúrate de que el elemento tenga el atributo name correspondiente
             document.getElementsByName(primerError)[0]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
 
         setErroresForm({});
         post('/admin/artistas', { forceFormData: true });
+    };
+
+    // Función auxiliar para formatear la fecha de manera segura
+    const formatearFecha = (fechaStr: string) => {
+        // Reemplazar guiones por barras previene desfases de zona horaria en algunos navegadores
+        const fecha = new Date(fechaStr.replace(/-/g, '\/'));
+        return isNaN(fecha.getTime()) 
+            ? 'FECHA INVÁLIDA' 
+            : fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).toUpperCase();
     };
 
     return (
@@ -80,6 +90,7 @@ export default function Create({ dias }: { dias: any[] }) {
                 <div className="bg-white p-10 rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
                     <form onSubmit={enviar} className="space-y-6">
                         
+                        {/* NOMBRE */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2">Nombre</label>
                             <input 
@@ -96,6 +107,7 @@ export default function Create({ dias }: { dias: any[] }) {
                             )}
                         </div>
 
+                        {/* DÍA */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2">Día</label>
                             <div className="relative">
@@ -107,7 +119,7 @@ export default function Create({ dias }: { dias: any[] }) {
                                 >
                                     {dias.map(d => (
                                         <option key={d.id} value={d.id}>
-                                            {new Date(d.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).toUpperCase()}
+                                            {formatearFecha(d.fecha)}
                                         </option>
                                     ))}
                                 </select>
@@ -120,6 +132,7 @@ export default function Create({ dias }: { dias: any[] }) {
                             )}
                         </div>
 
+                        {/* SPOTIFY */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2 tracking-widest text-black">
                                 Perfil de Spotify
@@ -141,6 +154,7 @@ export default function Create({ dias }: { dias: any[] }) {
                             )}
                         </div>
 
+                        {/* IMAGEN */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2">Imagen</label>
                             <input 
@@ -150,6 +164,11 @@ export default function Create({ dias }: { dias: any[] }) {
                                 onChange={e => setData('imagen', e.target.files ? e.target.files[0] : null)} 
                                 className={`w-full border-2 border-black rounded-2xl p-4 font-bold text-xs bg-gray-50 file:bg-black file:text-white file:rounded-lg file:font-black file:uppercase file:px-3 file:py-1.5 file:border-none file:mr-4 cursor-pointer file:cursor-pointer ${ErroresForm.imagen ? 'border-red-500 bg-red-50/50' : ''}`} 
                             />
+                            {data.imagen && (
+                                <p className="text-[10px] font-bold text-gray-600 mt-2 truncate">
+                                    Archivo seleccionado: {data.imagen.name}
+                                </p>
+                            )}
                             {ErroresForm.imagen && (
                                 <p className="mt-2 border-2 border-black bg-red-400 text-black text-xs font-black p-2.5 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase tracking-wide">
                                     {ErroresForm.imagen}
@@ -157,12 +176,14 @@ export default function Create({ dias }: { dias: any[] }) {
                             )}
                         </div>
 
+                        {/* ORDEN */}
                         <div>
                             <label className="block text-[10px] font-black uppercase mb-2 tracking-widest text-gray-500">
                                 Orden en el cartel (Opcional)
                             </label>
                             <input
                                 type="number"
+                                name="orden"
                                 value={data.orden}
                                 onChange={e => setData('orden', Number(e.target.value))}
                                 placeholder="Ej: 1"
@@ -173,6 +194,7 @@ export default function Create({ dias }: { dias: any[] }) {
                             </p>
                         </div>
 
+                        {/* HEADLINER */}
                         <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border-2 border-black border-dashed">
                             <input 
                                 type="checkbox" 
@@ -184,6 +206,7 @@ export default function Create({ dias }: { dias: any[] }) {
                             <label htmlFor="hl" className="font-black uppercase italic text-sm cursor-pointer select-none">¿Es Headliner?</label>
                         </div>
 
+                        {/* BOTÓN SUBMIT */}
                         <button 
                             disabled={processing} 
                             className="w-full bg-black text-white font-black uppercase py-5 rounded-2xl shadow-[4px_4px_0px_0px_rgba(236,72,153,1)] hover:bg-pink-500 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:bg-gray-400 disabled:shadow-none transition-all"

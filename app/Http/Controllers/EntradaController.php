@@ -36,9 +36,12 @@ class EntradaController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Entradas/Create', [
-            'tipos' => TipoEntrada::with('dia')->get(),
-            'zonas' => Zona::all(),
+        $tipos = TipoEntrada::with('dia')->get(); 
+        $zonas = Zona::all();
+
+        return inertia('Admin/Entradas/Create', [
+            'tipos' => $tipos,
+            'zonas' => $zonas
         ]);
     }
 

@@ -3,15 +3,30 @@ import Header from '../components/festival/Header';
 import Footer from '../components/festival/Footer';
 import VideoHeader from '../components/festival/VideoHeader';
 import WidgetChat from '../components/festival/WidgetChat';
+import NoticiasHome from '../components/festival/NoticiasHome';
 
-export default function Home() {
+interface Noticia {
+    id: number;
+    titulo: string;
+    contenido: string;
+    imagen?: string;
+    created_at: string;
+}
+
+interface HomeProps {
+    fechaFestival: string;
+    ultimasNoticias: Noticia[];
+}
+
+export default function Home({ fechaFestival, ultimasNoticias }: HomeProps) {
     return (
         <>
             <Head title="Inicio - UrbanBeat" />
             <Header />
-            <div style={{ paddingTop: '95px', backgroundColor: '#fff', color: '#fff', textAlign: 'center' }}></div>
-            <VideoHeader />
-            <main style={{ paddingTop: '100px', backgroundColor: '#fff', minHeight: '100vh', color: '#fff', textAlign: 'center' }}>
+            <div className="pt-[95px] bg-white"></div>
+            <VideoHeader fechaFestival={fechaFestival} />
+            <main className="bg-white min-h-screen">
+                <NoticiasHome noticias={ultimasNoticias} />
             </main>
             <Footer />
             <WidgetChat />

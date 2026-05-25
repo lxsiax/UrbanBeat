@@ -1,10 +1,34 @@
 import Footer from '@/components/festival/Footer';
 import Header from '@/components/festival/Header';
 import { useForm, Link, router } from '@inertiajs/react';
-import { HiOutlineArrowLeft } from 'react-icons/hi2';
+import { useState } from 'react';
+import { HiOutlineArrowLeft, HiChevronDown } from 'react-icons/hi2';
 
-export default function Create({ tipos, zonas }: any) {
-    const { data, setData, post, processing, errors } = useForm({
+interface TipoEntrada {
+    id: number | string;
+    nombre: string;
+}
+
+interface Zona {
+    id: number | string;
+    nombre: string;
+}
+
+interface CreateProps {
+    tipos: TipoEntrada[];
+    zonas: Zona[];
+}
+
+type FormFields = {
+    tipo_entrada_id: string;
+    zona_id: string;
+    precio: string;
+    stock: string;
+    esta_oculta: boolean;
+};
+
+export default function Create({ tipos, zonas }: CreateProps) {
+    const { data, setData, post, processing, errors: serverErrors, setError, clearErrors } = useForm<FormFields>({
         tipo_entrada_id: '',
         zona_id: '',
         precio: '',
@@ -12,10 +36,64 @@ export default function Create({ tipos, zonas }: any) {
         esta_oculta: false,
     });
 
+    const [clientErrors, setClientErrors] = useState<Partial<Record<keyof FormFields, string>>>({});
+
+    const validarFormulario = (): boolean => {
+        const nuevosErrores: Partial<Record<keyof FormFields, string>> = {};
+        clearErrors();
+
+        if (!data.tipo_entrada_id) {
+            nuevosErrores.tipo_entrada_id = 'El tipo de entrada es obligatorio.';
+        }
+        if (!data.zona_id) {
+            nuevosErrores.zona_id = 'La zona de la entrada es obligatoria.';
+        }
+        if (!data.precio || parseFloat(data.precio) <= 0) {
+            nuevosErrores.precio = 'El precio debe ser un número mayor que 0.';
+        }
+        if (!data.stock || parseInt(data.stock, 10) < 0) {
+            nuevosErrores.stock = 'El stock debe ser un número.';
+        }
+
+        setClientErrors(nuevosErrores);
+
+        const keys = Object.keys(nuevosErrores) as Array<keyof FormFields>;
+        if (keys.length > 0) {
+            keys.forEach((key) => {
+                const mensaje = nuevosErrores[key];
+                if (mensaje) {
+                    setError(key, mensaje);
+                }
+            });
+            return false;
+        }
+
+        return true;
+    };
+
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/admin/entradas');
+        if (validarFormulario()) {
+            post('/admin/entradas');
+        }
     };
+
+    const handleCambio = (campo: keyof FormFields, valor: any) => {
+        setData(campo, valor);
+        if (clientErrors[campo] || serverErrors[campo]) {
+            setClientErrors(prev => {
+                const copia = { ...prev };
+                delete copia[campo];
+                return copia;
+            });
+            clearErrors(campo);
+        }
+    };
+
+    const errorTipo = clientErrors.tipo_entrada_id || serverErrors.tipo_entrada_id;
+    const errorZona = clientErrors.zona_id || serverErrors.zona_id;
+    const errorPrecio = clientErrors.precio || serverErrors.precio;
+    const errorStock = clientErrors.stock || serverErrors.stock;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -29,34 +107,44 @@ export default function Create({ tipos, zonas }: any) {
                     <HiOutlineArrowLeft size={16} />
                     Volver a gestión
                 </button>
+                
                 <div className="flex items-center gap-4 mb-8">
                     <h1 className="text-4xl font-black uppercase tracking-tighter italic text-black">
                         Añadir <span className="text-pink-500">Entrada</span>
                     </h1>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6 bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100">
-
+                <form 
+                    onSubmit={submit} 
+                    noValidate 
+                    className="space-y-6 bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100"
+                >
                     <div className="group">
                         <label className="block text-[10px] font-black uppercase mb-2 ml-1 text-gray-400 group-focus-within:text-pink-500 transition-colors">
                             Tipo y fecha de la entrada
                         </label>
-                        <select
-                            required
-                            className={`w-full border-2 rounded-2xl p-4 outline-none transition-all appearance-none bg-no-repeat bg-[right_1.5rem_center] ${errors.tipo_entrada_id ? 'border-red-500' : 'border-gray-100 focus:border-pink-500 bg-gray-50 focus:bg-white'}`}
-                            value={data.tipo_entrada_id}
-                            onChange={e => setData('tipo_entrada_id', e.target.value)}
-                        >
-                            <option value="">Selecciona entrada</option>
-                            {tipos.map((t: any) => (
-                                <option key={t.id} value={t.id}>
-                                    {t.nombre.toUpperCase()}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.tipo_entrada_id && (
-                            <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic tracking-widest">
-                                {errors.tipo_entrada_id}
+                        <div className="relative">
+                            <select
+                                className={`w-full border-2 rounded-2xl p-4 pr-12 outline-none transition-all appearance-none bg-no-repeat bg-[right_1.5rem_center] font-medium ${errorTipo ? 'border-red-500' : 'border-gray-100 focus:border-pink-500 bg-gray-50 focus:bg-white'}`}
+                                value={data.tipo_entrada_id}
+                                onChange={e => handleCambio('tipo_entrada_id', e.target.value)}
+                            >
+                                <option value="">Selecciona entrada</option>
+                                {tipos && tipos.length > 0 ? (
+                                    tipos.map((t) => (
+                                        <option key={t.id} value={t.id}>
+                                            {t.nombre.toUpperCase()}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option disabled>No hay tipos de entrada disponibles</option>
+                                )}
+                            </select>
+                            <HiChevronDown className="absolute right-4 top-5 pointer-events-none text-gray-400 group-focus-within:text-pink-500 transition-colors" size={20} />
+                        </div>
+                        {errorTipo && (
+                            <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic tracking-wildest">
+                                {errorTipo}
                             </div>
                         )}
                     </div>
@@ -65,60 +153,57 @@ export default function Create({ tipos, zonas }: any) {
                         <label className="block text-[10px] font-black uppercase mb-2 ml-1 text-gray-400 group-focus-within:text-pink-500 transition-colors">
                             Zona de la entrada
                         </label>
-                        <select
-                            required
-                            className={`w-full border-2 rounded-2xl p-4 outline-none transition-all appearance-none ${errors.zona_id ? 'border-red-500' : 'border-gray-100 focus:border-pink-500 bg-gray-50 focus:bg-white'}`}
-                            value={data.zona_id}
-                            onChange={e => setData('zona_id', e.target.value)}
-                        >
-                            <option value="">Selecciona una zona...</option>
-                            {zonas.map((z: any) => (
-                                <option key={z.id} value={z.id}>{z.nombre.toUpperCase()}</option>
-                            ))}
-                        </select>
-                        {errors.zona_id && (
-                            <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic tracking-widest">
-                                {errors.zona_id}
+                        <div className="relative">
+                            <select
+                                className={`w-full border-2 rounded-2xl p-4 pr-12 outline-none transition-all appearance-none font-medium ${errorZona ? 'border-red-500' : 'border-gray-100 focus:border-pink-500 bg-gray-50 focus:bg-white'}`}
+                                value={data.zona_id}
+                                onChange={e => handleCambio('zona_id', e.target.value)}
+                            >
+                                <option value="">Selecciona una zona...</option>
+                                {zonas.map((z) => (
+                                    <option key={z.id} value={z.id}>{z.nombre.toUpperCase()}</option>
+                                ))}
+                            </select>
+                            <HiChevronDown className="absolute right-4 top-5 pointer-events-none text-gray-400 group-focus-within:text-pink-500 transition-colors" size={20} />
+                        </div>
+                        {errorZona && (
+                            <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic tracking-wildest">
+                                {errorZona}
                             </div>
                         )}
                     </div>
 
-                    {/* Precio y Stock */}
                     <div className="grid grid-cols-2 gap-6">
                         <div className="group">
                             <label className="block text-[10px] font-black uppercase mb-2 ml-1 text-gray-400 group-focus-within:text-pink-500 transition-colors">
                                 Precio (€)
                             </label>
                             <input
-                                required
                                 type="number"
                                 step="0.01"
-                                min="0"
                                 placeholder="0.00"
-                                className="w-full border-2 border-gray-100 bg-gray-50 focus:bg-white rounded-2xl p-4 focus:border-pink-500 outline-none transition-all font-bold text-lg"
+                                className={`w-full border-2 bg-gray-50 focus:bg-white rounded-2xl p-4 focus:border-pink-500 outline-none transition-all font-bold text-lg ${errorPrecio ? 'border-red-500' : 'border-gray-100'}`}
                                 value={data.precio}
-                                onChange={e => setData('precio', e.target.value)}
+                                onChange={e => handleCambio('precio', e.target.value)}
                             />
-                            {errors.precio && <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic">{errors.precio}</div>}
+                            {errorPrecio && <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic">{errorPrecio}</div>}
                         </div>
+                        
                         <div className="group">
                             <label className="block text-[10px] font-black uppercase mb-2 ml-1 text-gray-400 group-focus-within:text-pink-500 transition-colors">
                                 Stock disponible
                             </label>
                             <input
-                                required
                                 type="number"
-                                min="0"
                                 placeholder="0"
-                                className="w-full border-2 border-gray-100 bg-gray-50 focus:bg-white rounded-2xl p-4 focus:border-pink-500 outline-none transition-all font-bold text-lg"
+                                className={`w-full border-2 bg-gray-50 focus:bg-white rounded-2xl p-4 focus:border-pink-500 outline-none transition-all font-bold text-lg ${errorStock ? 'border-red-500' : 'border-gray-100'}`}
                                 value={data.stock}
-                                onChange={e => setData('stock', e.target.value)}
+                                onChange={e => handleCambio('stock', e.target.value)}
                             />
-                            {errors.stock && <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic">{errors.stock}</div>}
+                            {errorStock && <div className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase italic">{errorStock}</div>}
                         </div>
                     </div>
 
-                    {/* Visibilidad */}
                     <div className="flex items-center gap-4 p-4 bg-black rounded-2xl transition-all hover:bg-zinc-900 shadow-xl group">
                         <div className="relative flex items-center cursor-pointer">
                             <input
@@ -126,7 +211,7 @@ export default function Create({ tipos, zonas }: any) {
                                 id="esta_oculta"
                                 className="peer h-6 w-6 cursor-pointer appearance-none rounded-md border-2 border-white/20 transition-all checked:border-pink-500 checked:bg-pink-500"
                                 checked={data.esta_oculta}
-                                onChange={e => setData('esta_oculta', e.target.checked)}
+                                onChange={e => handleCambio('esta_oculta', e.target.checked)}
                             />
                             <svg className="absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100 top-1 left-1 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </div>
@@ -135,7 +220,6 @@ export default function Create({ tipos, zonas }: any) {
                         </label>
                     </div>
 
-                    {/* Botones */}
                     <div className="pt-8 flex flex-col sm:flex-row items-center gap-6">
                         <button
                             type="submit"

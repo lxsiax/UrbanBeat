@@ -25,8 +25,9 @@ class ArtistaController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Artistas/Create', [
-            'dias' => Dia::all()
+        $dias = Dia::orderBy('fecha', 'asc')->get();
+        return inertia('Admin/Artistas/Create', [
+            'dias' => $dias
         ]);
     }
 
@@ -59,15 +60,18 @@ class ArtistaController extends Controller
 
         return redirect()->route('admin.artistas.index');
     }
-    
+
     /**
      * Formulario de edición
      */
-    public function edit(Artista $artista)
+    public function edit($id)
     {
-        return Inertia::render('Admin/Artistas/Edit', [
+        $artista = Artista::findOrFail($id);
+        $dias = Dia::orderBy('fecha', 'asc')->get();
+
+        return inertia('Admin/Artistas/Edit', [
             'artista' => $artista,
-            'dias' => Dia::all()
+            'dias' => $dias
         ]);
     }
 
