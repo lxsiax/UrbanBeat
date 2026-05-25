@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AjusteFestival;
 use App\Models\Artista;
 use App\Models\Chat;
 use App\Models\Dia;
@@ -181,7 +182,6 @@ class DatabaseSeeder extends Seeder
         $pulsera->tallas()->attach($tallaUnica->id, ['stock' => 150]);
 
 
-        // --- OTROS ---
         Chat::create(['nombre' => 'General', 'descripcion' => 'Chat oficial']);
 
         $artistas = [
@@ -198,33 +198,23 @@ class DatabaseSeeder extends Seeder
             Artista::create($artista);
         }
 
-        Noticia::create([
-            'titulo' => '📅 Horarios y Aperturas Oficiales',
-            'contenido' => "Apertura de puertas todos los días a las 17:00h.\n\n18:00h - Apertura con DJ Set\n19:30h - Primeros Shows\n22:30h - HEADLINERS (Show Principal)\n02:30h - Cierre de la jornada.\n\n¡Ven temprano al Escenario Único Urban Beat para ahorrarte las colas del control de seguridad!",
-            'tipo' => 'horario',
-        ]);
-
-        Noticia::create([
-            'titulo' => '🚀 Normas de Acceso y Consejos',
-            'contenido' => "Para que el Urban Beat sea una experiencia brutal para todos, ten en cuenta:\n\n- Permitida la entrada con botellas de agua pequeñas sin tapón.\n- Queda prohibido el acceso con objetos cortantes, bengalas o mochilas de gran tamaño.\n- En el recinto dispondrás de puntos de agua gratuita y asistencia médica las 24 horas.\n\n¡Cuida de los tuyos y disfruta del viaje!",
-            'tipo' => 'info_general',
+        AjusteFestival::insert([
+            ['clave' => 'horario', 'valor' => "Apertura de puertas todos los días a las 17:00h.\n\n18:00h - Apertura con DJ Set\n19:30h - Primeros Shows\n22:30h - HEADLINERS (Show Principal)\n02:30h - Cierre de la jornada.\n\n¡Ven temprano al Escenario Único Urban Beat para ahorrarte las colas del control de seguridad!", 'created_at' => now(), 'updated_at' => now()],
+            ['clave' => 'normas', 'valor' => "Para que el Urban Beat sea una experiencia brutal para todos, ten en cuenta:\n\n- Permitida la entrada con botellas de agua pequeñas sin tapón.\n- Queda prohibido el acceso con objetos cortantes, bengalas o mochilas de gran tamaño.\n- En el recinto dispondrás de puntos de agua gratuita y asistencia médica las 24 horas.\n\n¡Cuida de los tuyos y disfruta del viaje!", 'created_at' => now(), 'updated_at' => now()],
+            ['clave' => 'ubicacion', 'valor' => "Av. de las Piletas, 13, 11540 Sanlúcar de Barrameda, Cádiz", 'created_at' => now(), 'updated_at' => now()],
+            ['clave' => 'mapa_src', 'valor' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3195.4934925429425!2d-6.361902023466998!3d36.782716672252114!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0ddfd2efcf77a1%3A0x56d913ea787bbd6a!2sTeatro%20Municipal%20SANL%C3%9ACAR!5e0!3m2!1ses!2ses!4v1779678936981!5m2!1ses!2ses', 'created_at' => now(), 'updated_at' => now()],
+            
         ]);
 
         Noticia::create([
             'titulo' => '🔥 ¡ABONOS GENERALES AGOTADOS EN TIEMPO RÉCORD!',
-            'contenido' => '¡Esto es una auténtica locura, UrbanBeaters! Habéis reventado las taquillas y los abonos de 3 días han volado por completo. Mil gracias por la confianza. Si te has quedado sin el tuyo, aún quedan las últimas entradas de día para el jueves y sábado. ¡No duermas en los laureles!',
+            'contenido' => '¡Esto es una auténtica locura, UrbanBeaters! Habéis reventado las taquillas y los abonos de 3 días han volado por completo. Mil gracias por la confianza.',
             'tipo' => 'novedad',
         ]);
 
         Noticia::create([
-            'titulo' => 'Av. de las Piletas, 13, 11540 Sanlúcar de Barrameda, Cádiz', // <-- Tu dirección real
-            'contenido' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m4!1s0xd0dc6ebf70094b9:0x8798bf1eb54f3b25!2sAv.+de+las+Piletas,+13,+11540+Sanl%C3%BAcar+de+Barrameda,+C%C3%A1diz!3m2!1d36.7820612!2d-6.3639459!4m5!sAv.+de+las+Piletas,+13,+11540+Sanl%C3%BAcar+de+Barrameda,+C%C3%A1diz!3m2!1d36.7820612!2d-6.3639459!5e0!3m2!es!2ses!4v1716600000000!5m2!es!2ses', // Enlace de incrustación de Google Maps
-            'tipo' => 'ubicacion',
-        ]);
-
-        Noticia::create([
             'titulo' => '🍔 ZONA FOODTRUCKS: MÁS VARIEDAD QUE NUNCA',
-            'contenido' => 'Este año en el Urban Beat no solo vas a saltar, ¡también vas a comer de locos! Ampliamos nuestro espacio gastronómico con opciones veganas, sin gluten, hamburguesas gourmet y comida internacional de la mano de los mejores chefs sobre ruedas. Listos para reponer fuerzas.',
+            'contenido' => 'Este año en el Urban Beat no solo vas a saltar, ¡también vas a comer de locos! Ampliamos nuestro espacio gastronómico.',
             'tipo' => 'novedad',
         ]);
     }

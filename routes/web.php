@@ -101,6 +101,8 @@ Route::middleware(['auth'])->group(function () {
         //Rutas gestión del evento
         Route::get('/evento', [FestivalController::class, 'edit'])->name('admin.evento.edit');
         Route::patch('/evento/fecha', [FestivalController::class, 'updateFecha'])->name('admin.evento.update');
+        Route::patch('/evento/contenidos', [FestivalController::class, 'updateContenidos'])
+            ->name('admin.evento.contenidos');
 
         // Rutas crud usuarios
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');

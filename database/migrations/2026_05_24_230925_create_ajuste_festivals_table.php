@@ -12,11 +12,10 @@ return new class extends Migration
         Schema::create('ajuste_festivals', function (Blueprint $table) {
             $table->id();
             $table->string('clave')->unique(); 
-            $table->string('valor');     
+            $table->text('valor');     
             $table->timestamps();
         });
 
-        // Insertamos los valores iniciales por defecto para el Festival
         DB::table('ajuste_festivals')->insert([
             [
                 'clave' => 'fecha_inicio',
@@ -26,7 +25,7 @@ return new class extends Migration
             ],
             [
                 'clave' => 'duracion_dias',
-                'valor' => '3', // Duración inicial por defecto: 3 días
+                'valor' => '3',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

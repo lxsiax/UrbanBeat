@@ -16,19 +16,20 @@ class NoticiaController extends Controller
         return Inertia::render('home', [
             'fechaFestival' => $fechaFestival,
             'ultimasNoticias' => Noticia::where('tipo', 'novedad')
-                                    ->latest()
-                                    ->take(3)
-                                    ->get()
+                ->latest()
+                ->take(3)
+                ->get()
         ]);
     }
 
     public function informacion()
     {
-        return Inertia::render('Informacion', [ 
+        return Inertia::render('Informacion', [
             'novedades' => Noticia::where('tipo', 'novedad')->latest()->get(),
-            'horario' => Noticia::where('tipo', 'horario')->first(),
-            'ubicacion' => Noticia::where('tipo', 'ubicacion')->first(),
-            'general' => Noticia::where('tipo', 'info_general')->first(),
+            'horario' => AjusteFestival::where('clave', 'horario')->value('valor'),
+            'ubicacion' => AjusteFestival::where('clave', 'ubicacion')->value('valor'), 
+            'normas' => AjusteFestival::where('clave', 'normas')->value('valor'),
+            'mapa_src' => AjusteFestival::where('clave', 'mapa_src')->value('valor'),
         ]);
     }
 }
