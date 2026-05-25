@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Http\Requests\StoreProductoRequest;
-use App\Http\Requests\UpdateProductoRequest;
 use App\Models\Talla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -15,15 +14,12 @@ class ProductoController extends Controller
     public function cambiarVisibilidad($id)
     {
         $producto = Producto::findOrFail($id);
-
         $producto->esta_oculto = !$producto->esta_oculto;
         $producto->save();
 
         return back();
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $productos = Producto::with('tallas')->get();
@@ -32,9 +28,6 @@ class ProductoController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return Inertia::render('Admin/Productos/Create', [
@@ -62,9 +55,6 @@ class ProductoController extends Controller
         return redirect()->route('admin.productos.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
         $producto = Producto::with([
@@ -78,9 +68,6 @@ class ProductoController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Producto $producto)
     {
         $producto->load('tallas');
@@ -91,14 +78,13 @@ class ProductoController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Producto $producto)
     {
         $validated = $request->validate([
             'nombre' => 'required|string|min:3|max:255',
+            'descripcion' => 'required|string', // Añadido
             'precio' => 'required|numeric|gt:0',
+            'categoria' => 'required|string|in:ropa,accesorio', // Añadido
             'esta_oculto' => 'required|boolean',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'stocks' => 'required|array',
@@ -115,7 +101,9 @@ class ProductoController extends Controller
 
         $producto->update([
             'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'], // Añadido
             'precio' => $validated['precio'],
+            'categoria' => $validated['categoria'],     // Añadido
             'esta_oculto' => $validated['esta_oculto'],
             'imagen_url' => $producto->imagen_url
         ]);
@@ -130,9 +118,6 @@ class ProductoController extends Controller
         return redirect()->route('admin.productos.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Producto $producto)
     {
         //

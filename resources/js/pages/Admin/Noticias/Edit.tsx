@@ -8,6 +8,7 @@ export default function EditNoticia({ noticia }: { noticia: any }) {
     const { data, setData, post, processing } = useForm({
         titulo: noticia.titulo || '',
         contenido: noticia.contenido || '',
+        tipo: noticia.tipo || 'novedad', // <-- Añadido campo 'tipo' con su valor inicial
         imagen: null as File | null,
         _method: 'PUT',
     });
@@ -20,6 +21,7 @@ export default function EditNoticia({ noticia }: { noticia: any }) {
 
         if (!data.titulo.trim()) errores.titulo = 'El título es obligatorio.';
         if (!data.contenido.trim()) errores.contenido = 'El contenido es obligatorio.';
+        if (!data.tipo) errores.tipo = 'El tipo de noticia es obligatorio.'; // <-- Validación de tipo
         
         if (data.imagen && !data.imagen.type.startsWith('image/')) {
             errores.imagen = 'El archivo debe ser una imagen válida.';
@@ -60,6 +62,22 @@ export default function EditNoticia({ noticia }: { noticia: any }) {
                                 onChange={e => setData('titulo', e.target.value)} 
                                 className={`w-full border-2 border-black rounded-2xl p-4 font-black outline-none focus:border-pink-500 ${ErroresForm.titulo ? 'border-red-500' : ''}`} 
                             />
+                            {ErroresForm.titulo && <p className="text-red-500 text-[10px] font-black mt-1">{ErroresForm.titulo}</p>}
+                        </div>
+
+                        {/* TIPO DE NOTICIA */}
+                        <div>
+                            <label className="block text-[10px] font-black uppercase mb-2">Tipo de Noticia</label>
+                            <select 
+                                value={data.tipo} 
+                                onChange={e => setData('tipo', e.target.value as any)} 
+                                className={`w-full border-2 border-black rounded-2xl p-4 font-black bg-white outline-none focus:border-pink-500 cursor-pointer ${ErroresForm.tipo ? 'border-red-500' : ''}`}
+                            >
+                                <option value="novedad">Última Hora / Novedad</option>
+                                <option value="artista">Artista / Lineup</option>
+                                <option value="producto">Producto / Merch / Tickets</option>
+                            </select>
+                            {ErroresForm.tipo && <p className="text-red-500 text-[10px] font-black mt-1">{ErroresForm.tipo}</p>}
                         </div>
 
                         {/* CONTENIDO */}
@@ -71,6 +89,7 @@ export default function EditNoticia({ noticia }: { noticia: any }) {
                                 rows={6}
                                 className={`w-full border-2 border-black rounded-2xl p-4 font-bold text-sm outline-none focus:border-pink-500 ${ErroresForm.contenido ? 'border-red-500' : ''}`} 
                             />
+                            {ErroresForm.contenido && <p className="text-red-500 text-[10px] font-black mt-1">{ErroresForm.contenido}</p>}
                         </div>
 
                         {/* IMAGEN */}
@@ -83,6 +102,7 @@ export default function EditNoticia({ noticia }: { noticia: any }) {
                                 className="w-full border-2 border-black rounded-2xl p-4 font-bold text-xs bg-gray-50 file:bg-black file:text-white file:rounded-lg file:px-3 file:py-1.5 cursor-pointer" 
                             />
                             <p className="text-[9px] text-gray-400 mt-2">Deja en blanco para mantener la actual.</p>
+                            {ErroresForm.imagen && <p className="text-red-500 text-[10px] font-black mt-1">{ErroresForm.imagen}</p>}
                         </div>
 
                         <button 

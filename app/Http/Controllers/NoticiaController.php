@@ -14,12 +14,23 @@ class NoticiaController extends Controller
         $ajuste = AjusteFestival::where('clave', 'fecha_inicio')->first();
         $fechaFestival = $ajuste ? $ajuste->valor : '2026-07-23';
 
+        $user = auth()->user();
+        $esAdmin = $user && $user->role_id === 1;
+
+
+
+        $query = Noticia::whereIn('tipo', ['novedad', 'producto', 'artista'])->latest();
+
+        if (!$esAdmin) {
+            // Nota: El where('esta_oculta', false) se aplica correctamente sobre la query base
+            $ultimasNoticias = $query->where('esta_oculta', false)->take(3)->get();
+        } else {
+            $ultimasNoticias = $query->take(10)->get();
+        }
+
         return Inertia::render('home', [
             'fechaFestival' => $fechaFestival,
-            'ultimasNoticias' => Noticia::where('tipo', 'novedad')
-                ->latest()
-                ->take(3)
-                ->get()
+            'ultimasNoticias' => $ultimasNoticias
         ]);
     }
 
@@ -27,10 +38,13 @@ class NoticiaController extends Controller
     {
         $user = auth()->user();
         $esAdmin = $user && $user->role_id === 1;
-        $query = Noticia::where('tipo', 'novedad');
+
+        $query = Noticia::whereIn('tipo', ['novedad', 'producto', 'artista']);
+
         if (!$esAdmin) {
             $query->where('esta_oculta', false);
         }
+
         return Inertia::render('Informacion', [
             'novedades' => $query->latest()->get(),
             'horario' => AjusteFestival::where('clave', 'horario')->value('valor'),
@@ -76,6 +90,7 @@ class NoticiaController extends Controller
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string',
+            'tipo' => 'required|string|in:novedad,producto,artista', // <-- Agregada validación estricta del tipo
             'imagen' => 'nullable|image|max:2048',
         ]);
 
@@ -92,6 +107,7 @@ class NoticiaController extends Controller
         }
 
         $noticia->update($validated);
+
         $url = session('url.anterior', route('admin.noticias.index'));
         return redirect($url)->with('message', 'Noticia actualizada correctamente');
     }

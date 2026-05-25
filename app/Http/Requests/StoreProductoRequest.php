@@ -26,6 +26,8 @@ class StoreProductoRequest extends FormRequest
             'nombre' => 'required|string|min:3|max:255',
             'precio' => 'required|numeric|gt:0',
             'esta_oculto' => 'required|boolean',
+            'descripcion' => 'required|string',
+            'categoria' => 'required|in:ropa,accesorio',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'stocks' => 'required|array',
         ];

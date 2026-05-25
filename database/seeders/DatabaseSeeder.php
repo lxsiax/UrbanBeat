@@ -102,16 +102,16 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // --- TALLAS ---
+       // --- TALLAS ---
         $tallaS = Talla::create(['nombre' => 'S']);
         $tallaM = Talla::create(['nombre' => 'M']);
         $tallaL = Talla::create(['nombre' => 'L']);
         $tallaXL = Talla::create(['nombre' => 'XL']);
         $tallaUnica = Talla::create(['nombre' => 'Única']);
 
-        // --- PRODUCTOS Y STOCKS ---
+        // --- PRODUCTOS Y STOCKS (CON FECHAS ESCALONADAS) ---
 
-        // 1. Camiseta (Con tallas múltiples)
+        // Creado hace 3 días
         $camiseta = Producto::create([
             'nombre' => 'Camiseta UrbanBeat',
             'descripcion' => 'Edición 2026 oficial del festival',
@@ -119,14 +119,16 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'ropa',
             'esta_oculto' => false,
             'imagen_url' => 'productos/camisetabuena.png',
+            'created_at' => now()->subDays(5),
         ]);
         $camiseta->tallas()->attach([
-            $tallaS->id => ['stock' => 25],
-            $tallaM->id => ['stock' => 50],
-            $tallaL->id => ['stock' => 20],
-            $tallaXL->id => ['stock' => 5],
+            $tallaS->id => ['stock' => 25, 'created_at' => now()->subDays(5)],
+            $tallaM->id => ['stock' => 50, 'created_at' => now()->subDays(5)],
+            $tallaL->id => ['stock' => 20, 'created_at' => now()->subDays(5)],
+            $tallaXL->id => ['stock' => 5, 'created_at' => now()->subDays(5)],
         ]);
 
+        // Creado hace 3 días
         $pantalon = Producto::create([
             'nombre' => 'Pantalon UrbanBeat',
             'descripcion' => 'Edición 2026 oficial del festival',
@@ -134,14 +136,16 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'ropa',
             'esta_oculto' => false,
             'imagen_url' => 'productos/pantalon.png',
+            'created_at' => now()->subDays(5),
         ]);
         $pantalon->tallas()->attach([
-            $tallaS->id => ['stock' => 30],
-            $tallaM->id => ['stock' => 50],
-            $tallaL->id => ['stock' => 60],
-            $tallaXL->id => ['stock' => 3],
+            $tallaS->id => ['stock' => 30, 'created_at' => now()->subDays(5)],
+            $tallaM->id => ['stock' => 50, 'created_at' => now()->subDays(5)],
+            $tallaL->id => ['stock' => 60, 'created_at' => now()->subDays(5)],
+            $tallaXL->id => ['stock' => 5, 'created_at' => now()->subDays(5)],
         ]);
 
+        // Creado hace 2 días
         $sudadera = Producto::create([
             'nombre' => 'Sudadera UrbanBeat',
             'descripcion' => 'Edición 2026 oficial del festival',
@@ -149,14 +153,16 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'ropa',
             'esta_oculto' => false,
             'imagen_url' => 'productos/sudadera.png',
+            'created_at' => now()->subDays(8),
         ]);
         $sudadera->tallas()->attach([
-            $tallaS->id => ['stock' => 20],
-            $tallaM->id => ['stock' => 30],
-            $tallaL->id => ['stock' => 30],
-            $tallaXL->id => ['stock' => 6],
+            $tallaS->id => ['stock' => 20, 'created_at' => now()->subDays(8)],
+            $tallaM->id => ['stock' => 30, 'created_at' => now()->subDays(8)],
+            $tallaL->id => ['stock' => 30, 'created_at' => now()->subDays(8)],
+            $tallaXL->id => ['stock' => 6, 'created_at' => now()->subDays(8)],
         ]);
 
+        // Creado hace 2 días
         $gafas = Producto::create([
             'nombre' => 'Gafas UrbanBeat',
             'descripcion' => 'Gafas de sol. Perfectas para disfrutar del festival tranquilo.',
@@ -164,10 +170,11 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/gafas.png',
+            'created_at' => now()->subDays(5),
         ]);
-        $gafas->tallas()->attach($tallaUnica->id, ['stock' => 100]);
+        $gafas->tallas()->attach($tallaUnica->id, ['stock' => 100, 'created_at' => now()->subDays(5)]);
 
-        // 3. Gorra (Talla Única)
+        // Creado ayer
         $gorra = Producto::create([
             'nombre' => 'Gorra UrbanBeat',
             'descripcion' => 'Una gorra moderna de UrbanBeat para disfrutar del festival fresquito',
@@ -175,10 +182,11 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/gorra.png',
+            'created_at' => now()->subDays(3),
         ]);
-        $gorra->tallas()->attach($tallaUnica->id, ['stock' => 75]);
+        $gorra->tallas()->attach($tallaUnica->id, ['stock' => 75, 'created_at' => now()->subDays(3)]);
 
-        // 4. Botella (Talla Única)
+        // Creado ayer
         $botella = Producto::create([
             'nombre' => 'Botella UrbanBeat',
             'descripcion' => 'Con esta botella termo, podrás llevar todas tus bebidas fresquitas',
@@ -186,9 +194,11 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/botella.png',
+            'created_at' => now()->subDays(1),
         ]);
-        $botella->tallas()->attach($tallaUnica->id, ['stock' => 150]);
+        $botella->tallas()->attach($tallaUnica->id, ['stock' => 150, 'created_at' => now()->subDays(1)]);
 
+        // Creado hoy mismo (Ahora)
         $pulsera = Producto::create([
             'nombre' => 'Pulsera UrbanBeat',
             'descripcion' => 'Pulsera de UrbanBeat con estilo festivalero',
@@ -196,8 +206,9 @@ class DatabaseSeeder extends Seeder
             'categoria' => 'accesorios',
             'esta_oculto' => false,
             'imagen_url' => 'productos/pulsera.png',
+            'created_at' => now(),
         ]);
-        $pulsera->tallas()->attach($tallaUnica->id, ['stock' => 150]);
+        $pulsera->tallas()->attach($tallaUnica->id, ['stock' => 150, 'created_at' => now()]);
 
 
         Chat::create(['nombre' => 'General', 'descripcion' => 'Chat oficial']);

@@ -14,7 +14,9 @@ interface Talla {
 interface Producto {
     id: number;
     nombre: string;
+    descripcion: string; // Añadido
     precio: number;
+    categoria: string;   // Añadido
     esta_oculto: boolean;
     imagen_url: string | null;
     tallas: Talla[];
@@ -28,7 +30,9 @@ interface Props {
 export default function Edit({ producto, todaslasTallas }: Props) {
     const { data, setData, post, processing, errors, setError, clearErrors } = useForm({
         nombre: producto.nombre,
+        descripcion: producto.descripcion ?? '', // Añadido
         precio: producto.precio,
+        categoria: producto.categoria ?? 'ropa', // Añadido
         esta_oculto: !!producto.esta_oculto,
         imagen: null as File | null,
         _method: 'PATCH',
@@ -51,6 +55,11 @@ export default function Edit({ producto, todaslasTallas }: Props) {
             valido = false;
         }
 
+        if (!data.descripcion.trim()) {
+            setError('descripcion', 'La descripción es obligatoria.');
+            valido = false;
+        }
+
         if (!data.precio && data.precio !== 0) {
             setError('precio', 'El precio es obligatorio.');
             valido = false;
@@ -59,10 +68,15 @@ export default function Edit({ producto, todaslasTallas }: Props) {
             valido = false;
         }
 
+        if (!data.categoria) {
+            setError('categoria', 'La categoría es obligatoria.');
+            valido = false;
+        }
+
         if (data.imagen) {
             const formatosPermitidos = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
             if (!formatosPermitidos.includes(data.imagen.type)) {
-                setError('imagen', 'La imagen debe ser un formato válido (JPG, PNG, JPEG, WEBP).');
+                setError('imagen', 'La imagen debe ser un formató válido (JPG, PNG, JPEG, WEBP).');
                 valido = false;
             } else if (data.imagen.size > 2 * 1024 * 1024) {
                 setError('imagen', 'La imagen no puede pesar más de 2MB.');
@@ -75,7 +89,6 @@ export default function Edit({ producto, todaslasTallas }: Props) {
 
     const enviar = (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!validarFormulario()) return;
 
         post(`/admin/productos/${producto.id}`, {
@@ -91,7 +104,6 @@ export default function Edit({ producto, todaslasTallas }: Props) {
 
             <main className="flex-grow pt-40 pb-20 px-6">
                 <div className="max-w-2xl mx-auto">
-
                     <button
                         type="button"
                         onClick={() => window.history.back()}
@@ -106,9 +118,7 @@ export default function Edit({ producto, todaslasTallas }: Props) {
                     </h1>
 
                     <div className="bg-white p-10 rounded-[30px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-
                         <form onSubmit={enviar} className="space-y-6" noValidate>
-
                             <div>
                                 <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Nombre del Producto</label>
                                 <input
@@ -119,6 +129,32 @@ export default function Edit({ producto, todaslasTallas }: Props) {
                                     required
                                 />
                                 {errors.nombre && <p className="text-red-500 text-xs mt-2 font-bold uppercase tracking-wider">{errors.nombre}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Categoría</label>
+                                <select
+                                    value={data.categoria}
+                                    onChange={e => setData('categoria', e.target.value)}
+                                    className={`w-full border-2 border-black rounded-2xl p-4 font-black text-xl outline-none bg-white cursor-pointer focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.categoria ? 'border-red-500 bg-red-50' : 'focus:border-pink-500'}`}
+                                    required
+                                >
+                                    <option value="ropa">Ropa</option>
+                                    <option value="accesorio">Accesorio</option>
+                                </select>
+                                {errors.categoria && <p className="text-red-500 text-xs mt-2 font-bold uppercase tracking-wider">{errors.categoria}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-black uppercase mb-2 tracking-widest">Descripción</label>
+                                <textarea
+                                    value={data.descripcion}
+                                    onChange={e => setData('descripcion', e.target.value)}
+                                    rows={4}
+                                    className={`w-full border-2 border-black rounded-2xl p-4 font-bold text-lg outline-none resize-none focus:ring-4 focus:ring-pink-500/20 transition-all ${errors.descripcion ? 'border-red-500 bg-red-50' : 'focus:border-pink-500'}`}
+                                    required
+                                />
+                                {errors.descripcion && <p className="text-red-500 text-xs mt-2 font-bold uppercase tracking-wider">{errors.descripcion}</p>}
                             </div>
 
                             <div>
@@ -188,7 +224,6 @@ export default function Edit({ producto, todaslasTallas }: Props) {
                     </div>
                 </div>
             </main>
-
             <Footer />
         </div>
     );

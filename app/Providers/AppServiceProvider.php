@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Artista;
+use App\Models\Entrada;
+use App\Models\Producto;
 use App\Observers\ArtistaObserver;
+use App\Observers\EntradaObserver;
+use App\Observers\ProductoObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         Artista::observe(ArtistaObserver::class);
+        Producto::observe(ProductoObserver::class);
+        Entrada::observe(EntradaObserver::class);
     }
 
     /**

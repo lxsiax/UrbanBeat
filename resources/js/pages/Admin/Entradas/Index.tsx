@@ -149,7 +149,7 @@ export default function GestionEntradas({ entradas: entradasIniciales = [] }: Pr
                         </div>
                     </div>
 
-                    <h2 className="text-2xl font-black uppercase italic mt-20 mb-6">Resumen de Ventas</h2>
+                    <h2 className="text-3xl font-black uppercase italic mt-20 mb-6">Resumen de Ventas</h2>
 
                     <div className="space-y-12">
                         {fechasUnicas.map((fecha) => (
@@ -178,7 +178,6 @@ export default function GestionEntradas({ entradas: entradasIniciales = [] }: Pr
                                                 </div>
 
                                                 <div className="space-y-5">
-                                                    {/* Barra Entrada */}
                                                     <div>
                                                         <div className="flex justify-between text-[10px] font-black uppercase mb-1.5">
                                                             <span className="text-gray-600">Stock Entrada</span>

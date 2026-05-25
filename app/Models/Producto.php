@@ -17,6 +17,7 @@ class Producto extends Model
         'imagen_url',
         'categoria',
         'esta_oculto',
+        'created_at',
     ];
 
     public function tallas(): BelongsToMany
