@@ -12,15 +12,16 @@ import {
 import { Link, usePage } from '@inertiajs/react';
 
 export default function Header() {
-    const { auth } = usePage().props as any;
+    const { auth, dias_evento } = usePage().props as any;
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuMovil, setmenuMovil] = useState(false);
 
     const opcionesEntradas = [
         { nombre: 'Abonos Generales', href: '/entradas?tipo=abono' },
-        { nombre: 'Día 23 Julio', href: '/entradas?dia=2026-07-23' },
-        { nombre: 'Día 24 Julio', href: '/entradas?dia=2026-07-24' },
-        { nombre: 'Día 25 Julio', href: '/entradas?dia=2026-07-25' },
+        ...(dias_evento || []).map((dia: any) => ({
+            nombre: `Día ${new Date(dia.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}`,
+            href: `/entradas?dia=${dia.fecha}`
+        }))
     ];
 
     return (

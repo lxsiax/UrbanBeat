@@ -62,6 +62,7 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
                 'carrito_count' => $carritoCount,
             ],
+            'dias_evento' => \App\Models\Dia::orderBy('fecha', 'asc')->get(),
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
