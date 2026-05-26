@@ -13,11 +13,12 @@ class ProductoObserver
             return;
 
         Noticia::create([
-            'producto_id' => $producto->id, 
             'titulo' => '¡NUEVO MERCH DISPONIBLE: ' . strtoupper($producto->nombre) . '!',
             'contenido' => 'Ya puedes conseguir el nuevo producto oficial: ' . $producto->nombre,
             'imagen' => $producto->imagen_url,
             'tipo' => 'producto',
+            'created_at' => $producto->created_at,
+            'updated_at' => $producto->created_at,
         ]);
     }
 

@@ -71,35 +71,6 @@ class DatabaseSeeder extends Seeder
         $tipoD24 = TipoEntrada::create(['nombre' => 'Entrada 24 de Julio', 'dia_id' => $dia24->id]);
         $tipoD25 = TipoEntrada::create(['nombre' => 'Entrada 25 de Julio', 'dia_id' => $dia25->id]);
 
-        $zonas = [$zonaPista, $zonaGrada, $zonaFront];
-        $preciosBase = [
-            'Abono' => ['Pista' => 120, 'Grada' => 100, 'Front Stage' => 170],
-            'Dia' => ['Pista' => 60, 'Grada' => 45, 'Front Stage' => 100]
-        ];
-
-        foreach ($zonas as $z) {
-            $distribucion = [
-                $tipoAbono->id => 0.40,
-                $tipoD23->id => 0.20,
-                $tipoD24->id => 0.20,
-                $tipoD25->id => 0.20
-            ];
-
-            foreach ($distribucion as $tipoId => $porcentaje) {
-                $stockCalculado = floor($z->aforo * $porcentaje);
-                $esAbono = ($tipoId === $tipoAbono->id);
-                $precio = $esAbono ? $preciosBase['Abono'][$z->nombre] : $preciosBase['Dia'][$z->nombre];
-
-                Entrada::create([
-                    'tipo_entrada_id' => $tipoId,
-                    'zona_id' => $z->id,
-                    'precio' => $precio,
-                    'stock' => $stockCalculado,
-                    'stock_inicial' => $stockCalculado
-                ]);
-            }
-        }
-
         // --- TALLAS ---
         $tallaS = Talla::create(['nombre' => 'S']);
         $tallaM = Talla::create(['nombre' => 'M']);
@@ -392,6 +363,36 @@ class DatabaseSeeder extends Seeder
             'orden' => 2,
             'created_at' => now()->subDays($diasAtras++)
         ]);
+
+        $zonas = [$zonaPista, $zonaGrada, $zonaFront];
+        $preciosBase = [
+            'Abono' => ['Pista' => 120, 'Grada' => 100, 'Front Stage' => 170],
+            'Dia' => ['Pista' => 60, 'Grada' => 45, 'Front Stage' => 100]
+        ];
+
+        foreach ($zonas as $z) {
+            $distribucion = [
+                $tipoAbono->id => 0.40,
+                $tipoD23->id => 0.20,
+                $tipoD24->id => 0.20,
+                $tipoD25->id => 0.20
+            ];
+
+            foreach ($distribucion as $tipoId => $porcentaje) {
+                $stockCalculado = floor($z->aforo * $porcentaje);
+                $esAbono = ($tipoId === $tipoAbono->id);
+                $precio = $esAbono ? $preciosBase['Abono'][$z->nombre] : $preciosBase['Dia'][$z->nombre];
+
+                Entrada::create([
+                    'tipo_entrada_id' => $tipoId,
+                    'zona_id' => $z->id,
+                    'precio' => $precio,
+                    'stock' => $stockCalculado,
+                    'stock_inicial' => $stockCalculado,
+                    'created_at' => now()->subDays($diasAtras++)
+                ]);
+            }
+        }
 
         Artista::create([
             'nombre' => 'Maikel De La Calle',

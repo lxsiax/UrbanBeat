@@ -6,7 +6,7 @@ use App\Models\Noticia;
 
 class ArtistaObserver
 {
-     
+
     private function generarTitulo(string $nombre): string
     {
         return '¡NUEVO ARTISTA CONFIRMADO: ' . strtoupper($nombre) . '!';
@@ -23,23 +23,25 @@ class ArtistaObserver
             'contenido' => 'El festival Urban Beat 2026 anuncia la confirmación de ' . $artista->nombre . '. ¡Prepárate para el show!',
             'imagen' => $artista->imagen,
             'tipo' => 'artista',
+            'created_at' => $artista->created_at,
+            'updated_at' => $artista->created_at,
         ]);
     }
 
     public function updated(Artista $artista): void
     {
-         
+
         $noticia = Noticia::where('tipo', 'artista')
             ->where('titulo', $this->generarTitulo($artista->getOriginal('nombre')))
             ->first();
-         
+
         if ($artista->esta_oculto) {
             if ($noticia) {
                 $noticia->delete();
             }
             return;
         }
-         
+
         if (!$noticia) {
             $this->created($artista);
             return;
