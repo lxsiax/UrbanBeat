@@ -31,7 +31,7 @@ class Factura extends Model
 
     public function entrada()
     {
-        return $this->belongsTo(Entrada::class);
+        return $this->belongsTo(Entrada::class)->withTrashed();
     }
     public function talla()
     {

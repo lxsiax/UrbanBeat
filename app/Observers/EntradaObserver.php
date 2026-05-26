@@ -30,7 +30,6 @@ class EntradaObserver
                     'contenido' => "¡El ritmo de venta está siendo espectacular! Se acaban de agotar casi todos los pases de tipo {$textoIdentificador}. Actualmente quedan exactamente {$nuevoStock} entradas disponibles en nuestra wb. ¡Asegura tu sitio antes de que se agoten por completo!",
                     'tipo' => 'novedad',
                     'esta_oculta' => false,
-                    // 'imagen' => 'noticias/entradas-warning.jpg' // Por si quieres subir un banner genérico
                 ]);
             }
         }

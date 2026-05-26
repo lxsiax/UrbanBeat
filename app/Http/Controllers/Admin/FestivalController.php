@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AjusteFestival;
+use App\Models\Artista;
 use App\Models\Dia;
+use App\Models\Entrada;
 use App\Models\TipoEntrada;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -102,11 +104,11 @@ class FestivalController extends Controller
                 ['valor' => $request->duracion_dias]
             );
 
-            DB::table('artistas')->delete();
-            DB::table('entradas')->delete();
-            DB::table('tipo_entradas')->delete();
+	        Artista::query()->delete(); 
+            Entrada::query()->delete();
+            TipoEntrada::query()->delete();
 
-            Dia::truncate();
+            Dia::query()->delete();
 
             $nuevaFecha = Carbon::parse($request->fecha_inicio);
 

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('dias', function (Blueprint $table) {
             $table->id();
             $table->date('fecha')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
