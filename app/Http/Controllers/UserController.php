@@ -23,9 +23,13 @@ class UserController extends Controller
     {
         $usuario = User::findOrFail($id);
 
-        $usuario->update([
-            'acceso_permitido' => !$usuario->acceso_permitido
-        ]);
+        if ($usuario->role_id === 1) {
+            return;
+        } else
+            (
+                $usuario->update([
+                    'acceso_permitido' => !$usuario->acceso_permitido
+                ]));
 
         return redirect()->back();
     }
