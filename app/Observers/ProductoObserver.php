@@ -7,21 +7,39 @@ use App\Models\Noticia;
 
 class ProductoObserver
 {
-    /**
-     * Handle the Producto "created" event.
-     */
     public function created(Producto $producto): void
     {
-        if ($producto->esta_oculto) {
+        if ($producto->esta_oculto)
             return;
-        }
 
         Noticia::create([
+            'producto_id' => $producto->id, 
             'titulo' => '¡NUEVO MERCH DISPONIBLE: ' . strtoupper($producto->nombre) . '!',
-            'contenido' => 'Ya puedes conseguir el nuevo producto oficial del festival: ' . $producto->nombre . '. ' . $producto->descripcion . ' ¡Unidades limitadas!',
-            'imagen' => $producto->imagen_url, 
+            'contenido' => 'Ya puedes conseguir el nuevo producto oficial: ' . $producto->nombre,
+            'imagen' => $producto->imagen_url,
             'tipo' => 'producto',
-            'created_at' => $producto->created_at,
         ]);
+    }
+
+    public function updated(Producto $producto): void
+    {
+        $noticia = Noticia::where('tipo', 'producto')
+            ->where('titulo', 'LIKE', '%' . strtoupper($producto->getOriginal('nombre')) . '%')
+            ->first();
+
+        if ($noticia) {
+            if ($producto->esta_oculto) {
+                $noticia->delete();
+                return;
+            }
+
+            $noticia->update([
+                'titulo' => '¡NUEVO MERCH DISPONIBLE: ' . strtoupper($producto->nombre) . '!',
+                'contenido' => 'Ya puedes conseguir el nuevo producto oficial: ' . $producto->nombre,
+                'imagen' => $producto->imagen_url,
+            ]);
+        } elseif (!$producto->esta_oculto) {
+            $this->created($producto);
+        }
     }
 }
